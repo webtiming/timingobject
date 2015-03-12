@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Timing Object</title>
+    <meta charset="utf-8">
+    <script src="http://www.w3.org/Tools/respec/respec-w3c-common"
+            async class="remove"></script>
+    <script class="remove">
+      var respecConfig = {
+          specStatus: "ED",
+          edDraftURI: "http://webtiming.github.io/timingelement",
+          shortName:  "timing-object",
+          editors: [
+            {
+              name:       "François Daoust",
+              company:    "W3C",
+              companyURL: "http://www.w3.org",
+              mailto:     "fd@w3.org"
+            }
+          ],
+          authors: [
+            {
+              name:       "Ingar M. Arntzen",
+              company:    "Motion Corporation",
+              companyURL: "http://motioncorporation.com/"
+            },
+            {
+              name:       "Njål T. Borch",
+              company:    "Motion Corporation",
+              companyURL: "http://motioncorporation.com/"
+            }
+          ],
+          wg:           "Multi-Device Timing Community Group",
+          wgURI:        "http://www.w3.org/community/webtiming/",
+          wgPublicList: "public-webtiming",
+
+          localBiblio:  {
+            "MSV": {
+              title:    "The Media State Vector: A unifying concept for multi-device media navigation",
+              href:     "http://motioncorporation.com/publications/mediastatevector2012.pdf",
+              authors:  [
+                "Ingar M. Arntzen",
+                "Njål T. Borch",
+                "Christopher P. Needham"
+              ]
+            }
+        }
+      };
+    </script>
+    <style type="text/css">
+      table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+      table thead, table tbody { border-bottom: solid; }
+      table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+    </style>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>
+        This specification defines a timing object and an associated API to implement an ideal clock that advances deterministically in accordance with a local or online system clock and that may be used for reliable distributed synchronization.
+      </p>
+    </section>
+
+    <section id="sotd">
+      <p>
+        The specification is intended for discussion within the Multi-Device Timing Community Group. Its content does not yet represent the consensus of the Community Group.
+      </p>
+    </section>
+    
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>
+        This specification aims to make it possible and easy to synchronize playback of media (and non-media) content across Web clients.
+      </p>
+      <p>
+        At its core, the specification introduces a timing object that is essentially an ideal clock, advancing deterministically in accordance with a system clock. In this context, <em>ideal</em> means that it should take exactly 2.0 seconds for the <code>currentTime</code> property of the timing object to advance from 3.0 to 5.0 when its <code>playbackRate</code> is 1.0. The deterministic behavior is required for reliable distributed synchronization.
+      </p>
+      <p>
+        A timing object may be associated with an online timing resource that represents various application-level timing concepts, such as clocks, timeouts, stop-watches or media controllers. Timing resources are true objects on the Web, identified by URLs and hosted by timing services.
+      </p>
+      <p>
+        If the timing object is associated with an online timing resources, the timing object acts as a proxy object, mediating access to the online timing resource. This way, control operations such as <em>play</em> or <em>pause</em> are forwarded to the timing service. Effects can then be propagated equally to all connected clients. The timing object fully encapsulates the complexity of multi-device operation and leaves the programmer to interact only with local objects.
+      </p>
+      <figure>
+        <img src="overview.png" width="400" alt="The image illustrates the concept of an online timing resource and used to synchronize content across three different Web clients through timing elements" />
+        <figcaption>Multi-device synchronization architecture</figcaption>
+      </figure>
+      <p>
+        <a href="#fig-multi-device-synchronization-architecture"></a> illustrates three Web clients hosted by three different devices, say a laptop, a smartphone and a tablet. These three Web clients each have a timing object connected to a single, online, multi-device timing resource. For example, the online timing resource could be used as basis for shared media control, allowing multiple clients to operate in synchrony. This way, a laptop could present a video, the smartphone could present the audio track, and the tablet could present controls, progressbar, and timed extra information. If the timing resource is requested to pause, all connected clients pause in unison.
+      </p>
+
+      <p class="note">
+        The protocol used to connect, synchronize and interact with online timing resources will be defined in a separate specification.
+      </p>
+      <p class="note">
+        Similarly, the integration of the timing object with HTML5 Media Elements [[HTML5]] is out of scope of this specification.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h2>Use cases and requirements</h2>
+      <p class="issue">
+        Complete section, use <a href="http://lists.w3.org/Archives/Public/public-web-and-tv/2014Dec/0017.html">discussion on Web and TV IG mailing-list</a> as starting point
+      </p>
+    </section>
+
+    <section id="conformance">
+      <p>
+        Requirements phrased in the imperative as part of algorithms (such as "strip any leading space characters" or "return false and terminate these steps") are to be interpreted with the meaning of the key word ("must", "should", "may", etc.) used in introducing the algorithm.
+      </p>
+
+      <p>
+        Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, and not intended to be performant).
+      </p>
+
+      <p>
+        This specification defines conformance criteria that apply to a single product: the <dfn>user agent</dfn> that implements the interfaces that it contains.
+      </p>
+    </section>
+
+    <section>
+      <h2>Terminology</h2>
+
+      <p>
+        The terms <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event handler</a></dfn> and <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">event handler event type</a></dfn> are defined in [[!HTML5]].
+      </p>
+
+      <p>
+        The <dfn><code><a href="http://www.w3.org/TR/dom/#event">Event</a></code></dfn> interface represents an event as defined in [[!DOM]].
+      </p>
+
+      <p>
+        The <code><a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code> interface represents a callback used for <a title="event handler">event handlers</a> as defined in [[!HTML5]].
+      </p>
+
+      <p>
+        The <dfn><code><a href="http://dev.w3.org/html5/spec/webappapis.html#timeranges">TimeRanges</a></code></dfn> interface represents a list of ranges (periods) of time as defined in [[!HTML5]].
+      </p>
+
+      <p>
+        The concepts <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue a task</a></dfn>, <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">fires a simple event</a></dfn>, <dfn><a href="http://www.w3.org/html/wg/drafts/html/master/semantics.html#normalised-timeranges-object">normalised <code>TimeRanges</code> object</a></dfn> are defined in [[!HTML5]].
+      </p>
+
+      <p>
+        An <dfn>online timing resource</dfn> is an object identified by a URL and by a timing service that represents various application-level timing concepts, such as clocks, timeouts, stop-watches or media controllers. Timing resources are created and used by Web applications in order to support timing-sensitive execution in multi-device applications.
+      </p>
+
+      <p>
+        This document provides interface definitions using the [[!WEBIDL]] standard.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h2>Example</h2>
+      <p class="issue">
+        Show how the timing object and API can be used in practice in a simple multi-device scenario. The example should demonstrate how to make use of main methods such as <code>query</code>, <code>update</code> and <code>getState</code>.
+      </p>
+      <pre class="example highlight">
+        @@
+      </pre>
+    </section>
+
+    <section>
+      <h2>Timing objects</h2>
+
+      <p>A <dfn>timing object</dfn> represents an ideal clock that advances deterministically in accordance with a local or online system clock.</p>
+
+      <p>
+        A <a>timing object</a> has an <dfn>internal motion</dfn> represented by a <a>media state vector</a>, which must initially be set to <code>(p<sub>0</sub>, v<sub>0</sub>, a<sub>0</sub>, t<sub>0</sub>)</code> where <code>p<sub>0</sub>=0.0</code>, <code>v<sub>0</sub>=0.0</code>, <code>a<sub>0</sub>=0.0</code> and where <code>t<sub>0</sub></code> is the local timestamp when the object is created.
+      </p>
+
+      <p>
+        A <a>timing object</a> maintains an <dfn>internal synchronization state</dfn> that contains an estimate of the current client's clock skew relative to the online timing service when the object is associated with an <a>online timing resource</a>, as well as an estimate of the current network latency between the client and the online timing service. This information is used to correct timestamp values when <a title="media state vector">media state vectors</a> are exchanged between the client and the timing service. The user agent must initialize the skew and latency to 0.0. If the <a>timing object</a> is not associated with an online timing service, the skew and latency remain at 0.0.
+      </p>
+
+      <p><a title="timing object">Timing objects</a> implement the following interface:</p>
+
+      <dl title="interface Timing : EventTarget" class="idl">
+        <dt>Constructor()</dt>
+        <dd>When the constructor is invoked, the user agent must <a>create a new timing object</a>.</dd>
+
+        <dt>attribute DOMString src</dt>
+        <dd>On getting, return the URL of the <a>online timing resource</a> associated with the object if there is one, null if the object uses the local clock. On setting, the user agent must invoke the <a>online timing resource load algorithm</a>.</dd>
+
+        <dt>readonly attribute unsigned short readyState</dt>
+        <dd><span class="issue">uses HTMLMediaElement.readyState's values?</span></dd>
+
+        <dt>readonly attribute TimeRanges seekable</dt>
+        <dd>A <a>normalised <code>TimeRanges</code> object</a> that represents the intersection of the ranges that the timing element may seek to.
+        <br/><span class="issue">Only one element in the TimeRanges object?</span></dd>
+
+        <dt>readonly attribute unrestricted double duration</dt>
+        <dd>The timing object duration, if defined.<br/><span class="issue">linked to seekable?</span></dd>
+
+        <dt>attribute double currentTime</dt>
+        <dd>On getting, the user agent must <a>compute the position</a> at the current local time and return that value. On setting, the user agent must invoke the <code>update</code> method of the <a>Timing</a> object with parameters <code>(value, null, null)</code> where <code>value</code> it the new value. The user agent must interpret the new value as being in seconds.</dd>
+
+        <dt>readonly attribute boolean paused</dt>
+        <dd>true if the timing object is a paused timing object, and false otherwise.
+        <br/><span class="issue">Define "paused timing object" properly</span></dd>
+
+        <dt>attribute double playbackRate</dt>
+        <dd>On getting, the user agent must <a>compute the velocity</a> at the current local time and return that value. On setting, the user agent must invoke the <code>update</code> method of the <a>Timing</a> object with parameters <code>(null, value, null)</code> where <code>value</code> is the new value.</dd>
+
+        <dt>attribute EventHandler onplay</dt>
+        <dd>Corresponds to the <a>play</a> <a>event handler event type</a>.</dd>
+
+        <dt>attribute EventHandler onpause</dt>
+        <dd>Corresponds to the <a>pause</a> <a>event handler event type</a>.</dd>
+
+        <dt>attribute EventHandler onvectorchange</dt>
+        <dd>Corresponds to the <a>vectorchange</a> <a>event handler event type</a>.</dd>
+
+        <dt>attribute EventHandler onreadystatechange</dt>
+        <dd>Corresponds to the <a>readystatechange</a> <a>event handler event type</a>.</dd>
+
+        <dt>attribute EventHandler ontimeupdate</dt>
+        <dd>Corresponds to the <a>timeupdate</a> <a>event handler event type</a>.</dd>
+
+        <dt>void update (optional double? position, optional double? velocity, optional double? acceleration, optional Object? options)</dt>
+        <dd>
+          When called, the user agent must <a>update the internal motion</a> to the provided parameters, at the time when the update operation is processed. The parameters for the update operation are optional, i.e., null values may be supplied. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>update(null, value, null)</code> means "update velocity while preserving position and acceleration". Note that the values we want to preserve are not from the internal state, but rather from a snapshot of the <a>MediaStateVector</a> that represents the <a>internal motion</a>, taken at exactly the time when the update is processed.
+
+          <dl class="parameters">
+            <dt>optional double? position</dt>
+            <dd>The new position, or null to preserve the current value at the time the update is processed.</dd>
+            <dt>optional double? velocity</dt>
+            <dd>The new velocity, or null to preserve the current value at the time the update is processed.</dd>
+            <dt>optional double? acceleration</dt>
+            <dd>The new acceleration, or null to preserve the current value at the time the update is processed.</dd>
+          </dl>
+        </dd>
+
+        <dt>MediaStateVector query ()</dt>
+        <dd>When invoked, the user agent must <a>compute the motion</a> at the current local time and return the result.</dd>
+
+        <dt>TimingInfo getState ()</dt>
+        <dd>When invoked, the user agent must return a <a>TimingInfo</a> object initialized with the latest known <a>internal synchronization state</a>.</dd>
+
+        <dt>void pause ()</dt>
+        <dd>When invoked, the user agent must invoke the <code>update</code> method of the <a>Timing</a> object with parameters <code>(null, 0.0, null)</code>. The update effectively causes the motion to stop.</dd>
+
+        <dt>void play ()</dt>
+        <dd>When invoked, the user agent must invoke the <code>update</code> method of the <a>Timing</a> object with parameters <code>(null, 1.0, null)</code>. The update effectively causes the motion to play at the usual playback rate.</dd>
+      </dl>
+
+      <section>
+        <h3>Events</h3>
+
+        <p>The following events fire on <a>Timing</a> objects:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Event name</th>
+              <th>Interface</th>
+              <th>Fired when...</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><dfn><code>play</code></dfn></td>
+              <td><a><code>Event</code></a></td>
+              <td>The <code>paused</code> attribute is newly false.</td>
+            </tr>
+            <tr>
+              <td><dfn><code>pause</code></dfn></td>
+              <td><a><code>Event</code></a></td>
+              <td>The <code>paused</code> attribute is newly true.</td>
+            </tr>
+            <tr>
+              <td><dfn><code>vectorchange</code></dfn></td>
+              <td><a><code>Event</code></a></td>
+              <td>The <a>internal motion</a> changed. Fired after the <code>update()</code> method has returned, or when an update is received from the <a>online timing resource</a>.</td>
+            </tr>
+            <tr>
+              <td><dfn><code>readystatechange</code></dfn></td>
+              <td><a><code>Event</code></a></td>
+              <td>The <code>readyState</code> attribute changed.<br/><span class="issue">Split into different events?</span></td>
+            </tr>
+            <tr>
+              <td><dfn><code>timeupdate</code></dfn></td>
+              <td><a><code>Event</code></a></td>
+              <td>The current position changed as part of current motion or in an especially interesting way, for example discontinuously.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section>
+      <h2>Media state vectors</h2>
+
+      <p>
+        A <dfn>media state vector</dfn> is a representation of uni-dimensional motion in real time, intended as a general basis for synchronization of distributed media presentations. See [[MSV]] for details about the underlying concepts of a media state vector.
+      </p>
+
+      <p><a title="media state vector">Media state vectors</a></code> implement the following interface, but note that they may be represented as quadruples <code>(position, velocity, acceleration, timestamp)</code> in other sections of this specification to improve readability:</p>
+
+      <dl title="interface MediaStateVector" class="idl">
+        <dt>readonly attribute double position</dt>
+        <dd>The current position on the uni-dimensional axis.</dd>
+
+        <dt>readonly attribute double velocity</dt>
+        <dd>The current velocity along the uni-dimensional axis.</dd>
+
+        <dt>readonly attribute double acceleration</dt>
+        <dd>The current acceleration along the uni-dimensional axis.</dd>
+
+        <dt>readonly attribute double timestamp</dt>
+        <dd>The timestamp at the client clock when the position and velocity are evaluated.</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>TimingInfo object</h2>
+
+      <p>The <a>TimingInfo</a> object gives information about the internal state of a <a>timing object</a> at the time when <code>getState</code> is called.</p>
+
+      <dl title="interface TimingInfo" class="idl">
+        <dt>readonly attribute TimeRanges seekable</dt>
+        <dd>A <a>normalised <code>TimeRanges</code> object</a> that represents the intersection of the ranges that the timing element may seek to.
+        <br/><span class="issue">Why repeat that information here? It's available through the timing object already</span></dd>
+
+        <dt>readonly attribute double skew</dt>
+        <dd>Clock skew relative to the timing service.</dd>
+
+        <dt>readonly attribute double latency</dt>
+        <dd>Latency to timing service.</dd>
+
+        <dt>readonly attribute unsigned short readyState</dt>
+        <dd><br/><span class="issue">That's part of the state, but why repeat that information here? It's available through the timing object already</span></dd>
+
+        <dt>readonly attribute boolean readonly</dt>
+        <dd>Returns true when the timing object is read-only, false if the client can control the timing object. Calling the <code>update</code> method on a read-only timing object has no effect.</dd>
+
+        <dt>readonly attribute MediaStateVector lastVector</dt>
+        <dd>The initial vector that was before.
+        <br/><span class="issue">Wouldn't previousVector be better?</span></dd>
+
+        <dt>readonly attribute MediaStateVector vector</dt>
+        <dd>The initial vector of the current timing.
+        <br/><span class="issue">The use of "initial" is confusing. More the "latest" vector?</span></dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Algorithms</h2>
+
+      <section>
+        <h3>Create a new timing object</h3>
+        <p>
+          When the user agent is required to <dfn>create a new timing object</dfn>, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <em>timing</em> be a newly constructed <code><a>Timing</a></code> object.</li>
+          <li>Initialize <em>timing</em>'s <a>internal motion</a> to <code>(0.0, 0.0, 0.0, t)</code> where <code>t</code> is the local timestamp in seconds when the object is created</li>
+          <li>Initialize the skew and latency of <em>timing</em>'s <a>internal synchronization state</a> to 0.0.</li>
+          <li>Initialize <em>timing</em>'s <code>readyState</code> to <code>HAVE_NOTHING</code>.</li>
+          <li>Initialize <em>timing</em>'s <code>paused</code> attribute to true.</li>
+          <li>Return <em>timing</em>.</li>
+        </ol>
+
+      <section>
+        <h3>Compute the position</h3>
+        <p>
+          When the user agent is required to <dfn>compute the position</dfn> at a given time <code>t</code>, it must run the following steps:
+        </p>
+        <ol>
+          <li><span class="issue">TODO: deal with initialisation conditions (readyState, Media State Vector)</span></li>
+          <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current <a>internal motion</a></li>
+          <li>Let <em>pos</em> be <code>p<sub>i</sub> + v<sub>i</sub> (t - t<sub>i</sub>) + 1/2 a<sub>i</sub> (t - t<sub>i</sub>)<sup>2</sup></code></li>
+          <li>Return <em>pos</em></li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Compute the velocity</h3>
+        <p>
+          When the user agent is required to <dfn>compute the velocity</dfn> at a given time <code>t</code>, it must run the following steps:
+        </p>
+        <ol>
+          <li><span class="issue">TODO: deal with initialisation conditions (readyState, Media State Vector)</span></li>
+          <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current <a>internal motion</a></li>
+          <li>Let <em>vel</em> be <code>v<sub>i</sub> + a<sub>i</sub> (t - t<sub>i</sub>)</code></li>
+          <li>Return <em>vel</em></li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Compute the acceleration</h3>
+        <p>
+          When the user agent is required to <dfn>compute the acceleration</dfn> at a given time <code>t</code>, it must run the following steps:
+        </p>
+        <ol>
+          <li><span class="issue">TODO: deal with initialisation conditions (readyState, Media State Vector)</span></li>
+          <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current <a>internal motion</a></li>
+          <li>Return <code>a<sub>i</sub></code></li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Compute the motion</h3>
+        <p>
+          When the user agent is required to <dfn>compute the motion</dfn> at a given time <code>t</code>, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <em>pos</em> be the result of <a title="compute the position">computing the position</a> at time <code>t</code>.</li>
+          <li>Let <em>vel</em> be the result of <a title="compute the velocity">computing the velocity</a> at time <code>t</code>.</li>
+          <li>Let <em>acc</em> be the result of <a title="compute the acceleration">computing the acceleration</a> at time <code>t</code>.</li>
+          <li>Let <em>msv</em> be a newly constructed <a>MediaStateVector</a> object.</li>
+          <li>Initialize <em>msv</em>'s <code>position</code> attribute to <em>pos</em>.</li>
+          <li>Initialize <em>msv</em>'s <code>velocity</code> attribute to <em>vel</em>.</li>
+          <li>Initialize <em>msv</em>'s <code>acceleration</code> attribute to <em>acc</em>.</li>
+          <li>Initialize <em>msv</em>'s <code>timestamp</code> attribute to <code>t</code>.</li>
+          <li>Return <em>msv</em>.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Load an online timing resource</h3>
+        <p>
+          The <dfn>online timing resource load algorithm</dfn> consists of the following steps:
+          <br/><span class="issue">TODO</span>
+        </p>
+      </section>
+
+      <section>
+        <h3>Update the internal motion</h3>
+        <p>
+          When the user agent is required to <dfn>update the internal motion</dfn> to the provided <code>position</code>, <code>velocity</code> and <code>acceleration</code>, it must run the following steps:
+          <br/><span class="issue">TODO</span>
+        </p>
+      </section>
+
+      <section>
+        <h3>Process an update received from the online timing service</h3>
+        <p class="issue">Define what happens when a new media state vector is received from the server</p>
+      </section>
+
+      <section>
+        <h3>Synchronize media state vectors</h3>
+        <p class="issue">Details steps to update skew and latency (or out of scope?)</p>
+      </section>
+    </section>
+  </body>
+</html>
