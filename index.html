@@ -8,7 +8,7 @@
     <script class="remove">
       var respecConfig = {
           specStatus: "ED",
-          edDraftURI: "http://webtiming.github.io/timingelement",
+          edDraftURI: "http://webtiming.github.io/timingobject",
           shortName:  "timing-object",
           editors: [
             {
@@ -63,6 +63,19 @@
       <p>
         Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distibuted time-ordering and distributed recording (time-stamping). The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> works to extend the Web with support for multi-device timing, and the timing object is the central concept in this initiative.
       </p>
+
+       <p>
+        The design of the timing object has two main goals:
+      </p>
+      <ol>
+        <li>
+          provide a unifying API to which linear components may integrate in order to support linear composability. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
+        </li>
+        <li> 
+          encapsulate complexity of distributed time synchronization. In particular, by providing the same API for local and online timing resources, timing-sensitive components may be used in single-device and multi-device scenarios, without modification. 
+        </li>
+      </ol>
+      
     </section>
 
     <section id="sotd">
