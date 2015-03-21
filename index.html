@@ -75,7 +75,7 @@
       <h2>Introduction</h2>
       
       <p>
-        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including setTimeout, setInterval, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to operations within a single web page. In contrast, a multi-device timing mechanism would allow precisely timed operations across Web pages hosted by different devices. The W3C Multi-device Timing Community Group has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario.
+        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including setTimeout, setInterval, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to timed operations within a single web page. In contrast, a multi-device timing mechanism allows precisely timed operations across Web pages hosted by different devices. The W3C Multi-device Timing Community Group has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario.
       </p>
       
       <p>
@@ -83,67 +83,92 @@
       </p>
 
 
-      <h6>Linear Composition</h6>
+      <b>Linear Composition</b>
       <p>
         Multi-device timing has particular importance for multi-device, linear media, as it is key to distributed, time-sentitive playback. Here we express the motivation of the timing object specifically in the context of linear media. So, an important purpose of introducing the timing object into HTML is to enable <i>linear composition</i> in both single-device and multi-device linear media. 
       </p>
 
       <p>
-        Linear composition is simply the idea that complex linear media could be built from simpler, independent linear components. This way, the classical benefits of composition as a design principle, i.e., flexibility, reusability, extensibilty and mashup-ability, would fully apply to linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a WebAnimation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition require interoperability of heterogeneous linear components, through precisely coordinated, timed playback. Currently there is weak support for this, and a main reason for this is that timing control mechanisms are custom, and internal to each framework. This central purpose of the timing object is thus to simplify interoperability by providing a common basis for timing control in linear media. In this regard, the timing object has two main functions: 
+        Linear composition is simply the idea that complex linear media could be built from simpler, independent linear components. This way, the classical benefits of composition as a design principle, i.e., flexibility, reusability, extensibilty and mashup-ability, would fully apply to linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a WebAnimation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition require interoperability of heterogeneous linear components, through precisely coordinated, timed playback. Currently there is weak support for this, and a main reason for this is that timing control mechanisms are custom, and internal to each framework. This central purpose of the timing object is thus to simplify interoperability by providing a common basis for timing control in linear media.  
       </p>
 
+      <p>
+       For a more extensive introduction to linear composition, please consult documentation on the <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a>.
+      </p>
+
+
+      <b>Design Goals and Architecture</b>
+      <p>
+        The design of the timing object has two main goals:
+      </p>
       <ol>
         <li>
-          provide a unifying API to which linear components may integrate in order to support linear composability. The API must support highly precise synchronization, and be expressive enough to support control primitives appropriate for a wide range of media types and applications. 
+          provide a unifying API to which linear components may integrate in order to support linear composability. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
         </li>
         <li> 
           encapsulate complexity of distributed time synchronization. In particular, by providing the same API for local and online timing resources, timing-sensitive components may be used in single-device and multi-device scenarios, without modification. 
         </li>
       </ol>
-      <p>
-       For a more extensive introduction to linear composition, please consult documentation on the <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a>.
-      </p>
-
-      <figure>
-        <img src="overview.png" width="400" alt="The image illustrates the concept of an online timing resource and used to synchronize content across three different Web clients through timing elements" />
-        <figcaption>HTMLTimingObjects at three devices connected to shared online timing resource.</figcaption>
-      </figure>
-
-      <p>
-      The above figure illustrates these functions. Three devices each have a single HTMLTimingObjects, which are then individually connected to a single, shared online timing resource. Internally on each device, the HTMLTimingObject will act as the director for independent, time-sensitive GUI components. A video will aim to present videoframes always in accordance with the HTMLTiming resource. Similarly, a time-sensitive Twitter widget might replay time-stamped Twits. If the HTMLTiming resource pauses, so do the connected components. Crucially, note how the different components can go about their business in complete isolation. There is no need for components to communicate, except indirectly through the HTMLTimingObject. This loose coupling is the key to linear compsability.
-      </p>
-      <p>
-      Furthermore, when HTMLTimingObjects are connected to an online timing resource, they will act as local representatives. For example, if a connected HTMLTimingObject is requested to pause, it will simply forward this request to the online timing object. As the online object pauses, notifications will be gereated for all connected clients. ...
-      </p>
-
-
-
      
-
-     
-
-
-      <h5>HTMLTimingObject</h5>
       <p>
-        At its core, the specification introduces a timing object that is essentially an ideal clock, advancing deterministically in accordance with a system clock. In this context, <em>ideal</em> means that it should take exactly 2.0 seconds for the <code>currentTime</code> property of the timing object to advance from 3.0 to 5.0 when its <code>playbackRate</code> is 1.0. The deterministic behavior is required for reliable distributed synchronization.
+        The figure below illustrates these functions, as well as the underlying client-server architecture. Three devices each have a single HTMLTimingObjects, which are then individually connected to a single, shared online timing resource. Internally on each device, the HTMLTimingObject will act as the director for independent, time-sensitive GUI components. This way, a video will aim to present videoframes in accordance with the HTMLTiming resource. Similarly, a time-sensitive Twitter widget might replay time-stamped Twits. If the HTMLTimingObject pauses, the connected components are notified and react accordingly. Crucially, note how the different components can go about their business in complete isolation. There is no need for components to communicate, except indirectly through the HTMLTimingObject. This loose coupling is the key to linear compsability.
       </p>
       <p>
-        A timing object may be associated with an online timing resource that represents various application-level timing concepts, such as clocks, timeouts, stop-watches or media controllers. Timing resources are true objects on the Web, identified by URLs and hosted by timing services.
-      </p>
-      <p>
-        If the timing object is associated with an online timing resources, the timing object acts as a proxy object, mediating access to the online timing resource. This way, control operations such as <em>play</em> or <em>pause</em> are forwarded to the timing service. Effects can then be propagated equally to all connected clients. The timing object fully encapsulates the complexity of multi-device operation and leaves the programmer to interact only with local objects.
-      </p>
-
-      <p>
-        <a href="#fig-multi-device-synchronization-architecture"></a> illustrates three Web clients hosted by three different devices, say a laptop, a smartphone and a tablet. These three Web clients each have a timing object connected to a single, online, multi-device timing resource. For example, the online timing resource could be used as basis for shared media control, allowing multiple clients to operate in synchrony. This way, a laptop could present a video, the smartphone could present the audio track, and the tablet could present controls, progressbar, and timed extra information. If the timing resource is requested to pause, all connected clients pause in unison.
+        Furthermore, when HTMLTimingObjects are connected to an online timing resource, they will act as local representatives. For example, if a connected HTMLTimingObject is requested to pause, the request will simply be forwarded to the online timing object. As the online object pauses, notifications will be multicast to all connected clients. Finally, HTMLTimingObject will update their internal state and notify connected UI components. For online timing objects, clients can expect update latency of about 1 RTT (TCP), whereas purposeely local timing resources should have no update latency. Apart from this, online and local timing resources should be hard to distinguish. Note also that the argument made for the independence of time-sensitive components in the single-device scenario now applies to the multi-device scenario as well. 
       </p>
 
       <p class="note">
         The protocol used to connect, synchronize and interact with online timing resources will be defined in a separate specification.
       </p>
       <p class="note">
-        Similarly, the integration of the timing object with HTML5 Media Elements [[HTML5]] is out of scope of this specification.
+        Similarly, the integration of the timing object with UI components such as HTML5 Media Elements and HTML5 Track Elements [[HTML5]] will be covered in a separate specification.
       </p>
+ 
+
+      <figure>
+        <img src="overview.png" width="400" alt="The image illustrates the concept of an online timing resource how it used to synchronize HTTPTimingObjects across three different Web clients." />
+        <figcaption>HTMLTimingObjects at three devices connected to a single, shared online timing resource.</figcaption>
+      </figure>
+
+     
+      <b>HTMLTimingObject</b>
+      <p>
+        The HTMLTimingObject is conceptually a very simple object, essentially an advanced stop watch. If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value of to advance from 3.0 to 5.0, given that the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the HTMLTimingObject is a fairly thin wrapping around the system clock. (Integration with online timing resources adds a bit of complexity). Since it is based on the system clock, the HTMLTimingObject supports the same resolution and predictability as the system clock. This makes the HTMLTimingObject a sound basis for precise timing.
+      </p>
+      <p>
+        Importantly, the HTMLTimingObject is more expressive than the traditional stop watch. It supports any velocity or acceleration, and may jump to any position on the timeline. In fact, the HTMLTimingObject essentially implements linear motion along a unidimensional axis. An elegant implementation is provided by the concept of Media State Vectors (MSV), based on the classical equations of linear motion under constant acceleration. The HTMLTimingObject adopts this model. At any point in time, position, velocity or acceleration may be requested to change. Querying the HTMLTimingObject reveals not only its current value (position) but also its velocity and acceleration at that moment. This detailed information is again helpful in precise synchronisation, and the expressiveness of the underlying mathematical model implies that a wide variety of control primitives may be supported. In particular, discrete jumps on the timeline may be used to control a slide show, whereas velocity corresponds to playbackRate for the control of continuous media. Acceleration is required by certain animation frameworks.
+     </p>
+     <p>
+        We are not the first to define timing controls for linear media. Similar constructs have been explored in both academia and industry from the 70'ies and onwards.Indeed, any framework for linear media would maintain similar constructs internally. Instead, the novelty is to represent timing as an explicit resource on the Web, independent of framework, thereby creating a basis for interoperability. Also, integration with server-hosted, online timing resources is a novelty.
+      </p>     
+
+      <figure>
+        <img src="stopwatch_digital.jpg" width="80" alt="The HTMLTimingObject is essentially and advanced stop watch." />
+        <figcaption>The HTMLTimingObject is essentially an advanced stop watch.</figcaption>
+      </figure>
+        <figure>
+        <img src="timeline.png" width="400" alt="The HTMLTimingObject is essentially and advanced stop watch." />
+        <figcaption>The HTMLTimingObject visualized as a cursor moving along a timeline.</figcaption>
+      </figure>
+
+      <b>Programming with HTMLTimingObjects</b>
+
+      <p>
+        Timing objects are resources used by your application, and you may define as many as you like. What purposes they serve in the application is up to the programmer. If the application needs a shared, multi-device clock, just start a timing object and make sure you never stop it. If you want the clock value to represent milliseconds, just set the velocity to 1000 (advances the timingobject with 1000 milliseconds per second). If the timing object represents media offset, just specify the playback position, the velocity, and perhaps a media duration. For video you might measure offset in seconds or frames and set the velocity accordingly. Or, for musical applications it may be practical to let the timing object represent beats per second. Note also that the timing object may represent time-changes with any kind of variable. For instance, if you have data that is organized according to, say height above sea level, you may want to animate how this data changes as you move vertically. In this case the timing object might represent meters or feet above earth, and positive and negative velocities would allow you to move both upwards and downwards.
+      </p>
+      <p>
+        In general, the timing object is particularly useful when you have a variable that needs to change predictably in time. You may of course achieve this simply by overwriting a value repeatedly in time (this is essentially the approach of the current HTMLMediaElement), but the timing object provides an improvement on this approach, particularly with respect to precise synchronization.
+      </p>
+    
+
+
+      <!--
+      <p>
+        <a href="#fig-multi-device-synchronization-architecture"></a> illustrates three Web clients hosted by three different devices, say a laptop, a smartphone and a tablet. These three Web clients each have a timing object connected to a single, online, multi-device timing resource. For example, the online timing resource could be used as basis for shared media control, allowing multiple clients to operate in synchrony. This way, a laptop could present a video, the smartphone could present the audio track, and the tablet could present controls, progressbar, and timed extra information. If the timing resource is requested to pause, all connected clients pause in unison.
+      </p>
+      -->
+
+
     </section>
 
     <section class="informative">
