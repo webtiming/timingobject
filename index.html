@@ -58,7 +58,7 @@
   <body>
     <section id="abstract">
       <p>
-        This specification defines a timing object and an associated API. The timing object is a local object that may be used by Web clients to ensure precisely timed execution. If multiple time-sensitive components take direction from the same timing object, their behaviour will be precisely coordinated in time. Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is gateway to precisely timed operations, both in single-device as well as multi-device scenarios.
+        This specification defines a timing object and an associated API. The timing object is a local object that may be used by Web clients to ensure precisely timed execution. If multiple time-sensitive components take direction from the same timing object, their behaviour will be precisely coordinated in time. Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device as well as multi-device scenarios.
       </p>
       <p>
         Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distibuted time-ordering and distributed recording (time-stamping). The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> works to extend the Web with support for multi-device timing, and the timing object is the central concept in this initiative.
@@ -76,6 +76,12 @@
         </li>
       </ol>
       
+
+      <p class="note">
+        This timing object is not to be confused with concepts proposed by 
+        <a href="https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html">Navigation Timing</a>, an initiative targeting precise measurement of time consumption in Web browsers. In contrast, a central purpose of the timing object is to direct timed operations. 
+      </p>
+
     </section>
 
     <section id="sotd">
@@ -88,7 +94,7 @@
       <h2>Introduction</h2>
       
       <p>
-        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including setTimeout, setInterval, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to timed operations within a single web page. In contrast, a multi-device timing mechanism allows precisely timed operations across Web pages hosted by different devices. The W3C Multi-device Timing Community Group has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario.
+        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <i>setTimeout</i>, <i>setInterval</i>, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to timed operations within a single web page. In contrast, a multi-device timing mechanism allows precisely timed operations across Web pages hosted by different devices. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario.
       </p>
       
       <p>
@@ -102,11 +108,11 @@
       </p>
 
       <p>
-        Linear composition is simply the idea that complex linear media could be built from simpler, independent linear components. This way, the classical benefits of composition as a design principle, i.e., flexibility, reusability, extensibilty and mashup-ability, would fully apply to linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a WebAnimation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition require interoperability of heterogeneous linear components, through precisely coordinated, timed playback. Currently there is weak support for this, and a main reason for this is that timing control mechanisms are custom, and internal to each framework. This central purpose of the timing object is thus to simplify interoperability by providing a common basis for timing control in linear media.  
+        Linear composition is simply the idea that complex linear media could be built from simpler, independent linear components. This way, the classical benefits of composition as a design principle, i.e., flexibility, reusability, extensibilty and mashup-ability, would fully apply to linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a WebAnimation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition require interoperability of heterogeneous linear components, through precisely coordinated, timed playback. Currently though there is weak support for linear composition, and a main reason for this is that timing control mechanisms are custom and internal to each framework. This central purpose of the timing object is thus to simplify interoperability by providing a common basis for timing control in linear media.
       </p>
 
       <p>
-       For a more extensive introduction to linear composition, please consult documentation on the <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a>.
+       For a more extensive introduction to linear composition, please consult paper "Multi-device Linear Composition on the Web; Enabling Multi-device Linear Media with HTMLTimingObject and Shared Motion" by Arntzen et.al. This paper is currently submitted for publication, and will be made available on the <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> when it is published.
       </p>
 
 
@@ -130,20 +136,19 @@
         Furthermore, when HTMLTimingObjects are connected to an online timing resource, they will act as local representatives. For example, if a connected HTMLTimingObject is requested to pause, the request will simply be forwarded to the online timing object. As the online object pauses, notifications will be multicast to all connected clients. Finally, HTMLTimingObject will update their internal state and notify connected UI components. For online timing objects, clients can expect update latency of about 1 RTT (TCP), whereas local timing resources should have no update latency. Apart from this, online and local timing resources should be hard to distinguish. Note also that the argument made for the independence of time-sensitive components in the single-device scenario now applies to the multi-device scenario as well. 
       </p>
 
-      <p class="note">
-        The protocol used to connect, synchronize and interact with online timing resources will be defined in a separate specification.
-      </p>
-      <p class="note">
-        Similarly, the integration of the timing object with UI components such as HTML5 Media Elements and HTML5 Track Elements [[HTML5]] will be covered in a separate specification.
-      </p>
- 
-
       <figure>
         <img src="overview.png" width="400" alt="The image illustrates the concept of an online timing resource how it used to synchronize HTTPTimingObjects across three different Web clients." />
         <figcaption>HTMLTimingObjects at three devices connected to a single, shared online timing resource.</figcaption>
       </figure>
 
      
+      <p class="note">
+        The protocol used to connect, synchronize and interact with online timing resources will be defined in a separate specification.
+      </p>
+      <p class="note">
+        Similarly, the integration of the timing object with UI components such as HTML5 Media Elements and HTML5 Track Elements [[HTML5]] will be covered in a separate specification.
+      </p>
+
       <b>HTMLTimingObject</b>
       <p>
         The HTMLTimingObject is conceptually a very simple object, essentially an advanced stop watch. If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value of to advance from 3.0 to 5.0, given that the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the HTMLTimingObject is a fairly thin wrapping around the system clock. (Integration with online timing resources adds a bit of complexity). Since it is based on the system clock, the HTMLTimingObject supports the same resolution and predictability as the system clock. This makes the HTMLTimingObject a sound basis for precise timing.
@@ -193,9 +198,9 @@
       <ol>
 
       <li>
-      <b> Collaborative Viewing and Media Control</b>
+      <b> Social Viewing and Media Control</b>
       <p>
-        Allow people to enjoy the same content at the same time. Alice and Bob might watch the next episode together, even if Alice is on a train and Bob stays at home. If Alice pauses the video while briefly speaking with the conductor, Bob's video pauses too. Alice and Bob may always trust the other to see the exact same thing, making it very easy for them to maintain a conversation using a chat service or a phone service. It would also be possible for Alice and Bob to split part temporarily. Alice would see Bob moving along the progress line without her, and Bob would see Alice staying behind. When Alice is ready to resume viewing a bit later, she may continue on her own, play doublespeed or skip to catch up with Bob, or convice Bob to wait for her or jump back to see the segment again with her.      
+        Allow people to enjoy the same content at the same time. Alice and Bob would like to watch the next episode together, even if Alice is on a train and Bob stays at home. If Alice pauses the video while briefly speaking with the conductor, Bob's video pauses too. Alice and Bob may always trust the other to see the exact same thing, making it very easy for them to maintain a conversation, for instance by using a chat service or the phone. It would also be possible for Alice and Bob to split temporarily. Alice would see Bob moving along the progress line without her, and Bob would see Alice staying behind. When Alice is ready to resume viewing a bit later, she may continue on her own, play doublespeed or skip to catch up with Bob, or convice Bob to wait for her or jump back to see the segment again with her.      
       </p>
       <p>
         This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-3 Identical Media Stream Synchronization</a>, a usecase defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV InterestGroup</a>
@@ -206,19 +211,19 @@
       </li>
 
       <li>
-      <b> Time-consistent, Live Web Productions </b>
+      <b> Broadcasting - Time-consistent, Live Web Productions </b>
       <p>
-        The BBC provides live coverage of popular sport events such the FIFA World Cup. Modern Web presentations of this kind tend to include many independent media streams. For example, there might be multiple video streams for different camera angles, there are visualization of players on the field, player statitistics, and there might be commentary from studio as well as viewers. Earlier, Bob was annoyed that user comments could sometimes ruin the experience by shouting GOAL!  20 seconds before the goal appeared in the video stream. However, after BBC started timeshifting live Web content to match distribution latency in the video backend, this problem seems to be a thing of the past.
+        The BBC provides live coverage of popular sport events such the FIFA World Cup. Modern Web presentations of this kind tend to include many independent media streams. For example, there might be multiple video streams for different camera angles, there are visualization of players on the field, player statitistics, and there might be commentary from studio as well as viewers. Earlier, Bob was annoyed that user comments could sometimes ruin the experience by shouting "GOAL!" 20 seconds before the goal appeared in the video stream. However, after BBC started timeshifting live Web content to match distribution latency in their video backend, this problem seems to be a thing of the past.
       </p>
       <p>
-        This requires figuring out the estimated latency of the slowest media stream, and then to define a timing resource from which all parts of a presentation takes direction. In effect, early spoilers will be delayed (buffered) by the Web browsers and applied at the correct point in time.
+        This requires figuring out the estimated latency of the slowest distribution mechanism, and then to define a timing resource from which all parts of a presentation takes direction. In effect, early spoilers will be delayed (buffered) by the Web browsers and applied to UI components at the correct moment in time.
       </p>
       </li>
 
       <li>
-      <b> Time-shifted, Live Web productions </b>
+      <b> Broadcasting - Time-shifted, Live Web productions </b>
       <p>
-        A commercial media provider offers live Web content supplementing live broadcast of F1 races. Sometimes, as F1 races are held in different time zones, the provider will re-broadcast nighly races in the morning. As a keen F1 enthusiast, Alice is discontent that the Web content can not be time-shifted along with the re-broadcast of the race. So is Bob, head of marketing with the media provider, as he would like to sell time sensitive, Web-based ads for F1 races, and have the ads be presented correct for both live and time-shifted broadcasts, as well as later on demand viewers.  
+        A commercial media provider offers live Web content supplementing live broadcast of F1 races. Sometimes, as F1 races are held in different time zones, the provider will re-broadcast nighly races in the morning. As a keen F1 enthusiast, Alice is discontent that the Web content can not be time-shifted along with the re-broadcast of the race. So is Bob, the media providers head of marketing, as he would like to sell time sensitive, Web-based ads for F1 races, and have the ads be presented correctly for both live and time-shifted broadcasts, as well as later on demand viewers.
       </p>
       <p>
         This requires timestamping of live Web production so that is may be time-shifted correctly and aligned with a time-shifted broadcast.
@@ -226,47 +231,46 @@
       </li>
 
       <li>
-      <b> Timed, Web-based Secondary Device </b>
+      <b> Broadcasting - Timed, Web-based Secondary Device </b>
       <p>
-        Alice opens the BBC Sport Web page on her iPad during the olympic games. The backend service consults Alice's profile and learns that she is already watching figure skating from the iPlayer on her laptop computer. As a result, the BBC Sports Web page is personalized with an offer to load BBC's Web-based extra material for figure skating. Alice accepts, and the iPad goes on to present stats, images, infographics, commentary and alternative camera angles, all precisely timed with the iPlayer. Alice notises that other viewers have already highlighted a chinese athlete performing a bit earlier. She clicks to see it, and both the iPlayer (on the laptop) and the timed Web presentation (on the iPad) immediately skips back. After having seen the athlete's performance, now with added commentary provided by excited viewers, Alice contributes by giving it a thumbs up, and then clicks the back-to-live button. Both the laptop and the iPad snaps back to presenting the live action.
+        Alice opens the BBC Sport Web page on her iPad during the olympic games. The backend service consults Alice's profile and learns that she is already watching figure skating from the iPlayer on her laptop computer. As a result, the BBC Sports Web page is personalized with an offer to load BBC's Web-based extra material for figure skating. Alice accepts, and the iPad goes on to present stats, images, infographics, commentary and alternative camera angles, all precisely timed with the iPlayer. Alice notises that other viewers have already highlighted a Chinese athlete performing a bit earlier. She clicks to see it, and both the iPlayer (on the laptop) and the timed Web presentation (on the iPad) immediately skips back. After having seen the athlete's performance, now with added commentary provided by excited viewers, Alice contributes by giving it a thumbs up, and then clicks the back-to-live button. Both the laptop and the iPad snaps back to presenting the live action.
       </p>
       <p>
         This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-4 Related Media Stream Synchronization</a>, a usecase defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV InterestGroup</a>
       </p>
       <p>
-        This use case requires managing personal timing resources for individual viewers, as well as a common timing resource representing the live clock. Both iPlayer and Web-based secondary device offerings must take direction from online timingresources, and allow dynamic switching of timing objects based on user input. Presenting alternative camera angles as part of secondary device offerings require precise synchronization.   
+        This use case requires managing personal timing resources for individual viewers, as well as a common timing resource representing the live clock. Both iPlayer and Web-based secondary device offerings must take direction from online timing resources, and allow dynamic switching of timing objects based on user input. Presenting alternative camera angles as part of secondary device offerings requires precise synchronization.   
       </p>
       </li>
 
 
       <li>
-      <b> Timed, Multi-device Web Presentations </b>
+      <b> Online Education - Timed, Multi-device Web Presentations </b>
       <p>
-        Alice teaches an online course for international students from across the globe. Every week she goes through a new Web-based slide set. Just before the session, she makes two links available for her students on the class Web page, links for the primary and the secondary view of the presentation. When the time is there she connects on an audio link and requests the first slide to be presented. Slides are presented on her view and on all the views of her connected students, at exactly the same time. This way, Alice can be sure what she said on the audio link is always backed up with the correct illustrations. In effect, Alice remotely controls the Web browsers of all her students. Alice also has included a video in on of the slides. She plays the video for all the studends on the primary view, while presenting some related bullet points on the secondary view. Alice pauses the video at a certain point in order to highligh an important aspect. Beforehand she has prepared some bookmarks in the video, allowing her to effectively skip to the interesting parts. At some point one of the student has a question related to the movie. Alice temporarily gives the student access to control the video, and the student revinds it to explain the source of his question. Afterwards, Alice withdraws the controls from the student and continues. The entire event is recorded and timestamped, allowing students that missed the class to replay the audio with and the slide presentation precisely as it was given. This review also provides synchronized presentations of student comments as well as text-based search capabilities.         
+        Alice teaches an online course for international students from across the globe. Every week she goes through a new Web-based slide set. Just before the session, she makes two links available for her students on the class Web page, links for the primary and the secondary view of the presentation. When the time is there she connects on an audio link and requests the first slide to be presented. Slides are presented on her view and on all the views of her connected students, at exactly the same time. This way, Alice can be sure what she says on the audio link is always backed up with the correct illustrations. In effect, Alice remotely controls the Web browsers of all her students. Alice also has included a video in one of the slides. She plays the video for all the studends on the primary view, while presenting some related bullet points on the secondary view. Alice pauses the video at a certain point in order to highligh an important aspect. Beforehand she has prepared some bookmarks in the video, allowing her to effectively skip to the interesting parts. At some point one of the student has a question related to the movie. Alice temporarily gives the student access to control the video, and the student rewinds it to explain the origin of his question. Afterwards, Alice withdraws the controls from the student and continues. The entire event is recorded and timestamped, allowing students that missed the class to replay the audio with and the slide presentation precisely as it was given. This review also provides synchronized presentations of timed comments provided by studends as well as text-based search capabilities allowing efficient navigation within the presentation.         
       </p>
       <p>
-        Multi-device slide show navigation requires a single shared timing resource, where position represents slide number. Videos require additional timing resources. Finally, timestamping of audio, slide navigation, video navigation, students commentary etc., requires an addition timing resource as shared clock.
+        Multi-device slide show navigation requires a single shared timing resource, where position represents slide number. Videos require additional timing resources. Finally, timestamping of audio, slide navigation, video navigation, students commentary etc., require an addition timing resource as shared clock. Later individual replay might also require new timing resources.  
       </p>
       </li>
 
 
       <li>
-      <b> Timed, Multi-screen Web Presentations </b>
+      <b> Multi-Screen Data Visualization </b>
       <p>
-        Bob is heading a research project responsible for collecting and presenting a variety of data series related to climate changes in the Arctic. Web-based visualizations makes for a very dynamic and extensible visualization system. Multiple screens may be used to present and aligne very different timed visualizations, making it easier to detect visible patterns and possible correlations. The different visualizations may be navigated in unison. For instance, Bob may slow down the presentation for the heavy melting days to co-present this with measurements of salinity levels in the seawater. Bob may also search his data to find the day with the highest temperature. By clicking on the result, all screens immediately displays the relevant data for that day. 
-        Alice is recognized as an international expert in this area. Bob shares the link with Alice in an email, they may co-view the presentation even though they are stationed in different continents, and Alice may explore the visualization herself before giving her opinion. 
+        Bob is heading a research project responsible for collecting and presenting a variety of data series related to climate changes in the Arctic. A Web-based approach to visualization makes for a very dynamic and extensible visualization system. Multiple screens may be used to present and aligne very different timed visualizations, making it easier to detect temporal patterns and possible correlations. The different visualizations may be navigated in unison. For instance, Bob may slow down the presentation speed for the heavy melting days to co-present this with measurements of salinity levels in the ocean water. Bob may also search his data to find the day with the highest temperature. By clicking on the result, all screens immediately displays the relevant data for that day. Alice is recognized as an international expert in this area. Bob shares the link with Alice in an email, they may co-view the presentation even though they are stationed in different continents, and Alice may explore the visualization herself before giving her opinion of Bob's finding. 
       </p>
       <p>
-        A shared timing resource is required to support playback of timed data streams on multiple screens. The utility is not limited to Web-based visualization. For instance, native visualization frameworks may also interact with multi-device timing resources, thus enabling very different visualization systems to cooperate in presenting a common data model. 
+        A shared timing resource is required to support playback of timed data streams on multiple screens. The utility is not limited to Web-based visualization. For instance, native visualization frameworks (e.g. 3D) may also interact with multi-device timing resources, thus enabling very different visualization systems to cooperate in presenting a common data model. 
       </p>
       </li>
 
 
 
       <li>
-      <b> Device Migration </b>
+      <b> Seamless Workflows </b>
       <p>
-        Bob is watching a Netflix show using Chromecast on the TV when Alice interrupts and demands access to the living room big screen for herself and her friends. Bob reluctantly agrees to finish the show in his bedroom. Before he gets up he opens Netflix on his iPad. Netflix, well aware that Bob is already actively watching something, defaults to present the exact same thing, in perfect synchrony with the TV. Ensured that the transition was smooth, Bob leaves for his bedroom while staring at his iPad.      
+        Bob is watching a Netflix show using Chromecast on the TV when Alice interrupts and demands access to the living room big screen for herself and her friends. Bob reluctantly agrees to finish the show in his bedroom. Though, before he gets up he opens Netflix on his iPad. Netflix, well aware that Bob is already actively watching something, defaults to presenting the exact same thing, in perfect synchrony with the TV. Ensured that the transition was smooth, Bob leaves for his bedroom while staring at his iPad.
       </p>
       <p>
         The use case requires online timing resources and content resources to be tied to login information. So, when an already logged in user enters a VoD service with a second device, the default action could be to resolve which show is already playing and what timing resource is being used, and then to set up the new view with the exact same resources. 
@@ -277,7 +281,7 @@
       <li>
       <b> Alternative Soundtracks </b>
       <p>
-        Alice's Portuguise mother has a hairing deficiency, so as the two of them sit down to watch a movie together, Alice hooks her smart phone up with the Portuguise audio track and lets her mother adjust the sound volume.
+        Alice's Portuguise mother has a hairing deficiency, so as the two of them sit down to watch a movie together, Alice hooks her smart phone up with the Portuguise audio track and lets her mother adjust the sound volume. Any issues with lip-sync should be due to the dubbing, not the audio synchronization.
       </p>
       <p>
         This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-6 Clean Audio</a>, a usecase defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV InterestGroup</a>
@@ -291,7 +295,7 @@
       <li>
       <b> Timing Interoperability between Independent Providers </b>
       <p>
-        Bob watches soccer. Unfortunately, the clueless commentator is constantly pissing him off as he clearly favoures the other team. Bob turns to a dedicated Web radio channel for an alternative commentator. The new commentator is better, but he is out of sync. Bob chooses the SyncWith option in the radio channel Web page and selects his TV provider. After confirming his credentials, the radio channel Web page is able to connect to the same timing resource used by the TV provider, and the Web radio is immediately in sync with his TV.
+        Bob watches soccer. Unfortunately, the clueless commentator is constantly pissing him off as he clearly favoures the other team. Bob turns to a dedicated Web radio channel for an alternative commentary. The new commentator is better, but he is out of sync. Bob chooses the <i>SyncWith</i> option in the radio channel Web page and selects his TV provider. After confirming his credentials, the radio channel Web page is able to connect to the same timing resource used by the TV provider, and the Web radio is immediately in sync with his TV.
       </p>
       <p>
         This use case requires media providers to give access to timing resources associated with a given user, also when that user is requesting access from an external service. Synchronization of audio and video requires lip-synch precision.
@@ -300,9 +304,9 @@
  
 
       <li>
-      <b> Linear Content Adaption </b>
+      <b> Linear Content Adaptation </b>
       <p>
-        Bob's watching cricket, but he and Alice soon needs to get in the car to start the long drive to visit Bob's parents. He would like to keep following the cricket game on his smart phone, but does not have the bandwidth nor the money to enjoy HD content. Instead, Bob selects the timed HTML option. The audio goes on undisturbed, but the HD video is immediately terminated and replaced with a light-weight, timed animations of the cricket field. Alice is behind the wheels, and Bob's may continue the cricket match through audio and all the secondary information. 
+        Bob's watching cricket, but he and Alice soon needs to get in the car to start the long drive to visit Bob's parents. He would like to keep following the cricket game on his smart phone, but does not have the bandwidth nor the money to enjoy HD content. Instead, Bob selects the timed HTML option. The audio goes on undisturbed, but the HD video is immediately terminated and replaced with a light-weight, timed animations of the cricket field. Alice is behind the wheels, and Bob may continue to enjoy the cricket match through audio and full support from all the HTML-based extra information. 
       </p>
       <p>
         Shared timing resources allow smooth and dynamic switching from HD to timed-based HTML.   
