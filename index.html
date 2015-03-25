@@ -398,46 +398,101 @@
     </section>
 
     <section class="informative">
-      <h2>Example</h2>
-      <p class="issue">
-        Show how the timing object and API can be used in practice in a simple multi-device scenario. The example should demonstrate how to make use of main methods such as <code>query</code>, <code>update</code> and <code>getState</code>.
-      </p>
+      <h2>Examples</h2>
+
+      <b>Query the timing object</b>
+      <p> Read the current value of the timing object. </p>
       <pre class="example highlight">
-        @@
+      var to; // timing object
+      var elem; // DOM Element
+      var value = to.query();
+      elem.innerHTML = "pos:" + value.pos + " vel:" + value.vel + " acc:" + value.acc; 
       </pre>
+
+
+      <b>Update the timing object</b>
+      <p>Use buttons for play and pause controls.</p>
+      <pre class="example highlight">
+      var to; // timing object
+      var playbutton;
+      var pausebutton;
+      playbutton.onclick = function (e) {to.update(null, 1.0, null)}; // set velocity 1
+      pausebutton.onclick = function (e) {to.update(null, 0.0, null)}; // set velocity 0
+      </pre>
+
+      <b>Query the timing object repeatedly</b>
+      <p>By reading the current value repeatedly we can demonstrate that the values are changing predictably in time.</p>
+      <pre class="example highlight">
+      var to; // timing object
+      var elem; // DOM Element
+      setInterval(function () {
+        elem.innerHTML = to.query().pos.toFixed(2);
+      }, 100);
+      </pre>
+
+      <p>Alternatively, use the built in <i>timeupdate</i> event with fixed frequency.</p>
+      <pre class="example highlight">
+      var to; // timing object
+      var elem; // DOM Element
+      var to.on("timeupdate", function (r) {
+        elem.innerHTML = to.query().pos.toFixed(2);
+      });
+      </pre>
+
+
+      <b>React to updates events</b>
+      <p>The update operation may cause abrupt changes to the timing object. Register a handler to be notified.</p>
+      <pre class="example highlight">
+      var to; // timing object
+      var elem; // DOM Element
+      to.on("update", function (e) {
+        var value = to.query();
+        if (value.vel === 0.0 && value.acc === 0.0) {
+          elem.innerHTML = "I'm not moving!";
+        } else {
+          elemt.innerHTML = "I'm moving!";
+        }
+      });
+      </pre>
+
+
     </section>
 
     <section>
-      <h2>Timing objects</h2>
-
-      <p>A <dfn>timing object</dfn> represents an ideal clock that advances deterministically in accordance with a local or online system clock.</p>
+      <h2>Timing Objects</h2>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal motion</dfn> represented by a <a>media state vector</a>, which must initially be set to <code>(p<sub>0</sub>, v<sub>0</sub>, a<sub>0</sub>, t<sub>0</sub>)</code> where <code>p<sub>0</sub>=0.0</code>, <code>v<sub>0</sub>=0.0</code>, <code>a<sub>0</sub>=0.0</code> and where <code>t<sub>0</sub></code> is the local timestamp when the object is created.
-      </p>
-
-      <p>
-        A <a>timing object</a> maintains an <dfn>internal synchronization state</dfn> that contains an estimate of the current client's clock skew relative to the online timing service when the object is associated with an <a>online timing resource</a>, as well as an estimate of the current network latency between the client and the online timing service. This information is used to correct timestamp values when <a title="media state vector">media state vectors</a> are exchanged between the client and the timing service. The user agent must initialize the skew and latency to 0.0. If the <a>timing object</a> is not associated with an online timing service, the skew and latency remain at 0.0.
+        A <dfn>timing object</dfn> is consepualized as a point moving along an infinite axis. The value of the timing object (at a specific moment in time) corresponds to the position of the point, as well as the velocity and acceleration of the point, along the axis. So, essentially, the timing object is a representation of linear motion in real time. The timing object supports any motion that can be expressed in terms of position, velocity, and acceleration. This way, the timing object is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
       </p>
 
       <p><a title="timing object">Timing objects</a> implement the following interface:</p>
 
       <dl title="interface Timing : EventTarget" class="idl">
         <dt>Constructor()</dt>
-        <dd>When the constructor is invoked, the user agent must <a>create a new timing object</a>.</dd>
+        <dd>
+          When the constructor is invoked, the user agent must <a>create a new timing object</a>. Construction of timing objects likely will be handled by a TimeObjectManager.
+        </dd>
 
-        <dt>attribute DOMString src</dt>
-        <dd>On getting, return the URL of the <a>online timing resource</a> associated with the object if there is one, null if the object uses the local clock. On setting, the user agent must invoke the <a>online timing resource load algorithm</a>.</dd>
+        <dt>readonly attribute DOMString src</dt>
+        <dd>
+          On getting, returns the URL identifying the timing resource to which the timing object is connected. For example, a timing object connected to an <a>online timing resource</a> identifies as <i>msv://timinghost/timingResourceID</i>. A local timing object may indentify as <i>msv:///timingResourceID</i>.
+        </dd>
 
-        <dt>readonly attribute unsigned short readyState</dt>
-        <dd><span class="issue">uses HTMLMediaElement.readyState's values?</span></dd>
+        <dt>readonly attribute DOMString readyState</dt>
+        <dd>
+          <p>"init", "connecting", "open", "closed"</p>
+        </dd>
 
-        <dt>readonly attribute TimeRanges seekable</dt>
-        <dd>A <a>normalised <code>TimeRanges</code> object</a> that represents the intersection of the ranges that the timing element may seek to.
-        <br/><span class="issue">Only one element in the TimeRanges object?</span></dd>
+        <dt>readonly attribute RangeObject posRange</dt>
+        <dd>Defines range restritions for position of the timing object.</dd>
 
-        <dt>readonly attribute unrestricted double duration</dt>
-        <dd>The timing object duration, if defined.<br/><span class="issue">linked to seekable?</span></dd>
+        <dt>readonly attribute RangeObject velRange</dt>
+        <dd>Defines range restritions for velocity of the timing object.</dd>
+
+        <dt>readonly attribute RangeObject velRange</dt>
+        <dd>Defines range restritions for acceleration of the timing object.</dd>
+
+
 
         <dt>attribute double currentTime</dt>
         <dd>On getting, the user agent must <a>compute the position</a> at the current local time and return that value. On setting, the user agent must invoke the <code>update</code> method of the <a>Timing</a> object with parameters <code>(value, null, null)</code> where <code>value</code> it the new value. The user agent must interpret the new value as being in seconds.</dd>
