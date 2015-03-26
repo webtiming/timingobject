@@ -310,7 +310,7 @@
       <section>
       <h3> Alternative Soundtracks </h3>
       <p>
-        Alice's Portuguese mother has a hairing deficiency, so as the two of them sit down to watch a movie together, Alice hooks her smart phone up with the Portuguese audio track and lets her mother adjust the sound volume. Any issues with lip-sync should be due to the dubbing, not the audio synchronization.
+        Alice's Portuguese mother has a hearing deficiency, so as the two of them sit down to watch a movie together, Alice hooks her smart phone up with the Portuguese audio track and lets her mother adjust the sound volume. Any issues with lip-sync should be due to the dubbing, not the audio synchronization.
       </p>
       <p>
         This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-6 Clean Audio</a>, a use case defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
@@ -596,17 +596,15 @@
         <dt>Msv query ()</dt>
         <dd>When invoked, the user agent must compute a snapshot from the internal <a>vector</a> and the current local time and return the result.</dd>
 
-        <dt>void update (Msv newVector, optional Object options)</dt>
+        <dt>void update ()</dt>
         <dd>
-          When called, the user agent must update the internal <code>vector</code> if the timing object, based on the given <code>newVector</code>. The basic action is <code>vector=newVector</code> and set the timestamp correctly, i,e,. a fresh timstamp from the system clock representing the exact processing time of the update operation. However, the update operation also supports properties of <code>newVector</code> to be <code>undefined</code> or <code>null</code>. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{pos:null, vel:value, acc:null}</code> means <i>update velocity while preserving current position and acceleration</i>.
+          When called, the user agent must update the internal <code>vector</code> if the timing object, based on the given <code>newVector</code>. The basic action is <code>vector=newVector</code> and set the timestamp correctly, i,e,. a fresh timestamp from the system clock representing the exact processing time of the update operation. However, the update operation also supports properties of <code>newVector</code> to be <code>undefined</code> or <code>null</code>. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{pos:null, vel:value, acc:null}</code> means <i>update velocity while preserving current position and acceleration</i>.
 
           <dl class="parameters">
-            <dt>optional double? position</dt>
-            <dd>The new position, or null to preserve the current value at the time the update is processed.</dd>
-            <dt>optional double? velocity</dt>
-            <dd>The new velocity, or null to preserve the current value at the time the update is processed.</dd>
-            <dt>optional double? acceleration</dt>
-            <dd>The new acceleration, or null to preserve the current value at the time the update is processed.</dd>
+            <dt>optional Msv newVector</dt>
+            <dd>The new vector</dd>
+            <dt>optional Object options</dt>
+            <dd>@@</dd>
           </dl>
         </dd>
 
