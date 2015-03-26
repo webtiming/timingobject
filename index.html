@@ -505,7 +505,7 @@
       var elem; // DOM Element
       to.on("update", function (e) {
         var value = to.query();
-        if (value.vel === 0.0 && value.acc === 0.0) {
+        if (value.vel === 0.0 &amp;&amp; value.acc === 0.0) {
           elem.innerHTML = "I'm not moving!";
         } else {
           elem.innerHTML = "I'm moving!";
@@ -532,7 +532,7 @@
       <h2>Timing Object</h2>
 
       <p>
-        A <dfn>timing object</dfn> is consepualized as a point moving along an infinite axis. The value of the timing object is essentially the position, velocity and acceleration of the point, at a specific moment in time. So, essentially, the timing object is a representation of linear motion in real time. The timing object uses an <a>Msv</a> to represent the initial conditions of the current motion. This is known as the internal <dfn>vector</dfn> of the timing object. This <a>vector</a> is used by the <dfn>query</dfn> operation to calculate fresh <a>Msv</a> snapshots, based on timestamps from the system clock. The <dfn>update</dfn> operation allows the timing object to be updated, by modifying the internal <a>vector</a>. The timing object supports any motion that can be expressed in terms of <a>Msv</a>'s. This way, the timing object is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control). A <dfn>range</dfn> may be specified for the position of the timing object.
+        A <dfn>timing object</dfn> is conceptualized as a point moving along an infinite axis. The value of the timing object is essentially the position, velocity and acceleration of the point, at a specific moment in time. So, essentially, the timing object is a representation of linear motion in real time. The timing object uses an <a>Msv</a> to represent the initial conditions of the current motion. This is known as the internal <dfn>vector</dfn> of the timing object. This <a>vector</a> is used by the <dfn>query</dfn> operation to calculate fresh <a>Msv</a> snapshots, based on timestamps from the system clock. The <dfn>update</dfn> operation allows the timing object to be updated, by modifying the internal <a>vector</a>. The timing object supports any motion that can be expressed in terms of <a>Msv</a>'s. This way, the timing object is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control). A <dfn>range</dfn> may be specified for the position of the timing object.
       </p>
 
       <p><a title="timing object">Timing objects</a> implement the following interface:</p>
@@ -675,7 +675,7 @@
       <h2>Media State Vector (MSV)</h2>
 
       <p>
-        A Media State Vector (<dfn>msv</dfn>) represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>msv</a> for multiple purposes. Internally, the <a>msv</a> represents the initial conditions of the current movement. This is know as the <dfn>internal vector</dfn>. The <a>query</a> operation returns a <a>msv</a> as snapshot, and the <a>update</a> operation requires <a>msv</a> as parameter. Finally, in the distributed scenario, the <a>msv</a> is the unit of distribution.
+        A Media State Vector (<dfn>msv</dfn>) represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>msv</a> for multiple purposes. Internally, the <a>msv</a> represents the initial conditions of the current movement. This is known as the <dfn>internal vector</dfn>. The <a>query</a> operation returns a <a>msv</a> as snapshot, and the <a>update</a> operation requires <a>msv</a> as parameter. Finally, in the distributed scenario, the <a>msv</a> is the unit of distribution.
       </p>
 
       <p><a title="msv">Media State Vectors</a> implement the following interface</p>
@@ -707,7 +707,7 @@
     <section>
       <h2>Interval Object</h2>
       <p>
-        An <dfn>interval</dfn> is a representation of an mathematical interval of real numbers. Attributes <code>low</code> and <code>high</code> are endpoints defining the interval. <code>(low <= high)</code> is always true. If <code>(low === high)</code> the interval is a singular point. <code>low</code> and <code>high</code> may be set to <code>Infinity</code> or <code>-Infinity</code> to represent infinite intervals. Attributes <code>lowInclude</code> and <code>highInclude</code> determines whether endpoints <code>low</code> and <code>high</code> are included or excluded from the interval.
+        An <dfn>interval</dfn> is a representation of a mathematical interval of real numbers. Attributes <code>low</code> and <code>high</code> are endpoints defining the interval. <code>(low &lt;= high)</code> is always true. If <code>(low === high)</code> the interval is a singular point. <code>low</code> and <code>high</code> may be set to <code>Infinity</code> or <code>-Infinity</code> to represent infinite intervals. Attributes <code>lowInclude</code> and <code>highInclude</code> determine whether endpoints <code>low</code> and <code>high</code> are included or excluded from the interval.
       </p>
 
 
