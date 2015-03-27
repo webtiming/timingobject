@@ -65,22 +65,7 @@
       <p>
         This specification defines a timing object and an associated API. The timing object is a local object that may be used by Web clients to ensure precisely timed execution. If multiple time-sensitive components take direction from the same timing object, their behaviour will be precisely coordinated in time. Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device as well as multi-device scenarios.
       </p>
-      <p>
-        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distibuted time-ordering and distributed recording (time-stamping). The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> works to extend the Web with support for multi-device timing, and the timing object is the central concept in this initiative.
-      </p>
-
-       <p>
-        The design of the timing object has two main goals:
-      </p>
-      <ol>
-        <li>
-          provide a unifying API for timed operation, as a basis for interoperability between timed components. In particular, support integration with existing timed frameworks such as HTMLMediaElements, HTMLTrackElement, WebAnimation, WebAudio and SMIL. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
-        </li>
-        <li> 
-          encapsulate complexity of distributed time synchronization, thereby allowing integrating frameworks to be included in precisely timed multi-device operation. In particular, by providing the same API for local and online timing resources, timed components may be used in single-device and multi-device scenarios, without modification. 
-        </li>
-      </ol>
-      
+  
 
       <p class="note">
         This timing object is not to be confused with concepts proposed by 
@@ -111,12 +96,17 @@
       <h2>Introduction</h2>
       
       <p>
-        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <i>setTimeout</i>, <i>setInterval</i>, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to timed operations within a single web page. In contrast, a multi-device timing mechanism allows precisely timed operations across Web pages hosted by different devices. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario.
+        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <i>setTimeout</i>, <i>setInterval</i>, as well as controllers for media frameworks and animations. Unfortunately, these mechanisms are limited in scope, as they only apply to timed operations within a single web page. In contrast, a multi-device timing mechanism allows precisely timed operations across Web pages hosted by different devices. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation in the multi-device scenario, as well as providing a unifying model to which all frameworks for timed operation may integrate. The timing object is the central concept in this initiative.
       </p>
-      
+
       <p>
-        Multi-device timing is key to solving a variety of timing related challenges across a wide range of application domains. For example, this would include multi-device production and consumption of music, live, collaborative time-sensitive Web productions, Web-based secondary device applications with time-shifting capabilities, multi-screen systems, collatorative viewing, remote Web-based presentations, distributed remote controlling, multi-device time-senstive recording (time-stamping) with time-shifted multi-screen replay, and probably a lot more.
+        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distibuted time-ordering and distributed recording (time-stamping). This way, multi-device timing has applicability in many application domains, including TV and radio (broadcast and IP-based), secondary device applications, online education, VodServices, scientific visualization, music etc.  
       </p>
+
+ 
+      
+
+
 
 
       <section>
@@ -136,18 +126,20 @@
 
       <section>
         <h3>Design Goals and Architecture</h3>
+
         <p>
           The design of the timing object has two main goals:
         </p>
         <ol>
           <li>
-            provide a unifying API to which linear components may integrate in order to support linear composability. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
+            provide a unifying API for timed operation, as a basis for interoperability between timed components. In particular, support integration with existing timed frameworks such as HTMLMediaElements, HTMLTrackElement, WebAnimation, WebAudio and SMIL. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
           </li>
           <li> 
-            encapsulate complexity of distributed time synchronization. In particular, by providing the same API for local and online timing resources, timing-sensitive components may be used in single-device and multi-device scenarios, without modification. 
+            encapsulate complexity of distributed time synchronization, thereby allowing integrating frameworks to be included in precisely timed multi-device operation. In particular, by providing the same API for local and online timing resources, timed components may be used in single-device and multi-device scenarios, without modification. 
           </li>
         </ol>
-       
+
+
         <p>
           The figure below illustrates these functions, as well as the underlying client-server architecture. Three devices each have a single timing object, which are then individually connected to a single, shared online timing resource. Internally on each device, the timing object will act as the director for independent, time-sensitive GUI components. This way, a video will aim to present videoframes in accordance with the timing resource. Similarly, a time-sensitive Twitter widget might replay time-stamped Tweets. If the timing object pauses, the connected components are notified and react accordingly. Crucially, note how the different components can go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to linear compsability.
         </p>
@@ -594,11 +586,11 @@
         <!-- Methods -->
 
         <dt>Msv query ()</dt>
-        <dd>When invoked, the user agent must compute a snapshot from the internal <a>vector</a> and the current local time and return the result.</dd>
+        <dd>When invoked, the user agent must compute a snapshot from the internal <a>vector</a> and the current local time and return the result. See <a>process query</a> for details.</dd>
 
         <dt>void update ()</dt>
         <dd>
-          When called, the user agent must update the internal <code>vector</code> if the timing object, based on the given <code>newVector</code>. The basic action is <code>vector=newVector</code> and set the timestamp correctly, i,e,. a fresh timestamp from the system clock representing the exact processing time of the update operation. However, the update operation also supports properties of <code>newVector</code> to be <code>undefined</code> or <code>null</code>. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{pos:null, vel:value, acc:null}</code> means <i>update velocity while preserving current position and acceleration</i>.
+          When called, the user agent must update the internal <code>vector</code> if the timing object, based on the given <code>newVector</code>. The basic action is <code>vector=newVector</code> and set the timestamp correctly, i,e,. a fresh timestamp from the system clock representing the exact processing time of the update operation. However, the update operation also supports properties of <code>newVector</code> to be <code>undefined</code> or <code>null</code>. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{pos:null, vel:value, acc:null}</code> means <i>update velocity while preserving current position and acceleration</i>. See <a>process update</a> for details.
 
           <dl class="parameters">
             <dt>optional Msv newVector</dt>
@@ -732,7 +724,7 @@
 
         
         <section>
-        <h3>Create a new timing object</h3>
+        <h3>Create Timing Object</h3>
         <p>
           When the user agent is required to <dfn>create a new timing object</dfn>, it must run the following steps:
         </p>
@@ -769,19 +761,19 @@
           <li>Let <code>vector<sub>j</sub> : (p<sub>j</sub>, v<sub>j</sub>, a<sub>j</sub>, t)</code> represent the new <a>vector</a></li>
           <li>If <code>vector<sub>j</sub></code> is incomplete, calculate missing values by following the approach described in <a>process query</a>.</li>
           <li>Replace current internal vector with new vector <code>vector<sub>i</sub> = vector<sub>j</sub></code></li>
-          <li><a>Reset internal timeout</a> if <a>range</a> is specified for timing object.</li>
+          <li><a>Set internal timeout</a> if <a>range</a> is specified for timing object.</li>
           <li>Fire onchange event</li>
         </ol>
         </section>
 
 
         <section>
-          <h3>Reset Internal Timeout</h3>
+          <h3>Set Internal Timeout</h3>
           <p>
             If <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <a>update</a> operation on itself, to ensure that the <a>range</a> is not violated.
           <p>
           <p>
-            When the user agent is required to <dfn>reset internal timeout</dfn>, it must run the following steps:
+            When the user agent is required to <dfn>set internal timeout</dfn>, it must run the following steps:
           </p>
           <ol>
             <li> Cancel any pending timeout </li>
