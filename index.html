@@ -781,7 +781,43 @@
             <li> Register new timeout for future <a>range</a> violation. Default action is to pause the timing object at the endpoint. <span class="note">This mechanism may be extended to support loopback</span></li> 
           </ol>
         </section>
+    </section>
 
+
+
+    <section>
+    <h3> Distributed Synchronization </h3>
+
+    <p>
+      Built-in support for distributed synchronization is a key feature of the timing object. Timing objects on different devices will be synchronized if they individually connect to, and synchronize with, the same online timing resourse. If the implementation of this synchronization is precise and reliable, we can support the abstraction that timing objects are shared among multiple devices and components, across the Internet. Implementation addresses two distinct issues; <dfn>update synchronization</dfn> and <dfn>clock synchronization</dfn>. A brief introduction is given below. Details are available in [[MSV]]. <span class="note">Details of the protocol and synchronization policies will be covered upcomong Timing Protocol Spec</span>.
+    </p>
+
+    <section>
+      <h3> Update synchronization </h3>
+      <p>If an online timing resource is <a title="update">updated</a>, effects must apply equally to all connected timing objects, as quickly as possible.</p>
+
+      <p>
+        Update synchronization uses the <a>Msv</a> as the unit of distribution. Implementation of distributed synchronization implies that local timing objects become local representatives for online timing resources. This has implications for <a title="process update">update processing</a>. Local timing objects will no longer process updates themselves, but simply forward update requests (i.e., <a>Msv</a> parameter) across the network to the online timing resource. The algorithm for <a title="process update"> update processing</a> will instead be carried out by the timing service. Effects (i.e., the new <a>Msv</a>) are multicast by the timing service to all connected timing objects, finally triggering the update event. <a title="process query">Query processing</a> will remain unchanged. Queries are always resolved locally, using the last <a>Msv</a> received from the server.
+      </p>
+
+      <p>
+        Note that this strategy does not guarantee that timing objects receive update notification at exactly the same time. It would be possible to mask differences in network latency by introducing additional delay, but as this might hurt user experience, by default we do not do this. <span class="note">Support for delayed update processing might be a future extension</span>. In any case, this choice does not affect precision, see below.
+      </p>
+    </section>
+
+
+    <section>
+      <h3> Clock synchronization </h3>
+      <p> 
+        If multiple timing objects (connected to the same online timing resource) are <a title="query">queried</a> at the exact same moment in time, they must ideally provide the same result (i.e., same position, velocity and acceleration). Implementations must approximate this as much as possible.
+      </p>
+      <p>
+        Clock synchronization among timing service and timing objects is required for <a>Msv</a>'s to resolve to the same position, velocity and acceleration. As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between timing objects and timing service. To do this, timing objects maintain a software clock that is continuously synchronized with the system clock of the timing service. This is possible by means of periodic measurements of RTT and clock skew. Using this server clock, timing objects can tranform <a>Msv</a>'s with respect to their own local system clock. Clock synchronization is also very fast, stable estimates are reached within fractions of a second. Given a strict client-server architecture, this is the optimal approach.
+      </p>
+      <p>
+        Implementation relies on open Web sockets connections to minimize latency between timing objects and the timing service. If implemented correctly in both client and server, this approach provides a basis for sub-framerate media synchronization.
+      </p>
+    </section>
 
 
 
