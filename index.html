@@ -702,11 +702,11 @@
 
 
       <dl title="interface Interval" class="idl">
-      <dt>readonly attribute double low</dt>
-      <dt>readonly attribute double high</dt>
+      <dt>readonly attribute unrestricted double low</dt>
+      <dt>readonly attribute unrestricted double high</dt>
       <dt>readonly attribute boolean lowInclude</dt>
       <dt>readonly attribute boolean highInclude</dt>
-      <dt>boolean covers (double value)</dt>
+      <dt>boolean covers (unrestricted double value)</dt>
         <dd>Returns true if interval covers the given value.</dd>
       <dt>boolean isSingular ()</dt>
         <dd>Returns <code>(low === high)</code>.</dd>
