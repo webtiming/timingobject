@@ -6,5 +6,5 @@ This repository contains the [Timing Object](http://webtiming.github.io/timingob
 ### Useful Resources
 
 * [Specification](http://webtiming.github.io/timingobject/)
-* [Issue Tracker](http://webtiming.github.io/timingobject/issues)
+* [Issue Tracker](https://github.com/webtiming/timingobject/issues)
 * [Mailing List](http://lists.w3.org/Archives/Public/public-webtiming/)
