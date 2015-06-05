@@ -574,14 +574,14 @@
 
         <!-- Events -->
 
-        <dt>attribute EventHandler readystatechange</dt>
-        <dd>Event triggered whenever <a>readyState</a> changes.</dd>
+        <dt>attribute EventHandler onreadystatechange</dt>
+        <dd>Event handler, of type <a>readystatechange</a>.</dd>
 
-        <dt>attribute EventHandler change</dt>
-        <dd>Event triggered whenever the timing object has been updated.</dd>
+        <dt>attribute EventHandler onchange</dt>
+        <dd>Event handler, of type <a>change</a>.</dd>
 
-        <dt>attribute EventHandler timeupdate</dt>
-        <dd>Event triggered periodically at fixed frequency (5Hz) whenever timing object is moving </dd>
+        <dt>attribute EventHandler ontimeupdate</dt>
+        <dd>Event handler, of type <a>timeupdate</a>.</dd>
 
         <!-- Methods -->
 
@@ -741,7 +741,7 @@
           When the user agent is required to <dfn>process query</dfn>, it must run the following steps:
         </p>
         <ol>
-          <li>Let fresh timestamp <code>t</code> from system clock represent processing time of query.
+          <li>Let fresh timestamp <code>t</code> from system clock represent processing time of query.</li>
           <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current internal <a>vector</a></li>
           <li>Calculate <code> p = p<sub>i</sub> + v<sub>i</sub> (t - t<sub>i</sub>) + 1/2 a<sub>i</sub> (t - t<sub>i</sub>)<sup>2</sup></code></li>
           <li>Calculate <code> v = v<sub>i</sub> + a<sub>i</sub> (t - t<sub>i</sub>)</code></li>
@@ -761,8 +761,8 @@
           <li>Let <code>vector<sub>j</sub> : (p<sub>j</sub>, v<sub>j</sub>, a<sub>j</sub>, t)</code> represent the new <a>vector</a></li>
           <li>If <code>vector<sub>j</sub></code> is incomplete, calculate missing values by following the approach described in <a>process query</a>.</li>
           <li>Replace current internal vector with new vector <code>vector<sub>i</sub> = vector<sub>j</sub></code></li>
-          <li><a>Set internal timeout</a> if <a>range</a> is specified for timing object.</li>
-          <li>Fire onchange event</li>
+          <li><a>Set internal timeout</a> if <a>range</a> is specified for the timing object.</li>
+          <li>Fire an event named <code>change</code> at the timing object</li>
         </ol>
         </section>
 
