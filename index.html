@@ -524,7 +524,7 @@
       <h2>Timing Object</h2>
 
       <p>
-        A <dfn>timing object</dfn> is conceptualized as a point moving along an infinite axis. The value of the timing object is essentially the position, velocity and acceleration of the point, at a specific moment in time. So, essentially, the timing object is a representation of linear motion in real time. The timing object uses a <a>media state vector</a> to represent the initial conditions of the current motion. This is known as the internal <dfn>vector</dfn> of the timing object. This <a>vector</a> is used by the <dfn>query</dfn> operation to calculate fresh <a>media state vector</a> snapshots, based on timestamps from the system clock. The <dfn>update</dfn> operation allows the timing object to be updated, by modifying the internal <a>vector</a>. The timing object supports any motion that can be expressed in terms of a <a>media state vector</a>. This way, the timing object is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control). A <dfn>range</dfn> may be specified for the position of the timing object.
+        A <dfn>timing object</dfn> is conceptualized as a point moving along an infinite axis. The value of the timing object is essentially the position, velocity and acceleration of the point, at a specific moment in time. So, essentially, the timing object is a representation of linear motion in real time. The timing object uses a <a>state vector</a> to represent the initial conditions of the current motion. This is known as the <dfn>internal vector</dfn> of the timing object. This <a>internal vector</a> is used by the <dfn>query</dfn> operation to calculate fresh <a>state vector</a> snapshots, based on timestamps from the system clock. The <dfn>update</dfn> operation allows the timing object to be updated, by modifying the <a>internal vector</a>. The timing object supports any motion that can be expressed in terms of a <a>state vector</a>. This way, the timing object is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control). A <dfn>range</dfn> may be specified for the position of the timing object.
       </p>
 
       <p><a title="timing object">Timing objects</a> implement the following interface:</p>
@@ -563,9 +563,9 @@
 
 
         <dt>readonly attribute MediaStateVector vector </dt>
-        <dd>The internal vector of the timing object</dd>
+        <dd>The <a>internal vector</a> of the timing object</dd>
         <dt>readonly attribute MediaStateVector previousVector </dt>
-        <dd>The vector that was replaced by the current internal vector. This may be helpful for computing the nature of the last change, after the fact.</dd>
+        <dd>The vector that was replaced by the current <a>internal vector</a>. This may be helpful for computing the nature of the last change, after the fact.</dd>
 
 
 
@@ -586,7 +586,7 @@
         <!-- Methods -->
 
         <dt>MediaStateVector query ()</dt>
-        <dd>When invoked, the user agent must compute a snapshot from the internal <a>vector</a> and the current local time and return the result. See <a>process query</a> for details.</dd>
+        <dd>When invoked, the user agent must compute a snapshot from the <a>internal vector</a> and the current local time and return the result. See <a>process query</a> for details.</dd>
 
         <dt>void update ()</dt>
         <dd>
@@ -634,7 +634,7 @@
             <tr>
               <td><dfn><code>change</code></dfn></td>
               <td><a><code>Event</code></a></td>
-              <td>The internal <a>vector</a> is changed. Fired after the <code>update()</code> method has returned, or when an update is received from the <a>online timing resource</a>.</td>
+              <td>The <a>internal vector</a> is changed. Fired after the <code>update()</code> method has returned, or when an update is received from the <a>online timing resource</a>.</td>
             </tr>
             <tr>
               <td><dfn><code>readystatechange</code></dfn></td>
@@ -662,15 +662,15 @@
 
 
     <section>
-      <h2>Media State Vector</h2>
+      <h2>State Vector</h2>
 
       <p>
-        A <dfn>media state vector</dfn> represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>media state vector</a> for multiple purposes. Internally, the <a>media state vector</a> represents the initial conditions of the current movement. This is known as the <dfn>internal vector</dfn>. The <a>query</a> operation returns a <a>media state vector</a> as snapshot, and the <a>update</a> operation requires a <a>media state vector</a> as parameter. Finally, in the distributed scenario, the <a>media state vector</a> is the unit of distribution.
+        A <dfn>state vector</dfn> represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>state vector</a> for multiple purposes. Internally, the <a>state vector</a> represents the initial conditions of the current movement. This is known as the <dfn>internal vector</dfn>. The <a>query</a> operation returns a <a>state vector</a> as snapshot, and the <a>update</a> operation requires a <a>state vector</a> as parameter. Finally, in the distributed scenario, the <a>state vector</a> is the unit of distribution.
       </p>
 
-      <p><a title="media state vector">Media state vectors</a> implement the following interface</p>
+      <p><a title="state vector">State vectors</a> implement the following interface</p>
 
-      <dl title="interface MediaStateVector" class="idl">
+      <dl title="interface StateVector" class="idl">
         <dt>readonly attribute double position</dt>
         <dd>Position on a uni-dimensional axis.</dd>
 
@@ -730,7 +730,7 @@
         </p>
         <ol>
           <li>Let <em>timing</em> be a newly constructed <code><a>timing object</a></code>.</li>
-          <li>Initialize <em>timing</em>'s internal <a>vector</a>. Default is <code>(0.0, 0.0, 0.0, t)</code>, where <code>t</code> is the local timestamp in seconds when the object is created</li> 
+          <li>Initialize <em>timing</em>'s <a>internal vector</a>. Default is <code>(0.0, 0.0, 0.0, t)</code>, where <code>t</code> is the local timestamp in seconds when the object is created</li> 
           <li>Return <em>timing</em>.</li>
         </ol>
         </section>
@@ -742,7 +742,7 @@
         </p>
         <ol>
           <li>Let fresh timestamp <code>t</code> from system clock represent processing time of query.</li>
-          <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current internal <a>vector</a></li>
+          <li>Let <code>(p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current <a>internal vector</a></li>
           <li>Calculate <code> p = p<sub>i</sub> + v<sub>i</sub> (t - t<sub>i</sub>) + 1/2 a<sub>i</sub> (t - t<sub>i</sub>)<sup>2</sup></code></li>
           <li>Calculate <code> v = v<sub>i</sub> + a<sub>i</sub> (t - t<sub>i</sub>)</code></li>
           <li>Calculate <code> a = a<sub>i</sub></code></li>
@@ -757,10 +757,10 @@
         </p>
         <ol>
           <li>Let fresh timestamp <code>t</code> from system clock represent processing time of update.
-          <li>Let <code>vector<sub>i</sub> : (p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current internal <a>vector</a></li>
-          <li>Let <code>vector<sub>j</sub> : (p<sub>j</sub>, v<sub>j</sub>, a<sub>j</sub>, t)</code> represent the new <a>vector</a></li>
+          <li>Let <code>vector<sub>i</sub> : (p<sub>i</sub>, v<sub>i</sub>, a<sub>i</sub>, t<sub>i</sub>)</code> represent the current <a>internal vector</a></li>
+          <li>Let <code>vector<sub>j</sub> : (p<sub>j</sub>, v<sub>j</sub>, a<sub>j</sub>, t)</code> represent the new <a>internal vector</a></li>
           <li>If <code>vector<sub>j</sub></code> is incomplete, calculate missing values by following the approach described in <a>process query</a>.</li>
-          <li>Replace current internal vector with new vector <code>vector<sub>i</sub> = vector<sub>j</sub></code></li>
+          <li>Replace the current <a>internal vector</a> with new vector <code>vector<sub>i</sub> = vector<sub>j</sub></code></li>
           <li><a>Set internal timeout</a> if <a>range</a> is specified for the timing object.</li>
           <li>Fire an event named <code>change</code> at the timing object</li>
         </ol>
@@ -797,7 +797,7 @@
       <p>If an online timing resource is <a title="update">updated</a>, effects must apply equally to all connected timing objects, as quickly as possible.</p>
 
       <p>
-        Update synchronization uses the <a>media state vector</a> as the unit of distribution. Implementation of distributed synchronization implies that local timing objects become local representatives for online timing resources. This has implications for <a title="process update">update processing</a>. Local timing objects will no longer process updates themselves, but simply forward update requests (i.e. the <a>media state vector</a> parameter) across the network to the online timing resource. The algorithm for <a title="process update"> update processing</a> will instead be carried out by the timing service. Effects (i.e. the new <a>media state vector</a>) are multicast by the timing service to all connected timing objects, finally triggering the update event. <a title="process query">Query processing</a> will remain unchanged. Queries are always resolved locally, using the last <a>media state vector</a> received from the server.
+        Update synchronization uses the <a>state vector</a> as the unit of distribution. Implementation of distributed synchronization implies that local timing objects become local representatives for online timing resources. This has implications for <a title="process update">update processing</a>. Local timing objects will no longer process updates themselves, but simply forward update requests (i.e. the <a>state vector</a> parameter) across the network to the online timing resource. The algorithm for <a title="process update"> update processing</a> will instead be carried out by the timing service. Effects (i.e. the new <a>state vector</a>) are multicast by the timing service to all connected timing objects, finally triggering the update event. <a title="process query">Query processing</a> will remain unchanged. Queries are always resolved locally, using the last <a>state vector</a> received from the server.
       </p>
 
       <p>
@@ -812,7 +812,7 @@
         If multiple timing objects (connected to the same online timing resource) are <a title="query">queried</a> at the exact same moment in time, they must ideally provide the same result (i.e. same position, velocity and acceleration). Implementations must approximate this as much as possible.
       </p>
       <p>
-        Clock synchronization among timing service and timing objects is required for <a title="media state vector">media state vectors</a> to resolve to the same position, velocity and acceleration. As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between timing objects and timing service. To do this, timing objects maintain a software clock that is continuously synchronized with the system clock of the timing service. This is possible by means of periodic measurements of RTT and clock skew. Using this server clock, timing objects can tranform <a title="media state vector">media state vectors</a> with respect to their own local system clock. Clock synchronization is also very fast, stable estimates are reached within fractions of a second. Given a strict client-server architecture, this is the optimal approach.
+        Clock synchronization among timing service and timing objects is required for <a title="state vector">state vectors</a> to resolve to the same position, velocity and acceleration. As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between timing objects and timing service. To do this, timing objects maintain a software clock that is continuously synchronized with the system clock of the timing service. This is possible by means of periodic measurements of RTT and clock skew. Using this server clock, timing objects can tranform <a title="state vector">state vectors</a> with respect to their own local system clock. Clock synchronization is also very fast, stable estimates are reached within fractions of a second. Given a strict client-server architecture, this is the optimal approach.
       </p>
       <p>
         Implementation relies on open Web sockets connections to minimize latency between timing objects and the timing service. If implemented correctly in both client and server, this approach provides a basis for sub-framerate media synchronization.
