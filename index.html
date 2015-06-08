@@ -562,9 +562,9 @@
         </dd>
 
 
-        <dt>readonly attribute MediaStateVector vector </dt>
+        <dt>readonly attribute StateVector vector </dt>
         <dd>The <a>internal vector</a> of the timing object</dd>
-        <dt>readonly attribute MediaStateVector previousVector </dt>
+        <dt>readonly attribute StateVector previousVector </dt>
         <dd>The vector that was replaced by the current <a>internal vector</a>. This may be helpful for computing the nature of the last change, after the fact.</dd>
 
 
@@ -585,7 +585,7 @@
 
         <!-- Methods -->
 
-        <dt>MediaStateVector query ()</dt>
+        <dt>StateVector query ()</dt>
         <dd>When invoked, the user agent must compute a snapshot from the <a>internal vector</a> and the current local time and return the result. See <a>process query</a> for details.</dd>
 
         <dt>void update ()</dt>
@@ -593,7 +593,7 @@
           When called, the user agent must update the internal <code>vector</code> if the timing object, based on the given <code>newVector</code>. The basic action is <code>vector=newVector</code> and set the timestamp correctly, i,e,. a fresh timestamp from the system clock representing the exact processing time of the update operation. However, the update operation also supports properties of <code>newVector</code> to be <code>undefined</code> or <code>null</code>. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update velocity while preserving current position and acceleration</i>. See <a>process update</a> for details.
 
           <dl class="parameters">
-            <dt>optional MediaStateVector newVector</dt>
+            <dt>optional StateVector newVector</dt>
             <dd>The new vector</dd>
             <dt>optional Object options</dt>
             <dd>@@</dd>
@@ -657,7 +657,7 @@
 
 
 
-    <!-- MediaStateVector -->
+    <!-- StateVector -->
 
 
 
@@ -746,7 +746,7 @@
           <li>Calculate <code> p = p<sub>i</sub> + v<sub>i</sub> (t - t<sub>i</sub>) + 1/2 a<sub>i</sub> (t - t<sub>i</sub>)<sup>2</sup></code></li>
           <li>Calculate <code> v = v<sub>i</sub> + a<sub>i</sub> (t - t<sub>i</sub>)</code></li>
           <li>Calculate <code> a = a<sub>i</sub></code></li>
-          <li>Return a new <a>MediaStateVector</a> (<code>p,v,a,t</code>)</li>
+          <li>Return a new <a>StateVector</a> (<code>p,v,a,t</code>)</li>
         </ol>
         </section>
 
