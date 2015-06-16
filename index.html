@@ -163,7 +163,7 @@
       <section>
         <h3>Timing object</h3>
         <p>
-          The timing object is conceptually a very simple object, essentially an advanced stop watch. If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value to advance from 3.0 to 5.0 when the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the timing object is a fairly thin wrapping around the system clock (integration with online timing resources adds a bit of complexity). Since it is based on the system clock, the timing object supports the same resolution and predictability as the system clock. This makes the timing object a sound basis for precise timing.
+          The timing object is conceptually a very simple object, essentially an advanced stop watch. If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value to advance from 3.0 to 5.0 when the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the timing object is a fairly thin wrapping around the system clock (integration with online timing resources adds a bit of complexity). Since it is based on the system clock, the timing object supports the same resolution and predictability as the system clock. The underlying clock should be monotonic. In the Web performance.now() could be used for high granularity and to protect of local clock adjustments. This would make the timing object a sound basis for precise timing.
         </p>
         <p>
           Importantly, the timing object is more expressive than the traditional stop watch. It supports any velocity or acceleration, and may jump to any position on the timeline. In fact, the timing object essentially implements linear motion along a unidimensional axis. An elegant implementation is provided by the concept of Media State Vectors [[MSV]], based on the classical equations of linear motion under constant acceleration. The timing object adopts this model. At any point in time, position, velocity or acceleration may be requested to change. Querying the timing object reveals not only its current value (position) but also its velocity and acceleration at that moment. This detailed information is again helpful in precise synchronization, and the expressiveness of the underlying mathematical model implies that a wide variety of control primitives may be supported. In particular, discrete jumps on the timeline may be used to control a slide show, whereas velocity corresponds to <code>playbackRate</code> for the control of continuous media. Acceleration is required by certain animation frameworks.
@@ -212,10 +212,10 @@
       		The concept of reference point refers to the exact time-alignment of timing object and media in capture and playback. Disagreement about the details of this alignment is a source of (small) synchronization errors. For this reason, a common definition of reference points for time alignment in capture and playback is helpful.
       	</p>
       	<p>
-      		For media capture, media timestamps should reflect the ideal point in time when external, physical signals are received by sensors. I.e., when photons hit the lense or when sound waves hit the microphone. So, as timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency. If all components are able to do this correctly, variation if processing delay will not produce synchronization errors.  
+      		For media capture, media timestamps should reflect the point in time when external, physical signals are received by sensors. I.e., ideally when photons hit the lense or when sound waves hit the microphone. So, as timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency. If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.  
       	</p>
    		<p>
-      		For media playback, media timestamps should reflect the ideal point in time when timed media fragments take physical effect. I.e., when pixels are modified on the screen, or when the loudspeaker modifies its vibration frequency. If playback commands are subject to non-negligible delay before they take effect, the playback component must schedule commands earlier. This implies that playback component must know (or figure out) their downstream delay. If all components are able to do this correctly, variation if processing delay will not produce synchronization errors.  
+      		For media playback, media timestamps should reflect the point in time when timed media fragments take physical effect. I.e., ideally when pixels are modified on the screen, or when the loudspeaker modifies its vibration frequency. If playback commands are subject to non-negligible delay before they take effect, the playback component must schedule commands earlier. This implies that playback component must know (or figure out) their downstream delay. If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.  
       	</p>
       	<p class="note">
       		This definition of reference points is in accordence with definitions used in related standardization work, for instance see DVB-CSS / HbbTV2.0 CSS clause 5.7.2.
@@ -489,8 +489,8 @@
       <pre class="example highlight">
       var to; // timing object
       var elem; // DOM Element
-      var value = to.query();
-      elem.innerHTML = "pos:" + value.pos + " vel:" + value.vel + " acc:" + value.acc; 
+      var vector = to.query();
+      elem.innerHTML = "pos:" + vector.position + " vel:" + vector.velocity + " acc:" + vector.acc; 
       </pre>
       </section>
 
@@ -501,8 +501,8 @@
       var to; // timing object
       var playbutton;
       var pausebutton;
-      playbutton.onclick = function (e) {to.update({vel:1.0})}; // set velocity 1
-      pausebutton.onclick = function (e) {to.update({vel:0.0})}; // set velocity 0
+      playbutton.onclick = function (e) {to.update({velocity:1.0})}; // set velocity 1
+      pausebutton.onclick = function (e) {to.update({velocity:0.0})}; // set velocity 0
       </pre>
       </section>
 
@@ -513,7 +513,7 @@
       var to; // timing object
       var elem; // DOM Element
       setInterval(function () {
-        elem.innerHTML = to.query().pos.toFixed(2);
+        elem.innerHTML = to.query().position;
       }, 100);
       </pre>
 
@@ -522,7 +522,7 @@
       var to; // timing object
       var elem; // DOM Element
       var to.on("timeupdate", function (r) {
-        elem.innerHTML = to.query().pos.toFixed(2);
+        elem.innerHTML = to.query().position;
       });
       </pre>
       </section>
@@ -534,8 +534,8 @@
       var to; // timing object
       var elem; // DOM Element
       to.on("update", function (e) {
-        var value = to.query();
-        if (value.vel === 0.0 &amp;&amp; value.acc === 0.0) {
+        var vector = to.query();
+        if (vector.velocity === 0.0 &amp;&amp; vector.acceleration === 0.0) {
           elem.innerHTML = "I'm not moving!";
         } else {
           elem.innerHTML = "I'm moving!";
@@ -827,12 +827,12 @@
     <h3> Distributed Synchronization </h3>
 
     <p>
-      Built-in support for distributed synchronization is a key feature of the timing object. Timing objects on different devices will be synchronized if they individually connect to, and synchronize with, the same online timing resourse. If the implementation of this synchronization is precise and reliable, we can support the abstraction that timing objects are shared among multiple devices and components, across the Internet. Implementation addresses two distinct issues; <dfn>update synchronization</dfn> and <dfn>clock synchronization</dfn>. A brief introduction is given below. Details are available in [[MSV]]. <span class="note">Details of the protocol and synchronization policies will be covered upcomong Timing Protocol Spec</span>.
+      Built-in support for distributed synchronization is a key feature of the timing object. Timing objects on different devices will be synchronized if they individually connect and synchronize with the same online timing resourse. If the implementation of this synchronization is precise and reliable, we can support the abstraction that timing objects are shared (simultaneous) among multiple devices and components, across the Internet. Implementation addresses two distinct issues; <dfn>update synchronization</dfn> and <dfn>clock synchronization</dfn>. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
     </p>
 
     <section>
-      <h3> Update synchronization </h3>
-      <p>If an online timing resource is <a title="update">updated</a>, effects must apply equally to all connected timing objects, as quickly as possible.</p>
+      <h3> Update Synchronization </h3>
+      <p>If an online timing resource is <a title="update">updated</a> effects must apply equally to all connected timing objects, as quickly as possible.</p>
 
       <p>
         Update synchronization uses the <a>state vector</a> as the unit of distribution. Implementation of distributed synchronization implies that local timing objects become local representatives for online timing resources. This has implications for <a title="process update">update processing</a>. Local timing objects will no longer process updates themselves, but simply forward update requests (i.e. the <a>state vector</a> parameter) across the network to the online timing resource. The algorithm for <a title="process update"> update processing</a> will instead be carried out by the timing service. Effects (i.e. the new <a>state vector</a>) are multicast by the timing service to all connected timing objects, finally triggering the update event. <a title="process query">Query processing</a> will remain unchanged. Queries are always resolved locally, using the last <a>state vector</a> received from the server.
@@ -847,13 +847,13 @@
     <section>
       <h3> Clock synchronization </h3>
       <p> 
-        If multiple timing objects (connected to the same online timing resource) are <a title="query">queried</a> at the exact same moment in time, they must ideally provide the same result (i.e. same position, velocity and acceleration). Implementations must approximate this as much as possible.
+        If multiple timing objects (connected to the same online timing resource) are <a title="query">queried</a> at the exact same moment in time, they must ideally provide the same result (i.e. same position, velocity and acceleration). Implementations must approximate this ideal as much as possible.
       </p>
       <p>
-        Clock synchronization among timing service and timing objects is required for <a title="state vector">state vectors</a> to resolve to the same position, velocity and acceleration. As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between timing objects and timing service. To do this, timing objects maintain a software clock that is continuously synchronized with the system clock of the timing service. This is possible by means of periodic measurements of RTT and clock skew. Using this server clock, timing objects can tranform <a title="state vector">state vectors</a> with respect to their own local system clock. Clock synchronization is also very fast, stable estimates are reached within fractions of a second. Given a strict client-server architecture, this is the optimal approach.
+        Clock synchronization among timing service and timing objects is required for <a title="state vector">state vectors</a> to resolve to the same position, velocity and acceleration. As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between timing objects and timing service. To do this, timing objects maintain a software clock that is continuously synchronized with the system clock of the timing service. This is possible by means of periodic measurements of RTT and clock skew. Using this server clock, timing objects can tranform <a title="state vector">state vectors</a> with respect to their own local system clock. Clock synchronization is also very fast, stable estimates are reached within fractions of a second. Given a strict client-server architecture, this is approach is very effective.
       </p>
       <p>
-        Implementation relies on open Web sockets connections to minimize latency between timing objects and the timing service. If implemented correctly in both client and server, this approach provides a basis for sub-framerate media synchronization.
+        Implementation relies on open Web sockets connections to minimize latency between timing objects and the timing service. If implemented correctly in both client and server, this approach provides a basis for < 10ms media synchronization across Internet.
       </p>
     </section>
 
