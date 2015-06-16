@@ -209,7 +209,7 @@
       	<h3>Reference point in capture and playback</h3>
 
       	<p>
-      		The concept of reference point refers to the exact time-alignment of timing object and media in capture and playback. Disagreement about the details of this alignment is a source of (small) synchronization errors. For this reason, a common definition of "reference points" for time alignment in capture and playback is helpful.
+      		The concept of reference point refers to the exact time-alignment of timing object and media in capture and playback. Disagreement about the details of this alignment is a source of (small) synchronization errors. For this reason, a common definition of reference points for time alignment in capture and playback is helpful.
       	</p>
       	<p>
       		For media capture, media timestamps should reflect the ideal point in time when external, physical signals are received by sensors. I.e., when photons hit the lense or when sound waves hit the microphone. So, as timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency. If all components are able to do this correctly, variation if processing delay will not produce synchronization errors.  
