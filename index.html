@@ -120,7 +120,7 @@
         </p>
 
         <p>
-         For a more extensive introduction to linear composition, please consult paper "Multi-device Linear Composition on the Web; Enabling Multi-device Linear Media with timing object and Shared Motion" by Arntzen et.al. This paper is currently submitted for publication, and will be made available on the <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> when it is published.
+         For a more extensive introduction to linear composition, please consult paper "Multi-device Linear Composition on the Web; Enabling Multi-device Linear Media with timing object and Shared Motion" by Arntzen et.al. This paper is available on the <a href="https://www.w3.org/community/webtiming/2015/05/08/linearcomposition/">W3C Multi-device Timing Community Group</a>.
         </p>
       </section>
 
@@ -191,7 +191,45 @@
         <p>
           In general, the timing object is particularly useful when you have a variable that needs to change predictably in time. You may of course achieve this simply by overwriting a value repeatedly in time (this is essentially the approach of the current <code>HTMLMediaElement</code> interface), but the timing object provides an improvement on this approach, particularly with respect to precise synchronization.
         </p>
-      </section>    
+      </section>
+
+
+      <section>
+      	<h3>Media capture and playback</h3>
+
+      	<p>
+      		Two very common uses of the timing object include media capture and playback. For media playback, the  timing object may play the role of director/controls. Multiple independent components, possibly on different devices, may be responsible for timed presentation of timed media. If all components take direction from a single timing object, playback is ensured to be consistent.
+  		</p>
+  		<p>
+      		For media capture, the timing object may represent a shared clock for timestamping various types of captured media, also in multi-devices scenarios. As long as timestamps are sampled from a shared clock and included in the captured media, time-shifted playback is possible. In live capturing scenarios, the timing object object should likely just run continuously like a clock, or perhaps be adjusted just slightly from time to time to stay in sync with some real-world clock source, e.g. epoch. However, media capture in a studio may be a much more iterative process, recording one track or sample at a time. In such scenarios, the timing object might have to be paused and rewind for each take. The timing object will then play the dual role of playback director for previously captured media, as well as production clock for current capture.  
+      	</p>
+      </section>
+
+      <section>
+      	<h3>Reference point in capture and playback</h3>
+
+      	<p>
+      		The concept of reference point refers to the exact time-alignment of timing object and media in capture and playback. Disagreement about the details of this alignment is a source of (small) synchronization errors. For this reason, a common definition of "reference points" for time alignment in capture and playback is helpful.
+      	</p>
+      	<p>
+      		For media capture, media timestamps should reflect the ideal point in time when external, physical signals are received by sensors. I.e., when photons hit the lense or when sound waves hit the microphone. So, as timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency. If all components are able to do this correctly, variation if processing delay will not produce synchronization errors.  
+      	</p>
+   		<p>
+      		For media playback, media timestamps should reflect the ideal point in time when timed media fragments take physical effect. I.e., when pixels are modified on the screen, or when the loudspeaker modifies its vibration frequency. If playback commands are subject to non-negligible delay before they take effect, the playback component must schedule commands earlier. This implies that playback component must know (or figure out) their downstream delay. If all components are able to do this correctly, variation if processing delay will not produce synchronization errors.  
+      	</p>
+      	<p class="note">
+      		This definition of reference points is in accordence with definitions used in related standardization work, for instance see DVB-CSS / HbbTV2.0 CSS clause 5.7.2.
+      	</p>
+      	<p class="note">
+      		Strictly speaking, the timing object is usage-agnostic and can not mandate a specific definition for reference point. However, as interoperability of timing-sensitive components (e.g. capture and playback) is a major motivation for the timing object, the above definitions for reference point are recommended.  
+      	</p>
+
+      </section>
+
+
+
+
+
     </section>
 
 
@@ -665,7 +703,7 @@
       <h2>State Vector</h2>
 
       <p>
-        A <dfn>state vector</dfn> represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>state vector</a> for multiple purposes. Internally, the <a>state vector</a> represents the initial conditions of the current movement. This is known as the <dfn>internal vector</dfn>. The <a>query</a> operation returns a <a>state vector</a> as snapshot, and the <a>update</a> operation requires a <a>state vector</a> as parameter. Finally, in the distributed scenario, the <a>state vector</a> is the unit of distribution.
+        A <dfn>state vector</dfn> represents the classical four-tuple <code>(p,v,a,t)</code> associated with the mathematical description of linear motion under constant acceleration. The elements of this four tuple represent <code>(position, velocity, acceleration, time)</code>. The <a>timing object</a> uses the <a>state vector</a> for multiple purposes. Internally, the <a>state vector</a> represents the initial conditions of the current movement. This is known as the <a>internal vector</a>. The <a>query</a> operation returns a <a>state vector</a> as snapshot, and the <a>update</a> operation requires a <a>state vector</a> as parameter. Finally, in the distributed scenario, the <a>state vector</a> is the unit of distribution.
       </p>
 
       <p><a title="state vector">State vectors</a> implement the following interface</p>
