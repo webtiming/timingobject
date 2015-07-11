@@ -160,7 +160,7 @@
           The protocol used to connect, synchronize and interact with online timing resources will be defined in a separate specification.
         </p>
         <p class="note">
-          Similarly, the integration of the timing object with other frameworks for timed operation, such as HTML5 Media Elements, HTML5 Track Elements, Web Animation, SMIL, and Web Audio [[HTML5]] will be covered separately.
+          Similarly, the integration of the timing object with other frameworks for timed operation, such as HTML5 Media Elements, HTML5 Track Elements, Web Animation, SMIL, and Web Audio [[!HTML5]] will be covered separately.
         </p>
       </section>
 
@@ -441,13 +441,23 @@
       <h2>Terminology</h2>
 
       <p>
-        The following terms are defined in [[!HTML5]]:
+        The following terms, procedures and interfaces are defined in [[!HTML5]]:
       </p>
       <ul>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#slaved-media-elements">slaved media elements</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
+        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#htmlmediaelement">HTMLMediaElement</a></code></dfn></li>
+        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#mediacontroller">MediaController</a></code></dfn></li>
       </ul>
 
       <p>
@@ -1166,6 +1176,96 @@
     </section>
 
 
+    <section>
+      <h3>Associating media elements with a timing object</h3>
+      <p class="note">
+        If this specification progresses along the standardisation track, this section should be merged in a future version of [[!HTML5]].
+      </p>
+      <p class="issue">
+        The procedures below are incomplete, some of them are described as updates to be made to procedures defined in [[!HTML5]], and some procedures are missing. The goal is to define a <a>timing object</a> as a <code><a>MediaController</a></code> without requiring the <a>report the controller state</a> part and with prose to convey the need for a <a>user agent</a> to keep trying to bring the <a>media element</a> up to speed with its <a>timing object</a> when it cannot follow the motion the <a>timing object</a> imposes. Before dwelving into details, the Multi-Device Timing Community Group welcomes feedback on the overall approach proposed here.
+      </p>
+      <p>
+        This section specifies an extension of <a title="media element">media elements</a> that allows them to use a <a>timing object</a> as a <a>media timeline</a> source.
+      </p>
+      <p>
+        From the perspective of a <a>media element</a>, a <a>timing object</a> may be viewed as a <code><a>MediaController</a></code> with one notable exception: when it is slaved to a <a>timing object</a>, a <a>media element</a> cannot pause a <a>timing object</a>, even if it becomes stall.
+      </p>
+      <p>
+        A <a>media element</a> can have a <dfn>current timing source</dfn>, which is a <code><a>TimingObject</a></code>, that imposes the <a>media timeline</a> and associated clock that the <a>media element</a> uses.
+      </p>
+
+      <dl title="partial interface HTMLMediaElement" class="idl">
+        <dt>attribute TimingObject timingsrc</dt>
+        <dd>Get/Set the <code><a>TimingObject</a></code> object associated with this media element.</dd>
+      </dl>
+
+      <section>
+        <h3>Procedures</h3>
+        <section>
+          <h3>Associate with a timing object</h3>
+          <p>
+            The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST run the following steps:
+          </p>
+          <ol>
+            <li>Let <var>m</var> be the <a>media element</a> in question.</li>
+            <li>Let <var>old controller</var> be <var>m</var>'s <a>current media controller</a>, it if currently has one, and null otherwise.</li>
+            <li>Let <var>m</var> have no <a>current media controller</a>, if it currently has one.</li>
+            <li>Remove the elements's <code>mediagroup</code> content attribute, if any.</li>
+            <li>Let <var>m</var> have no <a>current timing source</a>, it if currently has one.</li>
+            <li>If the new value is null, then jump to the <i>update controller</i> step below.</li>
+            <li>Let <var>m</var>'s <a>current timing source</a> be the new value.</li>
+            <li>Let <var>new timing</var> be <var>m</var>'s <a>current timing source</a>.</li>
+            <li><a>Bring the media element up to speed with its new timing source</a>.</li>
+            <li><i>Update controller</i>: If <var>old controller</var> is not null and still has one or more <a>slaved media elements</a>, then <a>report the controller state</a> for <var>old controller</var>.</li>
+          </ol>
+
+          <p>
+            When a <a>media element</a> has a <a>current timing source</a>, its <a>effective playback rate</a> is the <code><a>TimingObject</a></code>'s <a>internal vector</a>'s velocity.
+          </p>
+        </section>
+
+        <section>
+          <h3>Set the current media controller</h3>
+          <p>
+            The procedures defined in [[!HTML5]] that update the <a>current media controller</a> should be updated to include the following step before the <a>current media controller</a> is set:
+          </p>
+          <ol>
+            <li>Let <var>m</var> have no <a>current timing source</a>, if it currently has one.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Set the current position</h3>
+          <p>
+            The procedure defined in [[!HTML5]] that prevent setting <code>currentTime</code> when the <a>media element</a> has a <a>current media controller</a> should be updated to also prevent setting the attribute when the <a>media element</a> has a <a>current timing source</a>.
+          </p>
+          <p class="note">
+            The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>, the velocity of the <a>state vector</a> of the <a>current timing source</a> is used instead in that situation.
+          </p>
+        </section>
+
+        <p class="issue">
+          Should the <code>play</code>, <code>pause</code> and other commands be mapped to <code>update</code> requests on the <code><a>TimingObject</a></code>?
+        </p>
+
+        <section>
+          <h3>Bring a media element up to speed with its timing source</h3>
+          <p>
+            When the <a>user agent</a> is to <dfn>bring the media element up to speed with its new timing source</dfn>, it MUST run the following steps:
+          </p>
+          <ol>
+            <li>Let <var>m</var> be that <a>media element</a>.</li>
+            <li>Let <var>timing</var> be that timing source.</li>
+            <li>Let (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>) be the result of calling <code>query</code> on <var>timing</var>.</li>
+            <li>If <var>m</var> cannot be <a title="seek">seeked</a> to <var>p</var> relative to <var>m</var>'s timeline because <a>media data</a> is not yet available, <a>queue a task</a> to <a>bring the media element up to speed with its new timing source</a> and abort these steps.</li>
+            <li><a>Seek</a> <var>m</var> to <var>p</var> relative to <var>m</var>'s timeline.</li>
+          </ol>
+          <p class="issue">
+            The <a>seek</a> procedure needs to be redefined here, since it may update the final playback position which must not happen here.
+          </p>
+        </section>
+      </section>
+    </section>
 
     <section class="informative">
       <h3>Implementation guidelines</h3>
