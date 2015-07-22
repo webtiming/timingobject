@@ -87,6 +87,9 @@
       <p>
         The specification is intended for discussion within the Multi-Device Timing Community Group. Its content does not yet represent the consensus of the Community Group.
       </p>
+      <p class="warning">
+        This specification is incomplete. Some procedures are either missing or described as <em>similar to procedures defined in [[!HTML5]]</em>. The main goal of this draft is to propose a technical solution, show how it could be integrated in [[!HTML5]] and gather feedback from interested parties before dwelving into details.
+      </p>
     </section>
     
 
@@ -444,11 +447,11 @@
         The following terms, procedures and interfaces are defined in [[!HTML5]]:
       </p>
       <ul>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
+        <li><dfn title="event handler|event handlers"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
+        <li><dfn title="media element|media elements"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
@@ -456,8 +459,23 @@
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
+        <li><dfn title="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-language">text track language</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-mode">text track mode</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-hidden">text track hidden</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-loaded">text track loaded</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-readiness-state">text track readiness state</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-list-of-cue">text track list of cues</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-text-tracks">list of text tracks</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-newly-introduced-cues">list of newly introduced cues</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-playback-position">current playback position</a></dfn></li>
+        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#time-marches-on">time marches on</a></dfn></li>
         <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#htmlmediaelement">HTMLMediaElement</a></code></dfn></li>
         <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#mediacontroller">MediaController</a></code></dfn></li>
+        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#texttrack">TextTrack</a></code></dfn></li>
       </ul>
 
       <p>
@@ -469,14 +487,14 @@
       </ul>
 
       <p>
-        The <code><a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code> interface represents a callback used for <a title="event handler">event handlers</a> as defined in [[!HTML5]].
+        The <code><a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code> interface represents a callback used for <a>event handlers</a> as defined in [[!HTML5]].
       </p>
 
       <p>
         A <dfn>timing resource</dfn> represents a point moving along an infinite axis. This motion is defined by the position, velocity and acceleration of the point at a specific moment in time, according to some clock. Essentially, a <a>timing resource</a> represents a linear motion in real time. A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn> under the control of a <a>user agent</a> or an <dfn>external timing resource</dfn> under the control of a <a>timing resource provider</a>. In both cases, the actual <a>timing resource</a> may run locally or may be an <dfn>online timing resource</dfn> hosted somewhere in the cloud.
       </p>
       <p class="note">
-        A <a>user agent</a> may typically offer native implementations of <a title="timing object">timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
+        A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
       </p>
 
       <p>
@@ -588,13 +606,19 @@
       <h2>Timing Object</h2>
 
       <p>
-        A <dfn>timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
+        A <dfn title="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
       <p>
         A <a>timing object</a> has a <dfn>state</dfn> that describes the state of the connection with the <a>timing resource</a>, and an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>.
       </p>
+      <p>
+        A <a>timing object</a> is said to be <dfn>moving</dfn> if the velocity and/or acceleration of its <a>internal vector</a> is non-zero.
+      </p>
       <p class="note">
         The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
+      </p>
+      <p>
+        A <a>timing object</a> has a <dfn>list of timing text tracks</dfn>, which is the group of <a>timing text tracks</a> that use the <a>timing object</a> as sequencer (see <a href="#sequencer"></a>). The <a>list of timing text tracks</a> is sorted in the order <a>timing text tracks</a> are associated with the <a>timing object</a>. A <a>timing object</a> has a <dfn>list of newly introduced timing cues</dfn>, whose definition is the same as a <a>media element</a>'s <a>list of newly introduced cues</a> in [[!HTML5]].
       </p>
       <p>
         A <a>timing object</a> can have a <dfn>range</dfn>, which is an <code><a>Interval</a></code> object and represents restrictions for the positions of the <a>state vector</a> and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
@@ -603,7 +627,10 @@
         A <a>timing object</a> can also have a <dfn>timing provider source</dfn>, which is a <code><a>TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>, and a <dfn>last measured time value</dfn> that is the last timestamp value read from the <a>timing provider source</a> and is used to check the monotonicity of the clock exposed by the <a>timing provider source</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
       </p>
       <p>
-        A <a>timing object</a> is associated with a clock which is maintained by the <a>timing resource provider</a> if the <a>timing object</a> has a <a>timing provider source</a>, or is the <a>internal clock</a>.
+        A <a>timing object</a> is associated with a <dfn title="timing object clock">clock</dfn> which is maintained by the <a>timing resource provider</a> if the <a>timing object</a> has a <a>timing provider source</a>, or is the <a>internal clock</a>.
+      </p>
+      <p>
+        A <a>timing object</a> has a <dfn>current position</dfn>, which represents the position of the <a>timing object</a> along the unidimensional axis at the time of evaluation. When the <a>timing object</a> is <a>moving</a>, its <a>current position</a> must increase monotonically based on the velocity and acceleration of its <a>internal vector</a> per unit time of the <a>timing object clock</a>. (This specification refers to this as an <em>increase</em> but that increase could actually be a <em>decrease</em>.)
       </p>
 
       <p>A <a>Timing object</a> implements the following interface:</p>
@@ -660,7 +687,7 @@
         <!-- Methods -->
 
         <dt>TimingStateVector query()</dt>
-        <dd>Returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the clock associated with the <a>timing object</a>.</dd>
+        <dd>Returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>timing object clock</a>.</dd>
 
         <dt>Promise update()</dt>
         <dd>
@@ -846,6 +873,23 @@
             What would be a proper way to introduce the notion of timeout according to the <a>internal clock</a> here?
           </p>
         </section>
+
+        <section>
+          <h3>Run the sequencer</h3>
+          <p>
+            The <dfn>sequencer marches on</dfn> steps for a <a>timing object</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>state vector</a> as returned by a call to the <code>query()</code> method at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the text track rendering, since their interpretation is up to the web application.
+          </p>
+          <p>
+            A <a>timing object</a> acts as sequencer for its list of <a>list of timing text tracks</a>. As such, the intended behavior is close to the one of a <a>media element</a> with its <a>list of text tracks</a>. In particular, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps on the <a>timing object</a>in the same cases as when [[!HTML5]] requires the <a>user agent</a> to run the <a>time marches on</a> steps on a <a>media element</a>.For instance:
+          </p>
+          <ul>
+            <li>When the <a>current position</a> of a <a>timing object</a> changes, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps.</li>
+            <li>When a <a>timing object</a>'s <a>list of newly introduced timing cues</a> has new cues added, then the <a>user agent</a> MUST run the <a>sequencer marches on</a>steps.</li>
+          </li>
+          <p class="issue">
+            This specification should of course properly document these cases and adjust steps as needed.
+          </p>
+        </section>
       </section>
 
       <section>
@@ -901,7 +945,7 @@
     <section>
       <h2>Timing Provider</h2>
       <p>
-        A <dfn>timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates whatever logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn title="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates whatever logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
         This mechanism is designed to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate motion updates to connected clients are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
@@ -1007,7 +1051,7 @@
       <h2>State Vector</h2>
 
       <p>
-        A <dfn>state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, time)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
+        A <dfn title="state vector|state vectors">state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, time)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
       </p>
       <p>
         In particular, the <a>internal vector</a> of a <a>timing object</a> is a <a>state vector</a>, the <code>query()</code> operation returns a <a>state vector</a> and the <code>update()</code> operation takes a <a>state vector</a> as parameter.
@@ -1185,7 +1229,7 @@
         The procedures below are incomplete, some of them are described as updates to be made to procedures defined in [[!HTML5]], and some procedures are missing. The goal is to define a <a>timing object</a> as a <code><a>MediaController</a></code> without requiring the <a>report the controller state</a> part and with prose to convey the need for a <a>user agent</a> to keep trying to bring the <a>media element</a> up to speed with its <a>timing object</a> when it cannot follow the motion the <a>timing object</a> imposes. Before dwelving into details, the Multi-Device Timing Community Group welcomes feedback on the overall approach proposed here.
       </p>
       <p>
-        This section specifies an extension of <a title="media element">media elements</a> that allows them to use a <a>timing object</a> as a <a>media timeline</a> source.
+        This section specifies an extension of <a>media elements</a> that allows them to use a <a>timing object</a> as a <a>media timeline</a> source.
       </p>
       <p>
         From the perspective of a <a>media element</a>, a <a>timing object</a> may be viewed as a <code><a>MediaController</a></code> with one notable exception: when it is slaved to a <a>timing object</a>, a <a>media element</a> cannot pause a <a>timing object</a>, even if it becomes stall.
@@ -1267,38 +1311,118 @@
       </section>
     </section>
 
+
+
+
+
+
+
+    <section>
+      <h3>Sequencer</h3>
+      <p>
+        A <dfn title="timing text track|timing text tracks">timing text track</dfn> is a <a>text track</a> that can be associated with a <a>timing object</a>, which acts as sequencer for the <a>text track cues</a> that compose the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a> that it is associated with.
+      </p>
+      <p class="note">
+        As opposed to a <a>text track</a>, a <a>timing text track</a> is not and cannot be associated with a <a>media element</a>. The interpretation of a <a>timing text track</a>'s <a>text track cue</a> is up to the Web application in particular.
+      </p>
+      <p class="issue">
+        Is inheriting from <a>TextTrack</a> as proposed below the right approach? It it tempting to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a> above. However <a>TextTrack</a> does not expose a constructor and adding an <code>addTextTrack</code> method to <a>TimingObject</a> (similar to the one on <a>HTMLMediaElement</a>) is not consistent with a <a>timing object</a> that objects can associate with.
+      </p>
+      <dl title="interface TimingTextTrack : TextTrack" class="idl">
+        <dt>Constructor()</dt>
+        <dd>
+          Returns a new <code><a>TimingTextTrack</a></code>.
+          <dl class="parameters">
+            <dt>TextTrackKind kind</dt>
+            <dd>The <a>kind of track</a>.</dd>
+            <dt>optional DOMString label = ""</dt>
+            <dd>The <a>text track label</a>.</dd>
+            <dt>optional DOMString language = ""</dt>
+            <dd>The <a>text track language</a>.</dd>
+          </dl>
+        </dd>
+
+        <dt>attribute TimingObject timingsrc</dt>
+        <dd>Get/Set the <code><a>TimingObject</a></code> object associated with this timing text track.</dd>
+      </dl>
+
+      <section>
+        <h3>Procedures</h3>
+
+        <section>
+          <h3>Create a new timing text track</h3>
+          <p>
+            When the <code><a>TimingTextTrack</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
+          </p>
+          <ol>
+            <li>Create a new <code><a>TimingTextTrack</a></code> object.</li>
+            <li>Create a new <a>timing text track</a> corresponding to the new object, and sets its <a>text track kind</a> to <var>kind</var>, its <a>text track label</a> to <var>label</var>, its <var>text track language</var> to language, its <a>text track readiness state</a> to the <a>text track loaded</a> state, its <a>text track mode</a> to the <a>text track hidden</a> mode, and its <a>text track list of cues</a> to an empty list.</li>
+            <li>Return the new <code><a>TimingTextTrack</a></code> object.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Associate with a timing object</h3>
+          <p>
+            The <code>timingsrc</code> attribute, on getting, MUST return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST run the following steps:
+          </p>
+          <ol>
+            <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
+            <li>Let <var>old timing</var> be <var>track</var>'s <a>current sequencer</a>, if any, or null otherwise.</li>
+            <li>Let <var>track</var>'s <a>current sequencer</a> be the new value.</li>
+            <li>Let <var>new timing</var> be <var>track</var>'s <a>current sequencer</a>.</li>
+            <li>
+              If <var>old timing</var> is not null, run the following substeps:
+              <ol>
+                <li>Remove <var>track</var> from <var>timing</var>'s <a>list of timing text tracks</a>.</li>
+                <li>Run the <a>time marches on</a> algorithm on <var>timing</var>.</li>
+              </ol>
+            </li>
+            <li>
+              If <var>new timing</var> is not null, run the following substeps:
+              <ol>
+                <li>Add <var>track</var> to <var>timing</var>'s <a>list of timing text tracks</a>.</li>
+                <li>Run the <a>time marches on</a> algorithm on <var>timing</var>.</li>
+              </ol>
+            </li>
+          </ol>
+        </section>
+      </section>
+    </section>
+
+
     <section class="informative">
       <h3>Implementation guidelines</h3>
 
       <p>
-        Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a title="timing object">Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of motion updates and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
+        Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a>Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of motion updates and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
       </p>
       <p class="note">
-        Guidelines below are phrased against <a title="timing object">timing objects</a> but the guidelines apply to <a title="timing provider object">timing provider objects</a> as well.
+        Guidelines below are phrased against <a>timing objects</a> but the guidelines apply to <a>timing provider objects</a> as well.
       </p>
 
       <section>
         <h3>Motion update synchronization</h3>
 
         <p>
-          If an <a>online timing resource</a> is updated, effects must apply equally to all connected <a title="timing object">timing objects</a> as quickly as possible, including to the <a>timing object</a> on which the update request might have been issued. This has implications for the processing of update requests. Local timing objects should simply forward the request (i.e. the <a>state vector</a>) across the network to the <a>online timing resource</a>, where the request will be processed. Effects (i.e. the new <a>state vector</a>) will be multicast by the <a>online timing resource</a> to all connected <a title="timing object">timing objects</a>, finally triggering a <code>change</code> event on these objects. Queries are always resolved locally, using the last <a>state vector</a> received from the server.
+          If an <a>online timing resource</a> is updated, effects must apply equally to all connected <a>timing objects</a> as quickly as possible, including to the <a>timing object</a> on which the update request might have been issued. This has implications for the processing of update requests. Local timing objects should simply forward the request (i.e. the <a>state vector</a>) across the network to the <a>online timing resource</a>, where the request will be processed. Effects (i.e. the new <a>state vector</a>) will be multicast by the <a>online timing resource</a> to all connected <a>timing objects</a>, finally triggering a <code>change</code> event on these objects. Queries are always resolved locally, using the last <a>state vector</a> received from the server.
         </p>
 
         <p>
-          Note that this strategy does not guarantee that <a title="timing object">timing objects</a> receive the update notification at exactly the same time. It is possible to mask the differences in network latency by introducing an additional delay, but note that this might hurt the user experience.
+          Note that this strategy does not guarantee that <a>timing objects</a> receive the update notification at exactly the same time. It is possible to mask the differences in network latency by introducing an additional delay, but note that this might hurt the user experience.
         </p>
       </section>
 
       <section>
         <h3>Clock synchronization</h3>
         <p>
-          Ideally, if multiple <a title="timing object">timing objects</a> that represent the same <a>online timing resource</a> are queried at the exact same moment, they should return the same <a>state vector</a> (same position, velocity and acceleration). This requires that the local clock associated with the <a>timing object</a> be synchronized with that of the <a>online timing resource</a>.
+          Ideally, if multiple <a>timing objects</a> that represent the same <a>online timing resource</a> are queried at the exact same moment, they should return the same <a>state vector</a> (same position, velocity and acceleration). This requires that the local clock associated with the <a>timing object</a> be synchronized with that of the <a>online timing resource</a>.
         </p>
         <p>
-          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between <a title="timing object">timing objects</a> and the <a>online timing resource</a>. To do this, <a title="timing object">timing objects</a> should maintain a software clock that is continuously synchronized with the system clock of the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a title="timing object">timing objects</a> can tranform <a title="state vector">state vectors</a> with respect to their own local clock.
+          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> should maintain a software clock that is continuously synchronized with the system clock of the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> with respect to their own local clock.
         </p>
         <p>
-          Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a title="timing object">timing objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
+          Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a>timing objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
         </p>
       </section>
     </section>
