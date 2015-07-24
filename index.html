@@ -290,7 +290,7 @@
       </p>
       <ul>
         <li><dfn title="event handler|event handlers"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
+        <li><dfn title="event handler event type|event handler event types"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
         <li><dfn title="media element|media elements"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
@@ -466,7 +466,7 @@
         The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
       </p>
       <p>
-        A <a>timing object</a> has a <dfn>list of timing text tracks</dfn>, which is the group of <a>timing text tracks</a> that use the <a>timing object</a> as sequencer (see <a href="#sequencer"></a>). The <a>list of timing text tracks</a> is sorted in the order <a>timing text tracks</a> are associated with the <a>timing object</a>. A <a>timing object</a> has a <dfn>list of newly introduced timing cues</dfn>, whose definition is the same as a <a>media element</a>'s <a>list of newly introduced cues</a> in [[!HTML5]].
+        A <a>timing object</a> has a <dfn>list of timing text tracks</dfn>, which is the group of <a>timing text tracks</a> that use the <a>timing object</a> as sequencer (see <a href="#sequencing"></a>). The <a>list of timing text tracks</a> is sorted in the order <a>timing text tracks</a> are associated with the <a>timing object</a>. A <a>timing object</a> has a <dfn>list of newly introduced timing cues</dfn>, whose definition is the same as a <a>media element</a>'s <a>list of newly introduced cues</a> in [[!HTML5]].
       </p>
       <p>
         A <a>timing object</a> can have a <dfn>range</dfn>, which is an <code><a>Interval</a></code> object and represents restrictions for the positions of the <a>state vector</a> and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
@@ -481,298 +481,263 @@
         A <a>timing object</a> has a <dfn>current position</dfn>, which represents the position of the <a>timing object</a> along the unidimensional axis at the time of evaluation. When the <a>timing object</a> is <a>moving</a>, its <a>current position</a> must increase monotonically based on the velocity and acceleration of its <a>internal vector</a> per unit time of the <a>timing object clock</a>. (This specification refers to this as an <em>increase</em> but that increase could actually be a <em>decrease</em>.)
       </p>
 
-      <p>A <a>Timing object</a> implements the following interface:</p>
+      <p>A <a>timing object</a> implements the following interface:</p>
 
-      <dl title="interface TimingObject : EventTarget" class="idl">
+      <pre class="idl">
+        [ Constructor (optional TimingStateVectorUpdate vector, optional TimingIntervalInit range),
+         Constructor (TimingProvider provider)]
+        interface TimingObject : EventTarget {
+          readonly    attribute TimingObjectState readyState;
+          readonly    attribute TimingInterval    range;
+                      attribute EventHandler      onreadystatechange;
+                      attribute EventHandler      onchange;
+                      attribute EventHandler      ontimeupdate;
+                      attribute EventHandler      onerror;
+          TimingStateVector query ();
+          Promise           update (TimingStateVectorUpdate newVector);
+        };
+      </pre>
 
-        <dt>Constructor()</dt>
-        <dd>
-          <p>
-            Returns a new <code><a>TimingObject</a></code> initialized with the provided initial motion conditions and possible range restrictions.
-          </p>
-
-          <dl class="parameters">
-            <dt>optional TimingStateVectorUpdate vector</dt>
-            <dd>The initial <a>state vector</a> to use as <a>internal vector</a>. When not specified, the timing object is initialized as a non moving point (velocity and acceleration equal <code>0.0</code>) at position <code>0.0</code>.</dd>
-
-            <dt>optional TimingIntervalInit range</dt>
-            <dd>The <a>interval</a> that constrains the motion of the <a>state vector</a>, if any.</dd>
-          </dl>
-        </dd>
-
-        <dt>Constructor()</dt>
-        <dd>
-          <p>
-            Returns a new <code><a>TimingObject</a></code> whose <a>timing provider source</a> is set to the given <code><a>TimingProvider</a></code> object.
-          </p>
-
-          <dl class="parameters">
-            <dt>TimingProvider provider</dt>
-            <dd>The <code><a>TimingProvider</a></code> object to use as <a>timing provider source</a>.</dd>
-          </dl>
-        </dd>
-
-        <dt>readonly attribute TimingObjectState readyState</dt>
-        <dd>The current state of the connection with the <a>timing resource</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The state may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.</dd>
-
-        <dt>readonly attribute TimingInterval range</dt>
-        <dd>Defines range restrictions for the position of the <a>timing resource</a>.</dd>
-
-        <!-- Events -->
-
-        <dt>attribute EventHandler onreadystatechange</dt>
-        <dd>Event handler, of type <a>readystatechange</a>.</dd>
-
-        <dt>attribute EventHandler onchange</dt>
-        <dd>Event handler, of type <a>change</a>.</dd>
-
-        <dt>attribute EventHandler ontimeupdate</dt>
-        <dd>Event handler, of type <a>timeupdate</a>.</dd>
-
-        <dt>attribute EventHandler onerror</dt>
-        <dd>Event handler, of type <a>error</a>.</dd>
-
-        <!-- Methods -->
-
-        <dt>TimingStateVector query()</dt>
-        <dd>Returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>timing object clock</a>.</dd>
-
-        <dt>Promise update()</dt>
-        <dd>
-          Sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account. The update supports null values for the provided vector's attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>.
-
-          <dl class="parameters">
-            <dt>TimingStateVectorUpdate newVector</dt>
-            <dd>The new vector.</dd>
-          </dl>
-        </dd>
-      </dl>
-
-      <p>
-        The connection with the <a>timing resource</a> that the <a>timing object</a> represents may take the following states:
-      </p>
-      <dl title="enum TimingObjectState" class="idl">
-        <dt>connecting</dt>
-        <dd>The <a>timing object</a> is attempting to establish a connection with the <a>timing resource</a> it represents. This is the initial state when a new <code><a>TimingObject</a></code> is created. This state is also used when a <code><a>TimingProvider</a></code> object is associated with the <code><a>TimingObject</a></code>.</dd>
-
-        <dt>open</dt>
-        <dd>The connection with the <a>timing resource</a> is established and communication is possible.</dd>
-
-        <dt>closing</dt>
-        <dd>The procedure to close down the connection with the <a>timing resource</a> has started.</dd>
-
-        <dt>closed</dt>
-        <dd>The connection with the <a>timing resource</a> has been closed or could not be established.</dd>
-      </dl>
-
-      <p>
-        The <dfn>allowed state transitions</dfn> are:
-      </p>
-      <ul>
-        <li>from <code>connecting</code> to any of the other states;</li>
-        <li>from <code>open</code> to <code>closing</code> and <code>closed</code>;</li>
-        <li>from <code>closing</code> to <code>closed</code>.</li>
-      </ul>
+      <div dfn-for="TimingObject" link-for="TimingObject">
+        <p>
+          The <dfn>range</dfn> attribute MUST be set to the <a>interval</a> that constrains the position of the <a>state vector</a>, if any.
+        </p>
+        <p>
+          The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
+        </p>
+      </div>
 
       <section>
-        <h3>Procedures</h3>
+        <h3>Create a new timing object</h3>
+        <p>
+          When the <code><a>TimingObject</a></code> constructor that takes an optional vector and range is invoked, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code>.</li>
+          <li>Let <var>vectorInit</var> be the four-tuple represented by the constructor's first argument or <code>(0.0, 0.0, 0.0, t)</code> if not given, where <code>t</code> is the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
+          <li>Set the <a>internal vector</a> of <var>timing</var> to a newly constructed <code><a>TimingStateVector</a></code> that represents <var>vectorInit</var>.</li>
+          <li>Set the <a>timing provider source</a> of <var>timing</var> to null.</li>
+          <li>Let <var>rangeInit</var> be the constructor's second argument or null if not given.</li>
+          <li>Set the <a>range</a> of <var>timing</var> to null.</li>
+          <li>If <var>rangeInit</var> is null, set the <a>current interval timeout</a> to null.</li>
+          <li>
+            If <var>rangeInit</var> is not null, run the following substeps:
+            <ol>
+              <li>Set the <a>range</a> of <var>timing</var> to a newly constructed <code><a>Interval</a></code> that represents <var>rangeInit</var>.</li>
+              <li>If the <a>range</a> does not <a title="covers">cover</a> the position of the <a>internal vector</a>, set that position to the lower bound or upper bound of the <a>range</a>, whichever is closest, and set the velocity and acceleration to <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
+              <li><a>Set the internal timeout</a> of <var>timing</var>.</li>
+            </ol>
+          <li>Set the <a>state</a> of <var>timing</var> to <code>open</code>.</li>
+          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+          <li>Return <var>timing</var>.</li>
+        </ol>
+        <p class="note">
+          When the initial vector is not provided to the constructor, the timing object is initialized as a non moving point (velocity and acceleration equal <code>0.0</code>) at position <code>0.0</code>.
+        </p>
 
-        <section>
-          <h3>Create a new timing object</h3>
-          <p>
-            When the <code><a>TimingObject</a></code> constructor that takes an optional vector and range is invoked, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code>.</li>
-            <li>Let <var>vectorInit</var> be the four-tuple represented by the constructor's first argument or <code>(0.0, 0.0, 0.0, t)</code> if not given, where <code>t</code> is the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
-            <li>Set the <a>internal vector</a> of <var>timing</var> to a newly constructed <code><a>TimingStateVector</a></code> that represents <var>vectorInit</var>.</li>
-            <li>Set the <a>timing provider source</a> of <var>timing</var> to null.</li>
-            <li>Let <var>rangeInit</var> be the constructor's second argument or null if not given.</li>
-            <li>Set the <a>range</a> of <var>timing</var> to null.</li>
-            <li>If <var>rangeInit</var> is null, set the <a>current interval timeout</a> to null.</li>
-            <li>
-              If <var>rangeInit</var> is not null, run the following substeps:
-              <ol>
-                <li>Set the <a>range</a> of <var>timing</var> to a newly constructed <code><a>Interval</a></code> that represents <var>rangeInit</var>.</li>
-                <li>If the <a>range</a> does not <a title="covers">cover</a> the position of the <a>internal vector</a>, set that position to the lower bound or upper bound of the <a>range</a>, whichever is closest, and set the velocity and acceleration to <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
-                <li><a>Set the internal timeout</a> of <var>timing</var>.</li>
-              </ol>
-            <li>Set the <a>state</a> of <var>timing</var> to <code>open</code>.</li>
-            <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
-            <li>Return <var>timing</var>.</li>
-          </ol>
 
-          <p>
-            When the <code><a>TimingObject</a></code> constructor that takes a <code><a>TimingProvider</a></code> is invoked, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>provider</var> be the constructor's argument.</li>
-            <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code> whose <a>timing provider source</a> is <var>provider</var>.</li>
-            <li>Set the <a>state</a> of <var>timing</var> to <code>connecting</code>.</li>
-            <li>Set the <a>range</a> of <var>timing</var> to the <code>range</code> property of <var>provider</var>.</li>
-            <li>Set the <a>state</a> of the <a>timing object</a> to the <code>readyState</code> property of <var>provider</var> and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
-            <li>Set the <a>last measured time value</a> of <var>timing</var> to null.</li>
-            <li>Set the <a>internal vector</a> of <var>timing</var> to the <code>vector</code> property of <var>provider</var>.</li>
-            <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
-            <li><a>Observe</a> <var>provider</var>.</li>
-            <li>
-              When an update to the <code>readyState</code> property is observed, run the following substeps:
-              <ol>
-                <li>If the transition from the current <a>state</a> of <var>timing</var> to the new value is in the list of <a>allowed state transitions</a>, set the <a>state</a> of <var>timing</var> to the new value. Otherwise, set the <code>state</code> of <var>timing</var> to <code>closed</code> and <a>stop observing</a> <var>provider</var>.</li>
-                <li>If the <code>error</code> property of <var>provider</var> is not null, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>.</li>
-                <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
-              </ol>
-            </li>
-            <li>
-              When an update to the <code>vector</code> property is observed, run the following substeps:
-              <ol>
-                <li>Set the <a>internal vector</a> of <var>timing</var> to the new value.</li>
-                <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
-              </ol>
-            </li>
-            <li>Return <var>timing</var>.</li>
-          </ol>
-
-          <p>
-            When a <a>user agent</a> is required to <dfn>observe</dfn> an object and run specific steps when an update to a property is detected, it MUST start to monitor the changes made to that object in the background and run the given steps as soon as the requested change is observed.
-          </p>
-          <p>
-            When a <a>user agent</a> is required to <dfn>stop observing</dfn> an object, it MUST stop any monitoring that was running on that object in the background.
-          </p>
-          <p class="issue">
-            This <a title="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
-          </p>
-        </section>
-
-        <section>
-          <h3>Process a query operation</h3>
-
-          <p>
-            When the <code>query</code> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, return null, and abort these steps.</li>
-            <li>If the <a>timing provider source</a> of <var>timing</var> is null, then let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds. Otherwise, let <var>t</var> be the result of running the following substeps:
-              <ol>
-                <li>Let <var>t<sub>provider</sub></var> be the result of calling <code>now()</code> on the <a>timing provider source</a> object. If this throws an exception, throw the exception, and abort all remaining steps. Similarly, if the returned value is not a double, throw a <code>TypeError</code> exception, and abort all remaining steps.</li>
-                <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an <code>OperationError</code> exception, and abort all remaining steps.</li>
-                <li>Set the <a>last measured time value</a>of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
-                <li>Return <var>t<sub>provider</sub></var>.</li>
-              </ol>
-            </li>
-            <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
-            <li>Let <var>p</var> be <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup>.</li>
-            <li>Let <var>v</var> be <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>).</li>
-            <li>Let <var>a</var> be <var>a<sub>int</sub></var>.</li>
-            <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
-            <li>Return <var>vector</var>.</li>
-          </ol>
-
-          <p class="issue">
-            The mechanism that detects non-monotonic readings of a <code><a>TimingProvider</a></code> clock and throws an exception when that happens could perhaps be replaced by a procedure that asks the <a>user agent</a> to create a monotonic clock out of these non-monotonic readings and to use that clock instead. This would allow to drop the requirement on <a>timing resource provider</a> to expose a monotonic clock.
-          </p>
-        </section>
-
-        <section>
-          <h3>Process an update operation</h3>
-          <p>
-            When the <code>update</code> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort these steps.</li>
-            <li>Let <var>newVector</var> be the method's first parameter</li>
-            <li>If the <a>timing provider source</a> of <var>timing</var> is not null, run the following substeps, and abort the remaining steps:
-              <ol>
-                <li>Let <var>promise<sub>provider</sub></var> be the result of calling <code>update()</code> on the <a>timing provider source</a> object with <var>newVector</var> as parameter. If the call throws an exception, return a new <code>Promise</code>, reject the promise with the exception, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps. Similarly, if the call does not return a <code>Promise</code>, return a new <code>Promise</code>, reject the promise with a <code>TypeError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps.</li>
-                <li>Return <var>promise<sub>provider</sub></var>.</li>
-              </ol>
-            </li>
-            <li>Let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
-            <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
-            <li>Let (<var>p<sub>new</sub></var>, <var>v<sub>new</sub></var>, <var>a<sub>new</sub></var>) be the three-tuple represented by <var>newVector</var>.</li>
-            <li>Let <var>p</var> be <var>p<sub>new</sub></var> or <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup> if <var>p<sub>new</sub></var> is null.</li>
-            <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a title="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
-            <li>Let <var>v</var> be <var>v<sub>new</sub></var> or <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) if <var>v<sub>new</sub></var> is null.</code>
-            <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var>if <var>a<sub>new</sub></var> is null.</li>
-            <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
-            <li>Set the <a>internal vector</a> of <var>timing</var> to <var>vector</var>.</li>
-            <li>If the <a>range</a> of <var>timing</var> is not null, <a>set the internal timeout</a> of <var>timing</var>.</li>
-            <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
-            <li>Resolve <var>promise</var>.</li>
-          </ol>
-        </section>
-
-        <section>
-          <h3>Set the internal timeout</h3>
-          <p>
-            If <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
-          <p>
-          <p>
-            When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
-          </p>
-          <ol>
-            <li>If the <a>current interval timeout</a> is not null, cancel the timeout and set the <a>current interval timeout</a> to null.</li>
-            <li>Given the current motion, Let <var>endpoint</var> be the <a>range</a> endpoint <code>(low|high)</code> that will be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
-            <li>If <var>endpoint</var> is null, abort these steps.</li>
-            <li>Set the <a>current interval timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
-          </ol>
-
-          <p class="issue">
-            What would be a proper way to introduce the notion of timeout according to the <a>internal clock</a> here?
-          </p>
-        </section>
-
-        <section>
-          <h3>Run the sequencer</h3>
-          <p>
-            The <dfn>sequencer marches on</dfn> steps for a <a>timing object</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>state vector</a> as returned by a call to the <code>query()</code> method at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the text track rendering, since their interpretation is up to the web application.
-          </p>
-          <p>
-            A <a>timing object</a> acts as sequencer for its list of <a>list of timing text tracks</a>. As such, the intended behavior is close to the one of a <a>media element</a> with its <a>list of text tracks</a>. In particular, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps on the <a>timing object</a>in the same cases as when [[!HTML5]] requires the <a>user agent</a> to run the <a>time marches on</a> steps on a <a>media element</a>.For instance:
-          </p>
-          <ul>
-            <li>When the <a>current position</a> of a <a>timing object</a> changes, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps.</li>
-            <li>When a <a>timing object</a>'s <a>list of newly introduced timing cues</a> has new cues added, then the <a>user agent</a> MUST run the <a>sequencer marches on</a>steps.</li>
+        <p>
+          When the <code><a>TimingObject</a></code> constructor that takes a <code><a>TimingProvider</a></code> is invoked, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>provider</var> be the constructor's argument.</li>
+          <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code> whose <a>timing provider source</a> is <var>provider</var>.</li>
+          <li>Set the <a>state</a> of <var>timing</var> to <code>connecting</code>.</li>
+          <li>Set the <a>range</a> of <var>timing</var> to the <code>range</code> property of <var>provider</var>.</li>
+          <li>Set the <a>state</a> of the <a>timing object</a> to the <code>readyState</code> property of <var>provider</var> and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+          <li>Set the <a>last measured time value</a> of <var>timing</var> to null.</li>
+          <li>Set the <a>internal vector</a> of <var>timing</var> to the <code>vector</code> property of <var>provider</var>.</li>
+          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
+          <li><a>Observe</a> <var>provider</var>.</li>
+          <li>
+            When an update to the <code>readyState</code> property is observed, run the following substeps:
+            <ol>
+              <li>If the transition from the current <a>state</a> of <var>timing</var> to the new value is in the list of <a>allowed state transitions</a>, set the <a>state</a> of <var>timing</var> to the new value. Otherwise, set the <code>state</code> of <var>timing</var> to <code>closed</code> and <a>stop observing</a> <var>provider</var>.</li>
+              <li>If the <code>error</code> property of <var>provider</var> is not null, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>.</li>
+              <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+            </ol>
           </li>
-          <p class="issue">
-            This specification should of course properly document these cases and adjust steps as needed.
-          </p>
-        </section>
+          <li>
+            When an update to the <code>vector</code> property is observed, run the following substeps:
+            <ol>
+              <li>Set the <a>internal vector</a> of <var>timing</var> to the new value.</li>
+              <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
+            </ol>
+          </li>
+          <li>Return <var>timing</var>.</li>
+        </ol>
+
+        <p>
+          When a <a>user agent</a> is required to <dfn>observe</dfn> an object and run specific steps when an update to a property is detected, it MUST start to monitor the changes made to that object in the background and run the given steps as soon as the requested change is observed.
+        </p>
+        <p>
+          When a <a>user agent</a> is required to <dfn>stop observing</dfn> an object, it MUST stop any monitoring that was running on that object in the background.
+        </p>
+        <p class="issue">
+          This <a title="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
+        </p>
       </section>
 
       <section>
-        <h3>Events</h3>
+        <h3>Process a query operation</h3>
 
-        <p>The following events fire on timing objects:</p>
+        <p>
+          The <dfn for="TimingObject">query</dfn> method returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>timing object clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, return null, and abort these steps.</li>
+          <li>If the <a>timing provider source</a> of <var>timing</var> is null, then let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds. Otherwise, let <var>t</var> be the result of running the following substeps:
+            <ol>
+              <li>Let <var>t<sub>provider</sub></var> be the result of calling <code>now()</code> on the <a>timing provider source</a> object. If this throws an exception, throw the exception, and abort all remaining steps. Similarly, if the returned value is not a double, throw a <code>TypeError</code> exception, and abort all remaining steps.</li>
+              <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an <code>OperationError</code> exception, and abort all remaining steps.</li>
+              <li>Set the <a>last measured time value</a>of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
+              <li>Return <var>t<sub>provider</sub></var>.</li>
+            </ol>
+          </li>
+          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
+          <li>Let <var>p</var> be <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup>.</li>
+          <li>Let <var>v</var> be <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>).</li>
+          <li>Let <var>a</var> be <var>a<sub>int</sub></var>.</li>
+          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
+          <li>Return <var>vector</var>.</li>
+        </ol>
 
-        <table>
+        <p class="issue">
+          The mechanism that detects non-monotonic readings of a <code><a>TimingProvider</a></code> clock and throws an exception when that happens could perhaps be replaced by a procedure that asks the <a>user agent</a> to create a monotonic clock out of these non-monotonic readings and to use that clock instead. This would allow to drop the requirement on <a>timing resource provider</a> to expose a monotonic clock.
+        </p>
+      </section>
+
+      <section>
+        <h3>Process an update operation</h3>
+        <p>
+          The <dfn for="TimingObject">update</dfn> method sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account. The method supports null values for the provided vector's attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>.
+        </p>
+        <p>
+          When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort these steps.</li>
+          <li>Let <var>newVector</var> be the method's first parameter</li>
+          <li>If the <a>timing provider source</a> of <var>timing</var> is not null, run the following substeps, and abort the remaining steps:
+            <ol>
+              <li>Let <var>promise<sub>provider</sub></var> be the result of calling <code>update()</code> on the <a>timing provider source</a> object with <var>newVector</var> as parameter. If the call throws an exception, return a new <code>Promise</code>, reject the promise with the exception, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps. Similarly, if the call does not return a <code>Promise</code>, return a new <code>Promise</code>, reject the promise with a <code>TypeError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps.</li>
+              <li>Return <var>promise<sub>provider</sub></var>.</li>
+            </ol>
+          </li>
+          <li>Let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
+          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
+          <li>Let (<var>p<sub>new</sub></var>, <var>v<sub>new</sub></var>, <var>a<sub>new</sub></var>) be the three-tuple represented by <var>newVector</var>.</li>
+          <li>Let <var>p</var> be <var>p<sub>new</sub></var> or <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup> if <var>p<sub>new</sub></var> is null.</li>
+          <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a title="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
+          <li>Let <var>v</var> be <var>v<sub>new</sub></var> or <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) if <var>v<sub>new</sub></var> is null.</code>
+          <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var>if <var>a<sub>new</sub></var> is null.</li>
+          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
+          <li>Set the <a>internal vector</a> of <var>timing</var> to <var>vector</var>.</li>
+          <li>If the <a>range</a> of <var>timing</var> is not null, <a>set the internal timeout</a> of <var>timing</var>.</li>
+          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
+          <li>Resolve <var>promise</var>.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Set the internal timeout</h3>
+        <p>
+          If <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
+        <p>
+        <p>
+          When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
+        </p>
+        <ol>
+          <li>If the <a>current interval timeout</a> is not null, cancel the timeout and set the <a>current interval timeout</a> to null.</li>
+          <li>Given the current motion, Let <var>endpoint</var> be the <a>range</a> endpoint <code>(low|high)</code> that will be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
+          <li>If <var>endpoint</var> is null, abort these steps.</li>
+          <li>Set the <a>current interval timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
+        </ol>
+
+        <p class="issue">
+          What would be a proper way to introduce the notion of timeout according to the <a>internal clock</a> here?
+        </p>
+      </section>
+
+      <section>
+        <h3>Run the sequencer</h3>
+        <p>
+          The <dfn>sequencer marches on</dfn> steps for a <a>timing object</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>state vector</a> as returned by a call to the <code>query()</code> method at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the text track rendering, since their interpretation is up to the web application.
+        </p>
+        <p>
+          A <a>timing object</a> acts as sequencer for its list of <a>list of timing text tracks</a>. As such, the intended behavior is close to the one of a <a>media element</a> with its <a>list of text tracks</a>. In particular, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps on the <a>timing object</a>in the same cases as when [[!HTML5]] requires the <a>user agent</a> to run the <a>time marches on</a> steps on a <a>media element</a>.For instance:
+        </p>
+        <ul>
+          <li>When the <a>current position</a> of a <a>timing object</a> changes, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps.</li>
+          <li>When a <a>timing object</a>'s <a>list of newly introduced timing cues</a> has new cues added, then the <a>user agent</a> MUST run the <a>sequencer marches on</a>steps.</li>
+        </li>
+        <p class="issue">
+          This specification should of course properly document these cases and adjust steps as needed.
+        </p>
+      </section>
+
+      <section>
+        <h3>Connection states</h3>
+        <p>
+          The connection with the <a>timing resource</a> that the <a>timing object</a> represents may take the following states:
+        </p>
+        <dl title="enum TimingObjectState" class="idl">
+          <dt>connecting</dt>
+          <dd>The <a>timing object</a> is attempting to establish a connection with the <a>timing resource</a> it represents. This is the initial state when a new <code><a>TimingObject</a></code> is created. This state is also used when a <code><a>TimingProvider</a></code> object is associated with the <code><a>TimingObject</a></code>.</dd>
+
+          <dt>open</dt>
+          <dd>The connection with the <a>timing resource</a> is established and communication is possible.</dd>
+
+          <dt>closing</dt>
+          <dd>The procedure to close down the connection with the <a>timing resource</a> has started.</dd>
+
+          <dt>closed</dt>
+          <dd>The connection with the <a>timing resource</a> has been closed or could not be established.</dd>
+        </dl>
+
+        <p>
+          The <dfn>allowed state transitions</dfn> are:
+        </p>
+        <ul>
+          <li>from <code>connecting</code> to any of the other states;</li>
+          <li>from <code>open</code> to <code>closing</code> and <code>closed</code>;</li>
+          <li>from <code>closing</code> to <code>closed</code>.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Event handlers</h3>
+
+        <p>The following are the <a>event handlers</a> (and their corresponding <a>event handler event types</a>) that MUST be supported as attributes by a <a>TimingObject</a> object. All events use the <a>Event</a> interface.</p>
+
+        <table dfn-for="TimingObject">
           <thead>
             <tr>
-              <th>Event name</th>
-              <th>Interface</th>
+              <th>Event handler</th>
+              <th>Event handler event type</th>
               <th>Fired</th>
             </tr>
           </thead>
           <tbody>
  
             <tr>
+              <td><dfn><code>onchange</code></dfn></td>
               <td><dfn><code>change</code></dfn></td>
-              <td><a><code>Event</code></a></td>
               <td>The <a>internal vector</a> is changed. Fired after the <code>update()</code> method has returned, or when an update is received from the <a>external timing resource</a>.</td>
             </tr>
             <tr>
+              <td><dfn><code>onreadystatechange</code></dfn></td>
               <td><dfn><code>readystatechange</code></dfn></td>
-              <td><a><code>Event</code></a></td>
               <td>The <code>readyState</code> attribute changed.<br/></td>
             </tr>
             <tr>
+              <td><dfn><code>ontimeupdate</code></dfn></td>
               <td><dfn><code>timeupdate</code></dfn></td>
-              <td><a><code>Event</code></a></td>
               <td>Fires periodically with fixed frequency 5Hz, except when timing object is paused. This is intended as a shorthand alternative for setting up a polling-loop with setInterval, or as an emulation of the pulse-based timing model that programmers are currently used to.</td>
             </tr>
             <tr>
+              <td><dfn><code>onerror</code></dfn></td>
               <td><dfn><code>error</code></dfn></td>
-              <td><a><code>Event</code></a></td>
               <td>Fired when an operation on the <a>timing object</a> cannot complete for some reason, (e.g. because of a loss of connection with the <a>timing resource</a>).</td>
             </tr>
           </tbody>
@@ -806,82 +771,76 @@
         A <a>timing provider object</a> implements the following interface:
       </p>
 
-      <dl title="callback interface TimingProvider" class="idl">
-        <dt>readonly attribute TimingStateVector vector</dt>
-        <dd>The <a>internal vector</a> that represents the initial conditions of the current motion.</dd>
+      <pre class="idl">
+        callback interface TimingProvider {
+          readonly    attribute TimingStateVector vector;
+          readonly    attribute TimingInterval    range;
+          readonly    attribute DOMString         readyState;
+          double  now ();
+          Promise update (TimingStateVectorUpdate newVector);
+        };
+      </pre>
 
-        <dt>readonly attribute TimingInterval range</dt>
-        <dd>The <a>interval</a>, if any, that defines range restrictions for the position of the <a>timing resource</a>.</dd>
-
-        <dt>readonly attribute DOMString readyState</dt>
-        <dd>The state of the object.</dd>
-
-        <dt>double now()</dt>
-        <dd>Returns the number of seconds from some arbitrary time origin defined by the <a>timing resource provider</a> when the object is created to the occurrence of the call to the <code>now</code> method.</dd>
-
-        <dt>Promise update()</dt>
-        <dd>
-          Sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account. The update supports null values for the provided vector's attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>.
-
-          <dl class="parameters">
-            <dt>TimingStateVectorUpdate newVector</dt>
-            <dd>The new vector.</dd>
-          </dl>
-        </dd>
-      </dl>
+      <div dfn-for="TimingProvider">
+        <p>
+          The <dfn>vector</dfn> attribute MUST be set to the <a>state vector</a> that represents the initial conditions of the current motion.
+        </p>
+        <p>
+          The <dfn>range</dfn> attribute MUST be set to the <a>interval</a> that constrains the position of the <a>state vector</a>, if any.
+        </p>
+        <p>
+          The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>.
+        </p>
+      </div>
 
       <section>
-        <h3>Procedures</h3>
+        <h3>Retrieve the current time</h3>
+        <p>
+          When the <dfn for="TimingProvider">now</dfn> method is invoked, the <a>timing resource provider</a> MUST return the number of seconds from some arbitrary time origin defined by the <a>timing resource provider</a> when the <a>timing provider object</a> is created to the occurrence of the call to the method, as evaluated by some software clock maintained by the <a>timing resource provider</a>.
+        </p>
+        <p>
+          The time values returned when calling the <a for="TimingProvider">now</a> method MUST be monotonically increasing.
+        </p>
+        <p class="note">
+          If the <a>external timing resource</a> that the <a>timing provider object</a> represents is hosted online, the <a>timing resource provider</a> may typically want to adjust the software clock through periodic measurements of this clock's skew against the clock of the server that hosts the resource in order to synchronize these clocks. How that synchronization is performed is up to the <a>timing resource provider</a> (see <a href="#implementation-guidelines"></a>).
+        </p>
+      </section>
 
-        <section>
-          <h3>Retrieve the current time</h3>
-          <p>
-            When the <code>now</code> method is invoked, the <a>timing resource provider</a> MUST return the number of seconds from some arbitrary time origin defined by the <a>timing resource provider</a> when the <a>timing provider object</a> is created to the occurrence of the call to the <code>now</code> method, as evaluated by some software clock maintained by the <a>timing resource provider</a>.
-          </p>
-          <p>
-            The time values returned when calling the <code>now</code> method MUST be monotonically increasing.
-          </p>
-          <p>
-            If the <a>external timing resource</a> that the <a>timing provider object</a> represents is hosted online, the <a>timing resource provider</a> may typically want to adjust the software clock through periodic measurements of this clock's skew against the clock of the server that hosts the resource in order to synchronize these clocks. How that synchronization is performed is up to the <a>timing resource provider</a> (see <a href="#implementation-guidelines"></a>).
-          </p>
-        </section>
+      <section>
+        <h3>Process an update operation</h3>
+        <p>
+          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>promise</var> be a new <code>Promise</code>.</li>
+          <li>Return <var>promise</var> and run the following steps in parallel.</li>
+          <li>Run whatever logic is necessary to pass the update request to the <a>external timing resource</a> that <var>provider</var> represents and alter the motion conditions accordingly.</li>
+          <li>If this logic succeeds, resolve <var>promise</var>. Otherwise reject <var>promise</var> with an error.</li>
+        </ol>
+      </section>
 
-        <section>
-          <h3>Process an update operation</h3>
-          <p>
-            When the <code>update</code> method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>promise</var> be a new <code>Promise</code>.</li>
-            <li>Return <var>promise</var>.</li>
-            <li>Run whatever logic is necessary to pass the update request to the <a>external timing resource</a> that <var>provider</var> represents and alter the motion conditions accordingly.</li>
-            <li>If this logic succeeds, resolve <var>promise</var>. Otherwise reject <var>promise</var> with an error.</li>
-          </ol>
-        </section>
+      <section>
+        <h3>Report new conditions of the current motion</h3>
+        <p>
+          When the <a>timing resource provider</a> needs to report an update to the motion conditions (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">vector</a> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
+        </p>
+      </section>
 
-        <section>
-          <h3>Report new conditions of the current motion</h3>
-          <p>
-            When the <a>timing resource provider</a> needs to report an update to the motion conditions (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <code>vector</code> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
-          </p>
-        </section>
+      <section>
+        <h3>Report a state change</h3>
+        <p>
+          When the <a>timing resource provider</a> needs to report a change of connection state with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">readyState</a> property to the new value.
+        </p>
+      </section>
 
-        <section>
-          <h3>Report a state change</h3>
-          <p>
-            When the <a>timing resource provider</a> needs to report a change of connection state with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <code>readyState</code> property to the new value.
-          </p>
-        </section>
-
-        <section>
-          <h3>Report an error</h3>
-          <p>
-            When the <a>timing resource provider</a> needs to report an unrecoverable error for a <code><a>TimingProvider</a></code> object, it MUST set its <code>error</code> property to the error and set its <code>readyState</code> property to <code>closed</code>.
-          </p>
-          <p class="note">
-            This will effectively make any <code><a>TimingObject</a></code> object that has this <code><a>TimingProvider</a></code> object as <a>timing provider source</a> enter a final <code>closed</code> state.
-          </p>
-        </section>
+      <section>
+        <h3>Report an error</h3>
+        <p link-for="TimingProvider">
+          When the <a>timing resource provider</a> needs to report an unrecoverable error for a <code><a>TimingProvider</a></code> object, it MUST set its <a>error</a> property to the error and set its <a>readyState</a> property to <code>closed</code>.
+        </p>
+        <p class="note">
+          This will effectively make any <code><a>TimingObject</a></code> object that has this <code><a>TimingProvider</a></code> object as <a>timing provider source</a> enter a final <code>closed</code> state.
+        </p>
       </section>
     </section>
 
@@ -907,67 +866,60 @@
 
       <p>A <a>State vector</a> implements the following interface:</p>
 
-      <dl title="interface TimingStateVector" class="idl" data-merge="TimingStateVectorInit TimingStateVectorUpdate">
-        <dt>Constructor()</dt>
-        <dd>
-          <p>
-            The constructor takes a dictionary argument, <var>vectorDict</var>, whose content is used to initialize the new <code>TimingStateVector</code> object. The <code>timestamp</code> attribute is required, other attributes are optional and will be replaced by <code>0.0</code> if not given.
-          </p>
-          <dl class="parameters">
-            <dt>TimingStateVectorInit vectorDict</dt>
-            <dd>The initial motion along the unidimensional axis. The <code>timestamp</code> attribute is required.</dd>
-          </dl>
-          <p class="note">
-            The constructor is only meant to be used by a <a>timing resource provider</a>, e.g. to create the <a>TimingStateVector</a> instance returned by a call to <code>query()</code>. In particular, the <a>timing resource provider</a> controls the underlying clock and thus is the only one who can compute a proper <code>timestamp</code> value.
-          </p>
-        </dd>
+      <pre class="idl">
+        dictionary TimingStateVectorUpdate {
+          double position;
+          double velocity;
+          double acceleration;
+        };
 
-        <dt>readonly attribute double position</dt>
-        <dd>Position on the unidimensional axis. The position unit is usage specific. The position may represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.</dd>
+        dictionary TimingStateVectorInit : TimingStateVectorUpdate {
+          double timestamp;
+        };
 
-        <dt>readonly attribute double velocity</dt>
-        <dd>Velocity along the unidimensional axis, in position unit per second.</dd>
+        [ Constructor (TimingStateVectorInit vectorDict)]
+        interface TimingStateVector {
+          readonly    attribute double position;
+          readonly    attribute double velocity;
+          readonly    attribute double acceleration;
+          readonly    attribute double timestamp;
+        };
+      </pre>
 
-        <dt>readonly attribute double acceleration</dt>
-        <dd>Acceleration along the unidimensional axis, in position unit per squared second.</dd>
+      <div dfn-for="TimingStateVector" link-for="TimingStateVector">
+        <p>
+          The <dfn>position</dfn> attribute MUST be set to the position of the <a>state vector</a> on its unidimensional axis. The position unit is usage specific. The position may represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.
+        </p>
 
-        <dt>readonly attribute double timestamp</dt>
-        <dd>The moment in time when <code>position</code>, <code>velocity</code> and <code>acceleration</code> were|are|will be valid, in seconds since some arbitrary time origin. The clock used to compute the timestamp depends on whether the <a>state vector</a> represents the motion of an <a>internal timing resource</a> or of an <a>external timing resource</a>.</dd>
-      </dl>
+        <p>
+          The <dfn>velocity</dfn> attribute MUST be set to the velocity of the <a>state vector</a> on its unidimensional axis, in position unit per second.
+        </p>
 
-      <dl title="dictionary TimingStateVectorUpdate" class="idl">
-        <dt>double position</dt>
-        <dd>Position on the unidimensional axis. The position unit is usage specific. The position may represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.</dd>
+        <p>
+          The <dfn>acceleration</dfn> attribute MUST be set to the acceleration of the <a>state vector</a> on its unidimensional axis, in position unit per squared second.
+        </p>
 
-        <dt>double velocity</dt>
-        <dd>Velocity along the unidimensional axis, in position unit per second.</dd>
-
-        <dt>double acceleration</dt>
-        <dd>Acceleration along the unidimensional axis, in position unit per squared second.</dd>
-      </dl>
-
-      <dl title="dictionary TimingStateVectorInit : TimingStateVectorUpdate" class="idl">
-        <dt>double timestamp</dt>
-        <dd>The moment in time when <code>position</code>, <code>velocity</code> and <code>acceleration</code> were|are|will be valid, in seconds, according to the clock used by the <a>timing object</a> or <a>timing provider object</a> that needs this structure.</dd>
-      </dl>
+        <p>
+          The <dfn>timestamp</dfn> attribut MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid, in seconds since some arbitrary time origin. The clock used to compute the timestamp depends on whether the <a>state vector</a> represents the motion of an <a>internal timing resource</a> or of an <a>external timing resource</a>.
+        </p>
+      </div>
 
       <section>
-        <h3>Procedures</h3>
-
-        <section>
-          <h3>Create a new state vector</h3>
-          <p>
-            When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code>.</li>
-            <li>Let (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>) be the four-tuple represented by the constructor's first argument.</li>
-            <li>If <var>t<sub>init</sub></var> is null, throw an <code>InvalidParameter</code> exception and abort these steps.</li>
-            <li>For each other variable, if the value is null, set it to <code>0.0</code>.</li>
-            <li>Initialize <var>vector</var> so that it represents the four-tuple (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>).</li>
-            <li>Return <var>vector</var>.</li>
-          </ol>
-        </section>
+        <h3>Create a new state vector</h3>
+        <p>
+          When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code>.</li>
+          <li>Let (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>) be the four-tuple represented by the constructor's first argument.</li>
+          <li>If <var>t<sub>init</sub></var> is null, throw an <code>InvalidParameter</code> exception and abort these steps.</li>
+          <li>For each other variable, if the value is null, set it to <code>0.0</code>.</li>
+          <li>Initialize <var>vector</var> so that it represents the four-tuple (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>).</li>
+          <li>Return <var>vector</var>.</li>
+        </ol>
+        <p class="note">
+          The constructor is only meant to be used by a <a>timing resource provider</a>, e.g. to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. In particular, the <a>timing resource provider</a> controls the underlying clock and thus is the only one who can compute a proper <a for="TimingStateVector">timestamp</a> value.
+        </p>
       </section>
     </section>
 
@@ -984,92 +936,75 @@
         An <dfn>interval</dfn> is a representation of a mathematical interval of real numbers. Attributes <code>low</code> and <code>high</code> are endpoints defining the interval. <code>(low &lt;= high)</code> is always true. If <code>(low === high)</code> the interval is a singular point. <code>low</code> and <code>high</code> may be set to <code>Infinity</code> or <code>-Infinity</code> to represent infinite intervals. Attributes <code>lowInclude</code> and <code>highInclude</code> determine whether endpoints <code>low</code> and <code>high</code> are included or excluded from the interval.
       </p>
 
+      <pre class="idl">
+        dictionary TimingIntervalInit {
+          double  low;
+          double  high;
+          boolean lowInclude;
+          boolean highInclude;
+        };
 
-      <dl title="interface TimingInterval" class="idl" data-merge="TimingIntervalInit">
-        <dt>Constructor()</dt>
-        <dd>
-          <p>
-            The constructor takes a dictionary argument, <var>intervalDict</var>, whose content is used to initialize the new <code>TimingInterval</code> object.
-          </p>
-          <dl class="parameters">
-            <dt>TimingIntervalInit intervalDict</dt>
-            <dd>Information about the interval to create.</dd>
-          </dl>
-        </dd>
+        [ Constructor (TimingIntervalInit intervalDict)]
+        interface TimingInterval {
+          readonly    attribute unrestricted double low;
+          readonly    attribute unrestricted double high;
+          readonly    attribute boolean             lowInclude;
+          readonly    attribute boolean             highInclude;
+          boolean covers (unrestricted double value);
+        };
+      </pre>
 
-        <dt>readonly attribute unrestricted double low</dt>
-        <dd>The lower bound of the interval.</dd>
-
-        <dt>readonly attribute unrestricted double high</dt>
-        <dd>The upper bound of the interval.</dd>
-
-        <dt>readonly attribute boolean lowInclude</dt>
-        <dd>Whether the lower bound is included in the interval.</dd>
-
-        <dt>readonly attribute boolean highInclude</dt>
-        <dd>Whether the upper bound is included in the interval.</dd>
-
-        <dt>boolean covers (unrestricted double value)</dt>
-        <dd>Returns true if the interval covers the given value.</dd>
-      </dl>
-
-      <dl title="dictionary TimingIntervalInit" class="idl">
-        <dt>double low</dt>
-        <dd>The lower bound of the interval.</dd>
-
-        <dt>double high</dt>
-        <dd>The upper bound of the interval.</dd>
-
-        <dt>boolean lowInclude</dt>
-        <dd>Whether the lower bound is included in the interval.</dd>
-
-        <dt>boolean highInclude</dt>
-        <dd>Whether the upper bound is included in the interval.</dd>
-      </dl>
+      <div dfn-for="TimingInterval">
+        <p>
+          The <dfn>low</dfn> attribute MUST be set to the lower bound of the interval.
+        </p>
+        <p>
+          The <dfn>high</dfn> attribute MUST be set to the upper bound of the interval.
+        </p>
+        <p>
+          The <dfn>lowInclude</dfn> attribute MUST be set to <code>true</code> if the lower bound is included in the interval. It MUST be set to <code>false</code> otherwise.
+        </p>
+        <p>
+          The <dfn>highInclude</dfn> attribute MUST be set to <code>true</code> if the upper bound is included in the interval. It MUST be set to <code>false</code> otherwise.
+        </p>
+      </div>
 
       <section>
-        <h3>Procedures</h3>
+        <h3>Create a new interval</h3>
 
-        <section>
-          <h3>Create a new interval</h3>
+        <p>
+          When the <code><a>Interval</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>interval</var> be a newly created <code><a>Interval</a></code>.</li>
+          <li>Let <var>intervalDict</var> be the constructor's first argument.</li>
+          <li>If <var>intervalDict.low</var> is null, set it to <code>-Infinity</code>.</li>
+          <li>If <var>intervalDict.high</var> is null, set it to <code>Infinity</code>.</li>
+          <li>If <var>intervalDict.low</var> is greater than <var>intervalDict.high</var>, swap <var>intervalDict.low</var> with <var>intervalDict.high</var> and swap <var>intervalDic.lowInclude</var> with <var>intervalDict.highInlude</var>.</li>
+          <li>Initialize the attributes of <var>interval</var> to the computed values of <var>intervalDict</var>.</li>
+          <li>Return <var>interval</var>.</li>
+        </ol>
+      </section>
 
-          <p>
-            When the <code><a>Interval</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>interval</var> be a newly created <code><a>Interval</a></code>.</li>
-            <li>Let <var>intervalDict</var> be the constructor's first argument.</li>
-            <li>If <var>intervalDict.low</var> is null, set it to <code>-Infinity</code>.</li>
-            <li>If <var>intervalDict.high</var> is null, set it to <code>Infinity</code>.</li>
-            <li>If <var>intervalDict.low</var> is greater than <var>intervalDict.high</var>, swap <var>intervalDict.low</var> with <var>intervalDict.high</var> and swap <var>intervalDic.lowInclude</var> with <var>intervalDict.highInlude</var>.</li>
-            <li>Initialize the attributes of <var>interval</var> to the computed values of <var>intervalDict</var>.</li>
-            <li>Return <var>interval</var>.</li>
-          </ol>
-        </section>
-
-        <section>
-          <h3>Cover a position</h3>
-          <p>
-            When the <code>covers</code> method is invoked on an <a>interval</a>, the <a>user agent</a> MUST evaluate whether the <a>interval</a> <a>covers</a> the provided value and return the result.
-          </p>
-          <p>
-            When the <a>user agent</a> is required to evaluate whether an <a>interval</a> <dfn>covers</dfn> a position value, it MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>value</var> be the position to evaluate.</li>
-            <li>If <var>value</var> is smaller than the <code>low</code> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-            <li>If <var>value</var> equals the <code>low</code> attribute of the <a>interval</a> and the <code>lowInclude</code> attribute is <code>false</code>, return <code>false</code>, and abort these steps.</li>
-            <li>If <var>value</var> is greater than the <code>high</code> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-            <li>If <var>value</var> equals the <code>high</code> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-            <li>Return true.</li>
-          </ol>
-        </section>
+      <section>
+        <h3>Cover a position</h3>
+        <p>
+          When the <dfn for="Interval">covers</dfn> method is invoked on an <a>interval</a> or when the <a>user agent</a> is required to evaluate whether an <a>interval</a> covers a provided value, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol link-for="TimingInterval">
+          <li>Let <var>value</var> be the position to evaluate.</li>
+          <li>If <var>value</var> is smaller than the <a>low</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
+          <li>If <var>value</var> equals the <a>low</a> attribute of the <a>interval</a> and the <a>lowInclude</a> attribute is <code>false</code>, return <code>false</code>, and abort these steps.</li>
+          <li>If <var>value</var> is greater than the <a>high</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
+          <li>If <var>value</var> equals the <a>high</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
+          <li>Return true.</li>
+        </ol>
       </section>
     </section>
 
 
     <section>
-      <h3>Associating media elements with a timing object</h3>
+      <h3>Media elements and timing objects</h3>
       <p class="note">
         If this specification progresses along the standardisation track, this section should be merged in a future version of [[!HTML5]].
       </p>
@@ -1086,76 +1021,78 @@
         A <a>media element</a> can have a <dfn>current timing source</dfn>, which is a <code><a>TimingObject</a></code>, that imposes the <a>media timeline</a> and associated clock that the <a>media element</a> uses.
       </p>
 
-      <dl title="partial interface HTMLMediaElement" class="idl">
-        <dt>attribute TimingObject timingsrc</dt>
-        <dd>Get/Set the <code><a>TimingObject</a></code> object associated with this media element.</dd>
-      </dl>
+      <pre class="idl">
+        partial interface HTMLMediaElement {
+          attribute TimingObject timingsrc;
+        };
+      </pre>
+
+      <p>
+        The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the media element with a timing object</a>.
+      </p>
 
       <section>
-        <h3>Procedures</h3>
-        <section>
-          <h3>Associate with a timing object</h3>
-          <p>
-            The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>m</var> be the <a>media element</a> in question.</li>
-            <li>Let <var>old controller</var> be <var>m</var>'s <a>current media controller</a>, it if currently has one, and null otherwise.</li>
-            <li>Let <var>m</var> have no <a>current media controller</a>, if it currently has one.</li>
-            <li>Remove the elements's <code>mediagroup</code> content attribute, if any.</li>
-            <li>Let <var>m</var> have no <a>current timing source</a>, it if currently has one.</li>
-            <li>If the new value is null, then jump to the <i>update controller</i> step below.</li>
-            <li>Let <var>m</var>'s <a>current timing source</a> be the new value.</li>
-            <li>Let <var>new timing</var> be <var>m</var>'s <a>current timing source</a>.</li>
-            <li><a>Bring the media element up to speed with its new timing source</a>.</li>
-            <li><i>Update controller</i>: If <var>old controller</var> is not null and still has one or more <a>slaved media elements</a>, then <a>report the controller state</a> for <var>old controller</var>.</li>
-          </ol>
-
-          <p>
-            When a <a>media element</a> has a <a>current timing source</a>, its <a>effective playback rate</a> is the <code><a>TimingObject</a></code>'s <a>internal vector</a>'s velocity.
-          </p>
-        </section>
-
-        <section>
-          <h3>Set the current media controller</h3>
-          <p>
-            The procedures defined in [[!HTML5]] that update the <a>current media controller</a> should be updated to include the following step before the <a>current media controller</a> is set:
-          </p>
-          <ol>
-            <li>Let <var>m</var> have no <a>current timing source</a>, if it currently has one.</li>
-          </ol>
-        </section>
-
-        <section>
-          <h3>Set the current position</h3>
-          <p>
-            The procedure defined in [[!HTML5]] that prevent setting <code>currentTime</code> when the <a>media element</a> has a <a>current media controller</a> should be updated to also prevent setting the attribute when the <a>media element</a> has a <a>current timing source</a>.
-          </p>
-          <p class="note">
-            The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>, the velocity of the <a>state vector</a> of the <a>current timing source</a> is used instead in that situation.
-          </p>
-        </section>
-
-        <p class="issue">
-          Should the <code>play</code>, <code>pause</code> and other commands be mapped to <code>update</code> requests on the <code><a>TimingObject</a></code>?
+        <h3>Associate with a timing object</h3>
+        <p>
+          When the <a>user agent</a> is to <dfn>associate the media element with a timing object</dfn>, it MUST run the following steps:
         </p>
+        <ol>
+          <li>Let <var>m</var> be the <a>media element</a> in question.</li>
+          <li>Let <var>old controller</var> be <var>m</var>'s <a>current media controller</a>, it if currently has one, and null otherwise.</li>
+          <li>Let <var>m</var> have no <a>current media controller</a>, if it currently has one.</li>
+          <li>Remove the element's <code>mediagroup</code> content attribute, if any.</li>
+          <li>Let <var>m</var> have no <a>current timing source</a>, it if currently has one.</li>
+          <li>If the provided timing object is null, then jump to the <i>update controller</i> step below.</li>
+          <li>Let <var>m</var>'s <a>current timing source</a> be the providedtiming object.</li>
+          <li>Let <var>new timing</var> be <var>m</var>'s <a>current timing source</a>.</li>
+          <li><a>Bring the media element up to speed with its new timing source</a>.</li>
+          <li><i>Update controller</i>: If <var>old controller</var> is not null and still has one or more <a>slaved media elements</a>, then <a>report the controller state</a> for <var>old controller</var>.</li>
+        </ol>
 
-        <section>
-          <h3>Bring a media element up to speed with its timing source</h3>
-          <p>
-            When the <a>user agent</a> is to <dfn>bring the media element up to speed with its new timing source</dfn>, it MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>m</var> be that <a>media element</a>.</li>
-            <li>Let <var>timing</var> be that timing source.</li>
-            <li>Let (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>) be the result of calling <code>query</code> on <var>timing</var>.</li>
-            <li>If <var>m</var> cannot be <a title="seek">seeked</a> to <var>p</var> relative to <var>m</var>'s timeline because <a>media data</a> is not yet available, <a>queue a task</a> to <a>bring the media element up to speed with its new timing source</a> and abort these steps.</li>
-            <li><a>Seek</a> <var>m</var> to <var>p</var> relative to <var>m</var>'s timeline.</li>
-          </ol>
-          <p class="issue">
-            The <a>seek</a> procedure needs to be redefined here, since it may update the final playback position which must not happen here.
-          </p>
-        </section>
+        <p>
+          When a <a>media element</a> has a <a>current timing source</a>, its <a>effective playback rate</a> is the <code><a>TimingObject</a></code>'s <a>internal vector</a>'s velocity.
+        </p>
+      </section>
+
+      <section>
+        <h3>Set the current media controller</h3>
+        <p>
+          The procedures defined in [[!HTML5]] that update the <a>current media controller</a> should be updated to include the following step before the <a>current media controller</a> is set:
+        </p>
+        <ol>
+          <li>Let <var>m</var> have no <a>current timing source</a>, if it currently has one.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Set the current position</h3>
+        <p>
+          The procedure defined in [[!HTML5]] that prevents setting <code>currentTime</code> when the <a>media element</a> has a <a>current media controller</a> should be updated to also prevent setting the attribute when the <a>media element</a> has a <a>current timing source</a>.
+        </p>
+        <p class="note">
+          The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>, the velocity of the <a>state vector</a> of the <a>current timing source</a> is used instead in that situation.
+        </p>
+      </section>
+
+      <p class="issue">
+        Should the <code>play</code>, <code>pause</code> and other commands be mapped to <code>update</code> requests on the <code><a>TimingObject</a></code>?
+      </p>
+
+      <section>
+        <h3>Bring a media element up to speed with its timing source</h3>
+        <p>
+          When the <a>user agent</a> is to <dfn>bring the media element up to speed with its new timing source</dfn>, it MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>m</var> be that <a>media element</a>.</li>
+          <li>Let <var>timing</var> be that timing source.</li>
+          <li>Let (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>) be the result of calling <a for="TimingObject">query</a> on <var>timing</var>.</li>
+          <li>If <var>m</var> cannot be <a title="seek">seeked</a> to <var>p</var> relative to <var>m</var>'s timeline because <a>media data</a> is not yet available, <a>queue a task</a> to <a>bring the media element up to speed with its new timing source</a> and abort these steps.</li>
+          <li><a>Seek</a> <var>m</var> to <var>p</var> relative to <var>m</var>'s timeline.</li>
+        </ol>
+        <p class="issue">
+          The <a>seek</a> procedure needs to be redefined here, since it may update the final playback position which must not happen here.
+        </p>
       </section>
     </section>
 
@@ -1164,9 +1101,8 @@
 
 
 
-
     <section>
-      <h3>Sequencer</h3>
+      <h3>Sequencing</h3>
       <p>
         A <dfn title="timing text track|timing text tracks">timing text track</dfn> is a <a>text track</a> that can be associated with a <a>timing object</a>, which acts as sequencer for the <a>text track cues</a> that compose the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a> that it is associated with.
       </p>
@@ -1176,65 +1112,54 @@
       <p class="issue">
         Is inheriting from <a>TextTrack</a> as proposed below the right approach? It it tempting to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a> above. However <a>TextTrack</a> does not expose a constructor and adding an <code>addTextTrack</code> method to <a>TimingObject</a> (similar to the one on <a>HTMLMediaElement</a>) is not consistent with a <a>timing object</a> that objects can associate with.
       </p>
-      <dl title="interface TimingTextTrack : TextTrack" class="idl">
-        <dt>Constructor()</dt>
-        <dd>
-          Returns a new <code><a>TimingTextTrack</a></code>.
-          <dl class="parameters">
-            <dt>TextTrackKind kind</dt>
-            <dd>The <a>kind of track</a>.</dd>
-            <dt>optional DOMString label = ""</dt>
-            <dd>The <a>text track label</a>.</dd>
-            <dt>optional DOMString language = ""</dt>
-            <dd>The <a>text track language</a>.</dd>
-          </dl>
-        </dd>
+      <pre class="idl">
+        [ Constructor (TextTrackKind kind, optional DOMString label = "", optional DOMString language = "")]
+        interface TimingTextTrack : TextTrack {
+          attribute TimingObject timingsrc;
+        };
+      </pre>
 
-        <dt>attribute TimingObject timingsrc</dt>
-        <dd>Get/Set the <code><a>TimingObject</a></code> object associated with this timing text track.</dd>
-      </dl>
+      <p>
+        The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
+      </p>
 
       <section>
-        <h3>Procedures</h3>
+        <h3>Create a new timing text track</h3>
+        <p>
+          When the <code><a>TimingTextTrack</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol>
+          <li>Create a new <code><a>TimingTextTrack</a></code> object.</li>
+          <li>Create a new <a>timing text track</a> corresponding to the new object, and sets its <a>text track kind</a> to <var>kind</var>, its <a>text track label</a> to <var>label</var>, its <var>text track language</var> to language, its <a>text track readiness state</a> to the <a>text track loaded</a> state, its <a>text track mode</a> to the <a>text track hidden</a> mode, and its <a>text track list of cues</a> to an empty list.</li>
+          <li>Return the new <code><a>TimingTextTrack</a></code> object.</li>
+        </ol>
+      </section>
 
-        <section>
-          <h3>Create a new timing text track</h3>
-          <p>
-            When the <code><a>TimingTextTrack</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Create a new <code><a>TimingTextTrack</a></code> object.</li>
-            <li>Create a new <a>timing text track</a> corresponding to the new object, and sets its <a>text track kind</a> to <var>kind</var>, its <a>text track label</a> to <var>label</var>, its <var>text track language</var> to language, its <a>text track readiness state</a> to the <a>text track loaded</a> state, its <a>text track mode</a> to the <a>text track hidden</a> mode, and its <a>text track list of cues</a> to an empty list.</li>
-            <li>Return the new <code><a>TimingTextTrack</a></code> object.</li>
-          </ol>
-        </section>
-
-        <section>
-          <h3>Associate with a timing object</h3>
-          <p>
-            The <code>timingsrc</code> attribute, on getting, MUST return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST run the following steps:
-          </p>
-          <ol>
-            <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
-            <li>Let <var>old timing</var> be <var>track</var>'s <a>current sequencer</a>, if any, or null otherwise.</li>
-            <li>Let <var>track</var>'s <a>current sequencer</a> be the new value.</li>
-            <li>Let <var>new timing</var> be <var>track</var>'s <a>current sequencer</a>.</li>
-            <li>
-              If <var>old timing</var> is not null, run the following substeps:
-              <ol>
-                <li>Remove <var>track</var> from <var>timing</var>'s <a>list of timing text tracks</a>.</li>
-                <li>Run the <a>time marches on</a> algorithm on <var>timing</var>.</li>
-              </ol>
-            </li>
-            <li>
-              If <var>new timing</var> is not null, run the following substeps:
-              <ol>
-                <li>Add <var>track</var> to <var>timing</var>'s <a>list of timing text tracks</a>.</li>
-                <li>Run the <a>time marches on</a> algorithm on <var>timing</var>.</li>
-              </ol>
-            </li>
-          </ol>
-        </section>
+      <section>
+        <h3>Associate with a timing object</h3>
+        <p>
+          When the <a>user agent</a> is required to <dfn>associate the track with a timing object</dfn>, it MUST run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
+          <li>Let <var>old timing</var> be <var>track</var>'s <a>current sequencer</a>, if any, or null otherwise.</li>
+          <li>Let <var>track</var>'s <a>current sequencer</a> be the new value.</li>
+          <li>Let <var>new timing</var> be <var>track</var>'s <a>current sequencer</a>.</li>
+          <li>
+            If <var>old timing</var> is not null, run the following substeps:
+            <ol>
+              <li>Remove <var>track</var> from <var>timing</var>'s <a>list of timing text tracks</a>.</li>
+              <li>Run the <a>sequencer marches on</a> algorithm on <var>timing</var>.</li>
+            </ol>
+          </li>
+          <li>
+            If <var>new timing</var> is not null, run the following substeps:
+            <ol>
+              <li>Add <var>track</var> to <var>timing</var>'s <a>list of timing text tracks</a>.</li>
+              <li>Run the <a>sequencer marches on</a> algorithm on <var>timing</var>.</li>
+            </ol>
+          </li>
+        </ol>
       </section>
     </section>
 
