@@ -289,11 +289,11 @@
         The following terms, procedures and interfaces are defined in [[!HTML5]]:
       </p>
       <ul>
-        <li><dfn title="event handler|event handlers"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
-        <li><dfn title="event handler event type|event handler event types"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
+        <li><dfn lt="event handler|event handlers"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
+        <li><dfn lt="event handler event type|event handler event types"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
-        <li><dfn title="media element|media elements"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
+        <li><dfn lt="media element|media elements"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
@@ -302,7 +302,7 @@
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
-        <li><dfn title="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
+        <li><dfn lt="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-language">text track language</a></dfn></li>
@@ -454,7 +454,7 @@
       <h2>Timing Object</h2>
 
       <p>
-        A <dfn title="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
+        A <dfn lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
       <p>
         A <a>timing object</a> has a <dfn>state</dfn> that describes the state of the connection with the <a>timing resource</a>, and an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>.
@@ -475,7 +475,7 @@
         A <a>timing object</a> can also have a <dfn>timing provider source</dfn>, which is a <code><a>TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>, and a <dfn>last measured time value</dfn> that is the last timestamp value read from the <a>timing provider source</a> and is used to check the monotonicity of the clock exposed by the <a>timing provider source</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
       </p>
       <p>
-        A <a>timing object</a> is associated with a <dfn title="timing object clock">clock</dfn> which is maintained by the <a>timing resource provider</a> if the <a>timing object</a> has a <a>timing provider source</a>, or is the <a>internal clock</a>.
+        A <a>timing object</a> is associated with a <dfn lt="timing object clock">clock</dfn> which is maintained by the <a>timing resource provider</a> if the <a>timing object</a> has a <a>timing provider source</a>, or is the <a>internal clock</a>.
       </p>
       <p>
         A <a>timing object</a> has a <dfn>current position</dfn>, which represents the position of the <a>timing object</a> along the unidimensional axis at the time of evaluation. When the <a>timing object</a> is <a>moving</a>, its <a>current position</a> must increase monotonically based on the velocity and acceleration of its <a>internal vector</a> per unit time of the <a>timing object clock</a>. (This specification refers to this as an <em>increase</em> but that increase could actually be a <em>decrease</em>.)
@@ -524,7 +524,7 @@
             If <var>rangeInit</var> is not null, run the following substeps:
             <ol>
               <li>Set the <a>range</a> of <var>timing</var> to a newly constructed <code><a>Interval</a></code> that represents <var>rangeInit</var>.</li>
-              <li>If the <a>range</a> does not <a title="covers">cover</a> the position of the <a>internal vector</a>, set that position to the lower bound or upper bound of the <a>range</a>, whichever is closest, and set the velocity and acceleration to <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
+              <li>If the <a>range</a> does not <a lt="covers">cover</a> the position of the <a>internal vector</a>, set that position to the lower bound or upper bound of the <a>range</a>, whichever is closest, and set the velocity and acceleration to <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
               <li><a>Set the internal timeout</a> of <var>timing</var>.</li>
             </ol>
           <li>Set the <a>state</a> of <var>timing</var> to <code>open</code>.</li>
@@ -574,7 +574,7 @@
           When a <a>user agent</a> is required to <dfn>stop observing</dfn> an object, it MUST stop any monitoring that was running on that object in the background.
         </p>
         <p class="issue">
-          This <a title="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
+          This <a lt="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
         </p>
       </section>
 
@@ -628,7 +628,7 @@
           <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
           <li>Let (<var>p<sub>new</sub></var>, <var>v<sub>new</sub></var>, <var>a<sub>new</sub></var>) be the three-tuple represented by <var>newVector</var>.</li>
           <li>Let <var>p</var> be <var>p<sub>new</sub></var> or <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup> if <var>p<sub>new</sub></var> is null.</li>
-          <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a title="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
+          <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a lt="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
           <li>Let <var>v</var> be <var>v<sub>new</sub></var> or <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) if <var>v<sub>new</sub></var> is null.</code>
           <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var>if <var>a<sub>new</sub></var> is null.</li>
           <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
@@ -758,7 +758,7 @@
     <section>
       <h2>Timing Provider</h2>
       <p>
-        A <dfn title="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates whatever logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates whatever logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
         This mechanism is designed to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate motion updates to connected clients are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
@@ -858,7 +858,7 @@
       <h2>State Vector</h2>
 
       <p>
-        A <dfn title="state vector|state vectors">state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, time)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
+        A <dfn lt="state vector|state vectors">state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, time)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
       </p>
       <p>
         In particular, the <a>internal vector</a> of a <a>timing object</a> is a <a>state vector</a>, the <code>query()</code> operation returns a <a>state vector</a> and the <code>update()</code> operation takes a <a>state vector</a> as parameter.
@@ -1005,34 +1005,61 @@
 
     <section>
       <h3>Media elements and timing objects</h3>
+      <p>
+        This section specifies an extension of <a>media elements</a> that allows them to use a <a>timing object</a> as a timing source.
+      </p>
+
       <p class="note">
         If this specification progresses along the standardisation track, this section should be merged in a future version of [[!HTML5]].
       </p>
-      <p class="issue">
-        The procedures below are incomplete, some of them are described as updates to be made to procedures defined in [[!HTML5]], and some procedures are missing. The goal is to define a <a>timing object</a> as a <code><a>MediaController</a></code> without requiring the <a>report the controller state</a> part and with prose to convey the need for a <a>user agent</a> to keep trying to bring the <a>media element</a> up to speed with its <a>timing object</a> when it cannot follow the motion the <a>timing object</a> imposes. Before dwelving into details, the Multi-Device Timing Community Group welcomes feedback on the overall approach proposed here.
-      </p>
-      <p>
-        This section specifies an extension of <a>media elements</a> that allows them to use a <a>timing object</a> as a <a>media timeline</a> source.
-      </p>
-      <p>
-        From the perspective of a <a>media element</a>, a <a>timing object</a> may be viewed as a <code><a>MediaController</a></code> with one notable exception: when it is slaved to a <a>timing object</a>, a <a>media element</a> cannot pause a <a>timing object</a>, even if it becomes stall.
-      </p>
-      <p>
-        A <a>media element</a> can have a <dfn>current timing source</dfn>, which is a <code><a>TimingObject</a></code>, that imposes the <a>media timeline</a> and associated clock that the <a>media element</a> uses.
-      </p>
 
-      <pre class="idl">
-        partial interface HTMLMediaElement {
-          attribute TimingObject timingsrc;
-        };
-      </pre>
+      <section>
+        <h3>Introduction</h3>
 
-      <p>
-        The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the media element with a timing object</a>.
-      </p>
+        <p>
+          The essential function of the <a>media element</a> is to provide playback of video and audio data. Playback is typically controlled by end-user interaction (e.g. play, pause, seekTo) as well as the availability of data (e.g. live streaming, buffering). In particular, if the buffer underflows during playback, playback is halted until data becomes available. We call this the <dfn>default playback mode</dfn>.
+        </p>
+        <p> 
+          This section specifies <dfn>timed playback mode</dfn> as an alternative mode of operation for the <a>media element</a>. <a>Timed playback mode</a> implies that media playback is directed exclusively by an external <a>timing object</a>. The goal is to allow presentation of video and audio frames at the correct time (millisecond scale), relative to a timing object. In other words, in <a>timed playback mode</a> the function of the <a>media element</a> is to time-align its internal media player with a <a>timing object</a>. This way, <a>media elements</a> may take part in precisely coordinated multi-media presentations, both in single-device and multi-device scenarios. In particular, as errors in time-alignment should be well below 10 ms, use-cases such as echo-less Web radio (multiple devices in a room), multi-track music (on multiple devices) or synchronization with musical instruments should be supported.
+        </p>
+        <p>
+          <a>Timed playback mode</a> and <a>default playback mode</a> are different in a few important respects:
+        </p>
+        <p>
+          In <a>timed playback mode</a> there is no obligation to present all the media content. If the <a>timing object</a> starts playback before the <a>media element</a> is ready, then a small segment of media will simply not be presented. The <a>media element</a> must always focus on time-aligning its presentation with the <a>timing object</a>. This is equally true on load, after <a>timing object</a> change events, or in the event of missing data. If correct data is not available at any given point in time, the <a>media element</a> simply defaults to presenting a black screen, perhaps decorated with graphics illustrating the advancing offset of the <a>timing object</a> as well as the appropriate error message.
+        </p>
+        <p>
+          The <a>media element</a> never halts the <a>timing object</a> in order to wait for data or other internal processing. Instead, end-users may choose to pause the presentation manually, or navigate back to see missing segments. Crucially, media controls (e.g. interactive buttons and progress bar) associated with the <a>media element</a> must be applied exclusively to the <a>timing object</a>. (The internal media player of the <a>media element</a> will be affected indirectly by change events from the <a>timing object</a>). This way, manually pausing a <a>media element</a> for buffering affects not only the <a>media element</a> but any media component connected to the same <a>timing object</a>.
+        </p>
+        <p>
+          To achieve precisely timed playback, a <a>media element</a> must continuously monitor and adjust its internal media player. Even if the internal media player is perfectly time-aligned with the <a>timing object</a> at one point, players may slowly drift away from the <a>timing object</a> over time. To counter this, the <a>media element</a> must monitor their time-alignment periodically, and adjust as the error grows too large. Using variable playback rate internally is an effective way of implementing adjustments gradually and precisely.
+        </p>
+        <p>
+          <a lt="media elements">Media elements</a> take direction from a <a>timing object</a>, but playback capabilities are likely limited when it comes to high velocities, backwards playback or acceleration (supported by the <a>timing object</a>). Still, <a>media elements</a> must accept any state that the <a>timing object</a> supports, so throwing exceptions in these circumstances is not acceptable. Instead, <a>media elements</a> are free to fall back to black screen or graphical illustrations whenever the <a>timing object</a> specifies motions that are not supported by the internal media player.
+        </p>
+
+      </section>
+
 
       <section>
         <h3>Associate with a timing object</h3>
+        <p>
+          From the perspective of a <a>media element</a>, a <code><a>TimingObject</a></code> plays a role similar to a <code><a>MediaController</a></code>.
+        </p>
+        <p>
+          A <a>media element</a> in <a>timed playback mode</a> has a <dfn>current timing source</dfn> which is a <code><a>TimingObject</a></code>. The <a>timing object</a> imposes the media clock that the <a>media element</a> uses.
+        </p>
+
+        <pre class="idl">
+          partial interface HTMLMediaElement {
+            attribute TimingObject timingsrc;
+          };
+        </pre>
+
+        <p>
+          The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the media element with a timing object</a>.
+        </p>
+     
         <p>
           When the <a>user agent</a> is to <dfn>associate the media element with a timing object</dfn>, it MUST run the following steps:
         </p>
@@ -1045,12 +1072,12 @@
           <li>If the provided timing object is null, then jump to the <i>update controller</i> step below.</li>
           <li>Let <var>m</var>'s <a>current timing source</a> be the providedtiming object.</li>
           <li>Let <var>new timing</var> be <var>m</var>'s <a>current timing source</a>.</li>
-          <li><a>Bring the media element up to speed with its new timing source</a>.</li>
+          <li><a>check error in time-alignment</a>.</li>
           <li><i>Update controller</i>: If <var>old controller</var> is not null and still has one or more <a>slaved media elements</a>, then <a>report the controller state</a> for <var>old controller</var>.</li>
         </ol>
 
         <p>
-          When a <a>media element</a> has a <a>current timing source</a>, its <a>effective playback rate</a> is the <code><a>TimingObject</a></code>'s <a>internal vector</a>'s velocity.
+          When a <a>media element</a> has a <a>current timing source</a>, it's <code>currentTime</code> and <code>playbackRate</code> properties reflect the current state of the internal media player, not the <a>timing object</a>. This implies backwards compatibility for applications that uses the <a>media element</a> as timing source. Note that if the velocity of the <a>timing object</a> is 1.0, the effective playbackRate of the <a>media element</a> might be slightly less or slightly larger than 1.0. An internal playback rate of 1.0 generally does NOT imply that playback offset advances with the exact speed of the system clock. In addition, <a>media elements</a> may adjust for error in time-alignment gradually by adjusting their internal playback rate every now and then. 
         </p>
       </section>
 
@@ -1069,42 +1096,55 @@
         <p>
           The procedure defined in [[!HTML5]] that prevents setting <code>currentTime</code> when the <a>media element</a> has a <a>current media controller</a> should be updated to also prevent setting the attribute when the <a>media element</a> has a <a>current timing source</a>.
         </p>
+        <p class="issue">
+          An alternative to preventing the setting of <code>currentTime</code> would be to map such a request onto the <a>current timing source</a>.
+          Following this approach, other media control commands such as <code>play</code> and <code>pause</code> could be mapped similarly.
+        </p>
         <p class="note">
-          The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>, the velocity of the <a>state vector</a> of the <a>current timing source</a> is used instead in that situation.
+          The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>.
+          Note also that <code>playbackRate</code> attribute does not trivially map to the current definition of a <a>timing object</a>. This is because <code>playbackRate</code> is effectively a persistent wish for a specific playbackRate, rather than the actual playbackRate at any time. The <a>timing object</a> may easily be extended with this functionality by application code.   
         </p>
       </section>
-
-      <p class="issue">
-        Should the <code>play</code>, <code>pause</code> and other commands be mapped to <code>update</code> requests on the <code><a>TimingObject</a></code>?
-      </p>
-
+      
       <section>
-        <h3>Bring a media element up to speed with its timing source</h3>
+        <h3>Check error in time-alignment</h3>
         <p>
-          When the <a>user agent</a> is to <dfn>bring the media element up to speed with its new timing source</dfn>, it MUST run the following steps:
+          The user agent must <dfn>check error in time-alignment</dfn> between <a>timing object</a> and the internal player of the <a>media element</a>, and then make steps to adapt if error are too big. Checking the error involves the following steps:
         </p>
         <ol>
           <li>Let <var>m</var> be that <a>media element</a>.</li>
           <li>Let <var>timing</var> be that timing source.</li>
-          <li>Let (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>) be the result of calling <a for="TimingObject">query</a> on <var>timing</var>.</li>
-          <li>If <var>m</var> cannot be <a title="seek">seeked</a> to <var>p</var> relative to <var>m</var>'s timeline because <a>media data</a> is not yet available, <a>queue a task</a> to <a>bring the media element up to speed with its new timing source</a> and abort these steps.</li>
-          <li><a>Seek</a> <var>m</var> to <var>p</var> relative to <var>m</var>'s timeline.</li>
+          <li>Let <var>max</var> be the maximum error that is tolerated.</li>       
+          <li>Let <var>ideal</var> be the result of <code>timing.query().position</code>.</li>
+          <li>Let <var>actual</var> be the currentTime of the internal media player.</li>
+          <li>Let <var>error</var> be (<var>ideal</var> - <var>actual</var>).</li>
+          <li>If (<var>error</var> &#gt <var>max</var>) start adjust <a>time-alignment</a> with given <var>error</var></li>.
         </ol>
-        <p class="issue">
-          The <a>seek</a> procedure needs to be redefined here, since it may update the final playback position which must not happen here.
+      </section>
+
+   
+      <section>
+        <h3>Time-alignment</h3>
+        <p>
+          How the user agent implements adjustments to the <dfn>time-alignment</dfn> is left unspecified. 
+        </p>
+        <p>
+          If the error is big (e.g. after a <a>timing object</a> update event) adjustments may require one or multiple <code>seekTo(X)</code> operations on the internal media player. The expected time-consumption of seekTo() operations should likely be taken into consideration when calculating <code>X</code>. If the internal media player (media format) supports variable playbackRate, this may be an effective way of implementing smaller adjustments gradually and more precisely. In both cases, adjusting the time-alignment is likely a multi-step process that goes on until the <var>error</var> is acceptible or cannot be further reduced.  
         </p>
       </section>
+    
+
     </section>
 
 
 
 
-
+    <!-- SEQUENCING -->
 
     <section>
       <h3>Sequencing</h3>
       <p>
-        A <dfn title="timing text track|timing text tracks">timing text track</dfn> is a <a>text track</a> that can be associated with a <a>timing object</a>, which acts as sequencer for the <a>text track cues</a> that compose the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a> that it is associated with.
+        A <dfn lt="timing text track|timing text tracks">timing text track</dfn> is a <a>text track</a> that can be associated with a <a>timing object</a>, which acts as sequencer for the <a>text track cues</a> that compose the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a> that it is associated with.
       </p>
       <p class="note">
         As opposed to a <a>text track</a>, a <a>timing text track</a> is not and cannot be associated with a <a>media element</a>. The interpretation of a <a>timing text track</a>'s <a>text track cue</a> is up to the Web application in particular.
