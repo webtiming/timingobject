@@ -59,6 +59,10 @@
             "DVB-CSS": {
               title: "ETSI TS 103 256-2 V1.1.1 Digital Video Broadcasting (DVB); Companion Screens and Streams; Part 2: Content Identification and Media Synchronization",
               href: "http://www.etsi.org/modules/mod_StandardSearch/pdf.png"
+            },
+            "SHAREDMOTION": {
+              title: "Shared Motion",
+              href: "http://motioncorporation.com"
             }
         }
       };
@@ -301,7 +305,7 @@
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
+        <li><dfn lt="text tracks|text track"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
         <li><dfn lt="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
@@ -436,14 +440,34 @@
       </pre>
       </section>
 
+      <section>
+      <h3>Connect to a MediaElement</h3>
+      <p>
+        A media element connected to a timing object, will provide media playback precisely time-aligned with that timing object. In essence, the media element becomes a slave to the timing object. Pausing the timing object implies pausing the media element, etc.
+      </p> 
+      <pre class="example highlight">
+      var to; // timing object
+      var me; // DOM MediaElement
+      me.timingsrc = to; // media element directed by timing object
+      </pre>
+      </section>
+
+
+      <section>
+      <h3>Connect to a TimingTextTrack</h3>
+      <p>A timing text track connected to a timing object, will provide enter/exit events for timed data, precisely time-aligned with that timing object. In essence, the timing text track becomes a slave to the timing object. Pausing the timing object implies pausing the timing text track, etc. </p>
+      <pre class="example highlight">
+      var to; // timing object
+      var track = new TimingTextTrack(kind, lable, language); // timing text track
+      track.timingsrc = to; // timing text track directed by timing object
+      // add timed data
+      track.addCue(new TextTrackCue(12.783, 13.612, 'dog bark'));
+      </pre>
+      </section>
+
+
+
     </section>
-
-
-
-
-
-
-
 
 
     <!-- TIMING OBJECT -->
@@ -464,9 +488,6 @@
       </p>
       <p class="note">
         The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
-      </p>
-      <p>
-        A <a>timing object</a> has a <dfn>list of timing text tracks</dfn>, which is the group of <a>timing text tracks</a> that use the <a>timing object</a> as sequencer (see <a href="#sequencing"></a>). The <a>list of timing text tracks</a> is sorted in the order <a>timing text tracks</a> are associated with the <a>timing object</a>. A <a>timing object</a> has a <dfn>list of newly introduced timing cues</dfn>, whose definition is the same as a <a>media element</a>'s <a>list of newly introduced cues</a> in [[!HTML5]].
       </p>
       <p>
         A <a>timing object</a> can have a <dfn>range</dfn>, which is an <code><a>Interval</a></code> object and represents restrictions for the positions of the <a>state vector</a> and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
@@ -659,22 +680,7 @@
         </p>
       </section>
 
-      <section>
-        <h3>Run the sequencer</h3>
-        <p>
-          The <dfn>sequencer marches on</dfn> steps for a <a>timing object</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>state vector</a> as returned by a call to the <code>query()</code> method at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the text track rendering, since their interpretation is up to the web application.
-        </p>
-        <p>
-          A <a>timing object</a> acts as sequencer for its list of <a>list of timing text tracks</a>. As such, the intended behavior is close to the one of a <a>media element</a> with its <a>list of text tracks</a>. In particular, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps on the <a>timing object</a>in the same cases as when [[!HTML5]] requires the <a>user agent</a> to run the <a>time marches on</a> steps on a <a>media element</a>.For instance:
-        </p>
-        <ul>
-          <li>When the <a>current position</a> of a <a>timing object</a> changes, the <a>user agent</a> MUST run the <a>sequencer marches on</a> steps.</li>
-          <li>When a <a>timing object</a>'s <a>list of newly introduced timing cues</a> has new cues added, then the <a>user agent</a> MUST run the <a>sequencer marches on</a>steps.</li>
-        </li>
-        <p class="issue">
-          This specification should of course properly document these cases and adjust steps as needed.
-        </p>
-      </section>
+     
 
       <section>
         <h3>Connection states</h3>
@@ -1042,7 +1048,7 @@
 
 
       <section>
-        <h3>Associate with a timing object</h3>
+        <h3>Procedure: Associate <a>media element</a> with <a>timing object</a></h3>
         <p>
           From the perspective of a <a>media element</a>, a <code><a>TimingObject</a></code> plays a role similar to a <code><a>MediaController</a></code>.
         </p>
@@ -1079,10 +1085,18 @@
         <p>
           When a <a>media element</a> has a <a>current timing source</a>, it's <code>currentTime</code> and <code>playbackRate</code> properties reflect the current state of the internal media player, not the <a>timing object</a>. This implies backwards compatibility for applications that uses the <a>media element</a> as timing source. Note that if the velocity of the <a>timing object</a> is 1.0, the effective playbackRate of the <a>media element</a> might be slightly less or slightly larger than 1.0. An internal playback rate of 1.0 generally does NOT imply that playback offset advances with the exact speed of the system clock. In addition, <a>media elements</a> may adjust for error in time-alignment gradually by adjusting their internal playback rate every now and then. 
         </p>
+
+        <pre class="example highlight">
+        var to; // timing object
+        var me; // MediaElement
+        me.timingsrc = to; // media element directed by timing object
+        </pre>
+
+
       </section>
 
       <section>
-        <h3>Set the current media controller</h3>
+        <h3>Procedure: Set the current media controller for <a>media element</a></h3>
         <p>
           The procedures defined in [[!HTML5]] that update the <a>current media controller</a> should be updated to include the following step before the <a>current media controller</a> is set:
         </p>
@@ -1092,7 +1106,7 @@
       </section>
 
       <section>
-        <h3>Set the current position</h3>
+        <h3>Procedure: Set the current position for <a>media element</a></h3>
         <p>
           The procedure defined in [[!HTML5]] that prevents setting <code>currentTime</code> when the <a>media element</a> has a <a>current media controller</a> should be updated to also prevent setting the attribute when the <a>media element</a> has a <a>current timing source</a>.
         </p>
@@ -1102,12 +1116,12 @@
         </p>
         <p class="note">
           The <code>playbackRate</code> attribute has no effect when the <a>media element</a> has a <a>current timing source</a>.
-          Note also that <code>playbackRate</code> attribute does not trivially map to the current definition of a <a>timing object</a>. This is because <code>playbackRate</code> is effectively a persistent wish for a specific playbackRate, rather than the actual playbackRate at any time. The <a>timing object</a> may easily be extended with this functionality by application code.   
+          Note also that <code>playbackRate</code> attribute does not trivially map to the current definition of a <a>timing object</a>. This is because <code>playbackRate</code> is effectively a persistent wish for a specific playbackRate, rather than the actual playbackRate at any time. If needed, the <a>timing object</a> may easily be extended with this functionality by application code.
         </p>
       </section>
       
       <section>
-        <h3>Check error in time-alignment</h3>
+        <h3>Procedure: Check error in time-alignment for <a>media element</a></h3>
         <p>
           The user agent must <dfn>check error in time-alignment</dfn> between <a>timing object</a> and the internal player of the <a>media element</a>, and then make steps to adapt if error are too big. Checking the error involves the following steps:
         </p>
@@ -1124,7 +1138,7 @@
 
    
       <section>
-        <h3>Time-alignment</h3>
+        <h3>Procedure: Time-align <a>media element</a> with <a>timing object</a></h3>
         <p>
           How the user agent implements adjustments to the <dfn>time-alignment</dfn> is left unspecified. 
         </p>
@@ -1138,33 +1152,114 @@
 
 
 
-
     <!-- SEQUENCING -->
 
     <section>
-      <h3>Sequencing</h3>
-      <p>
-        A <dfn lt="timing text track|timing text tracks">timing text track</dfn> is a <a>text track</a> that can be associated with a <a>timing object</a>, which acts as sequencer for the <a>text track cues</a> that compose the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a> that it is associated with.
-      </p>
-      <p class="note">
-        As opposed to a <a>text track</a>, a <a>timing text track</a> is not and cannot be associated with a <a>media element</a>. The interpretation of a <a>timing text track</a>'s <a>text track cue</a> is up to the Web application in particular.
-      </p>
-      <p class="issue">
-        Is inheriting from <a>TextTrack</a> as proposed below the right approach? It it tempting to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a> above. However <a>TextTrack</a> does not expose a constructor and adding an <code>addTextTrack</code> method to <a>TimingObject</a> (similar to the one on <a>HTMLMediaElement</a>) is not consistent with a <a>timing object</a> that objects can associate with.
-      </p>
-      <pre class="idl">
-        [ Constructor (TextTrackKind kind, optional DOMString label = "", optional DOMString language = "")]
-        interface TimingTextTrack : TextTrack {
-          attribute TimingObject timingsrc;
-        };
-      </pre>
+
+      <h3>Timed data and the timing object</h3>
 
       <p>
-        The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
+        This section specifies how a timing object may be used to direct timed presentation/execution of timed data.
       </p>
 
       <section>
-        <h3>Create a new timing text track</h3>
+        <h3>Introduction</h3>
+
+        <p>
+          In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn lt="sequencer|sequencing">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
+        </p>
+        <p>
+          Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data (e.g. JSON) to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
+        </p>
+        <ul>
+          <li><b>Data-independency.</b><a>Sequencing</a> logic should be implemented without reference to any specific data format. This way, timing support for a wide range of data formats can be provided, including application-specific data formats.</li>
+          <li><b>UI-independency.</b><a>Sequencing</a> logic should not be bundled with any predefined UI elements or UI frameworks. This ensures that programmers are free to exploit <a>sequencing</a> for any purpose, including purposes that require custom UI solutions or no UI at all. General purpose UI components for <a>sequencing</a> may still be authored and shared independently.</li>
+          <li><b>Precise timing.</b> <a>Sequencing</a> logic should be based on a precise timeout mechanism (e.g. setTimeout) for enter/exit events to be emitted with high precision, ideally correct down to a single millisecond.</li>
+          <li><b>Expressive controls.</b><a>Sequencing</a> logic should support any motion supported by the <a>timing object</a>, including fast forward, slow motion, backwards playback, immediate jumps or acceleration. This way, the <a>sequencing</a> logic may support a variety of media control primitives, appropriate for a wide array of media applications.</li>
+          <li><b>Dynamic data.</b> <a>Sequencing</a> logic should allow modifications of timed data to safely occur at any time, with immediate and consistent effects and without introducing any added complexity for the programmer. This would enable both live authoring and live viewing of dynamic timed media, applicable in both single-device and collaborative, multi-device scenarios.</li> 
+          <li><b>Simple usage</b></li>
+        </ul>
+     
+        <p>
+          In short, <a>sequencing</a> logic should be made available as an generic programming concept/tool. This would presumably benefit both individual programmers as well as developers of advanced media frameworks. The approach is to pursue this in two ways:
+        </p>
+        <ol>
+          <li>
+            <b>JavaScript library.</b> Provide a pure JavaScript reference implementation of a <a>sequencer</a>. This will allow developers to quickly start exploring the benefits of <a>sequencing</a> driven by the <a>timing object</a>, as well as reasoning about the need for standardization.
+          </li>
+          <li>
+            <b>Integration with existing standards.</b> Integrate with <a>text tracks</a>, providing a new <dfn lt="timing text track|timing text tracks">timing text track</dfn>. 
+            A <a>timing text track</a> is a <a>text track</a> that can be associated with a <a>timing object</a>. Applications that use <a>text tracks</a> already (driven by <a>media elements</a>) may then easily integrate with <a>timing objects</a>.
+          </li>
+        </ol>
+      </section>
+
+      <section>
+        <h3>Example: Timed visualization of subtitles using Sequencer Library
+        <pre class="example highlight">
+        var elem; // DOM element
+        var subtitles = { // timed data
+          key1 : {text: "Zed's dead baby", start: 12.2, end: 17.4},
+          key2 : {text: "Zed's dead", start: 19.7, end: 22.5}
+        };
+        var to; // timing object
+        var s = new Sequencer(to); // sequencer operational and connected to timing object
+        // register timed data (i.e. keys) with the sequencer
+        for (key in subtitles) {
+          s.addCue(key, new Interval(subtitles[key].start, subtitles[key].end));
+        }
+        // register event callbacks
+        s.on("enter", function (e) {elem.innerHTML = subtitles[e.key].text;});
+        s.on("exit", function (e) {elem.innerHTML = "";})
+        // ready to go - control presentation using timing object
+        </pre>
+      </section>
+
+
+      <section>
+      <h3>JavaScript <a>Sequencer</a> library</h3>
+      <p>
+        The library is available at GitHub. At present the library interfaces with Shared Motion. 
+        Documentation for developers also available at GitHub.
+      </p>
+      </section>
+
+
+      <section>
+        <h3>Timing text track</h3>
+    
+        <p>
+          A <a>timing text track</a> is a <a>text track</a> that is directed by a <a>timing object</a>. The <a>timing text track</a> includes <a>sequencing</a> logic for the set of <a>text track cues</a> that composes the <a>text track</a>. As such, a <a>timing text track</a> has a <a>current timing source</a> which is the <a>timing object</a>.
+        </p>
+    
+        <pre class="idl">
+          [ Constructor (TextTrackKind kind, optional DOMString label = "", optional DOMString language = "")]
+          interface TimingTextTrack : TextTrack {
+            attribute TimingObject timingsrc;
+          };
+        </pre>
+
+        <p>
+          The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current timing source</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
+        </p>
+
+        <p class="note">
+          As opposed to a <a>text track</a>, a <a>timing text track</a> is not and cannot be associated with a <a>media element</a>.
+        </p>
+        <p class="issue">
+          Is inheriting from <a>TextTrack</a> as proposed above the right approach? An alternative approach would be to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a>. The issue with this appraoch is that <a>TextTrack</a> does not expose a constructor, so the only way to a <a>timing text track</a> would be to add an <code>addTextTrack</code> method to the <a>timing object</a> (similar to the one on <a>HTMLMediaElement</a>). However, this is undesireable, as we would like to maintain a clean separation between <a>timing object</a> and objects that take direction from it. For instance, separation provides the flexibility to dynamically switch <a>timing object</a> for the <a>timing text track</a>. 
+        </p>
+        <p class="issue">
+          Note also that <a>TextTrack</a> design bear witness of close integration with <a>media elements</a>. For example, as the <a>media element</a> must provide UI support for <a>text track</a> visualization, it requires meta information such as track type (kind) and language. However, this meta information may quickly become irrelevant in a context where programmers are making custom timed presentations from application-specific data formats. Furthermore, as the programming of timed presentation is made very easy and flexible using the <a>timing object</a> combined with general purpose <a>sequencing</a> logic, programmers will be much less dependent on the limited UI support for subtitles and captions, that is currently provided by <a>media elements</a>. In this perspective it seems odd to insist that <a>timing text tracks</a> must be of a specific kind for example. 
+        </p>
+        <p class="issue">
+          A <a>media element</a> acts as <a>sequencer</a> for a list of <a>text tracks</a>. It is not clear that <a>timing text tracks</a> similarly need to be managed within a container. If such a container object is deemed necessary (e.g. for consistency with existing standards), an object must be defined in this document, say a <dfn>Timing Track</dfn>. The <a>sequencing</a> logic (<a>track marches on</a>) would then be provided by that container object rather than by <a>timing text tracks</a> individually.         
+        </p>
+      </section>
+
+
+      <section>
+        <h3>Procedure: Create a new <a>timing text track</a></h3>
         <p>
           When the <code><a>TimingTextTrack</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
         </p>
@@ -1176,32 +1271,57 @@
       </section>
 
       <section>
-        <h3>Associate with a timing object</h3>
+        <h3>Procedure: Associate <a>timing text track</a> with a <a>timing object</a></h3>
         <p>
           When the <a>user agent</a> is required to <dfn>associate the track with a timing object</dfn>, it MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
-          <li>Let <var>old timing</var> be <var>track</var>'s <a>current sequencer</a>, if any, or null otherwise.</li>
-          <li>Let <var>track</var>'s <a>current sequencer</a> be the new value.</li>
-          <li>Let <var>new timing</var> be <var>track</var>'s <a>current sequencer</a>.</li>
-          <li>
-            If <var>old timing</var> is not null, run the following substeps:
-            <ol>
-              <li>Remove <var>track</var> from <var>timing</var>'s <a>list of timing text tracks</a>.</li>
-              <li>Run the <a>sequencer marches on</a> algorithm on <var>timing</var>.</li>
-            </ol>
-          </li>
-          <li>
-            If <var>new timing</var> is not null, run the following substeps:
-            <ol>
-              <li>Add <var>track</var> to <var>timing</var>'s <a>list of timing text tracks</a>.</li>
-              <li>Run the <a>sequencer marches on</a> algorithm on <var>timing</var>.</li>
-            </ol>
-          </li>
+          <li>Let <var>old timing</var> be <var>track</var>'s <a>current timing source</a>, if any, or null otherwise.</li>
+          <li>Let <var>track</var>'s <a>current timing source</a> be the new value.</li>
+          <li>Let <var>new timing</var> be <var>track</var>'s <a>current timing source</a>.</li>
+          <li>Run the <a>track marches on</a> algorithm of <var>track</var>.</li>
         </ol>
+
+        <pre class="example highlight">
+        var to; // timing object
+        var track = new TimingTextTrack(kind, lable, language); // timing text track
+        track.timingsrc = to; // timing text track directed by timing object
+        // add timed data
+        track.addCue(new TextTrackCue(12.783, 13.612, 'dog bark'));
+        </pre>
+
+
+
+
       </section>
+
+      <section>
+        <h3>Procedure: Track marches on</h3>
+        <p>The <dfn>track marches on</dfn> procedure evaluates the state of the <a>timing text track</a> at a specific point in time. The procedure may cause events to be emitted, and it may also cause a timeout to be created for the next execution of the procedure. The user agent must run this procedure whenever:
+        </p>
+        <ul>
+         <li>the <a>current timing source</a> is set.</li>
+         <li>the <a>current timing source</a> emits a change event.</li>
+         <li>a <a>text track cue</a> is added, modified or removed to the <a>timing text track</a>.</li>
+         <li>an internal timeout signals that an event is due.</li>
+        </ul>
+        <p> 
+          The specification does not detail the exact implementation of this procedure, except to note that the <a>track marches on</a> steps for the <a>timing text track</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>timing object</a> as returned by a call to <code>query().position</code> at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the <a>text track</a> rendering, since the <a>timing text track</a> is UI-independent.
+        </p>
+        <p>
+          Alternatively, the implementation of the <a>timing text track</a> may be based on the <a>sequencer</a> reference implementation. 
+        </p>
+      </section>
+
     </section>
+
+
+
+
+
+
+
 
 
     <section class="informative appendix">
