@@ -63,6 +63,14 @@
             "SHAREDMOTION": {
               title: "Shared Motion",
               href: "http://motioncorporation.com"
+            },
+            "MEDIASYNC":{
+              title: "MediaSync",
+              href: ""
+            },
+            "SEQUENCER" : {
+              title: "Sequencer",
+              href: ""
             }
         }
       };
@@ -1009,8 +1017,10 @@
     </section>
 
 
+
+    <!-- MEDIA ELEMENTS -->
     <section>
-      <h3>Media elements and timing objects</h3>
+      <h3><a>Media elements</a> and the <a>timing object</a></h3>
       <p>
         This section specifies an extension of <a>media elements</a> that allows them to use a <a>timing object</a> as a timing source.
       </p>
@@ -1035,10 +1045,10 @@
           In <a>timed playback mode</a> there is no obligation to present all the media content. If the <a>timing object</a> starts playback before the <a>media element</a> is ready, then a small segment of media will simply not be presented. The <a>media element</a> must always focus on time-aligning its presentation with the <a>timing object</a>. This is equally true on load, after <a>timing object</a> change events, or in the event of missing data. If correct data is not available at any given point in time, the <a>media element</a> simply defaults to presenting a black screen, perhaps decorated with graphics illustrating the advancing offset of the <a>timing object</a> as well as the appropriate error message.
         </p>
         <p>
-          The <a>media element</a> never halts the <a>timing object</a> in order to wait for data or other internal processing. Instead, end-users may choose to pause the presentation manually, or navigate back to see missing segments. Crucially, media controls (e.g. interactive buttons and progress bar) associated with the <a>media element</a> must be applied exclusively to the <a>timing object</a>. (The internal media player of the <a>media element</a> will be affected indirectly by change events from the <a>timing object</a>). This way, manually pausing a <a>media element</a> for buffering affects not only the <a>media element</a> but any media component connected to the same <a>timing object</a>.
+          The <a>media element</a> never halts the <a>timing object</a> in order to wait for data or other internal processing. Instead, end-users may choose to pause the presentation manually, or navigate back to see missing segments. Crucially, media controls (e.g. interactive buttons and progress bar) associated with the <a>media element</a> must be applied exclusively to the <a>timing object</a>. (The internal media player of the <a>media element</a> will be affected indirectly as a response to change events emitted by the <a>timing object</a>). This way, manually pausing a <a>media element</a> for buffering affects not only the <a>media element</a> but any other media component connected to the same <a>timing object</a>.
         </p>
         <p>
-          To achieve precisely timed playback, a <a>media element</a> must continuously monitor and adjust its internal media player. Even if the internal media player is perfectly time-aligned with the <a>timing object</a> at one point, players may slowly drift away from the <a>timing object</a> over time. To counter this, the <a>media element</a> must monitor their time-alignment periodically, and adjust as the error grows too large. Using variable playback rate internally is an effective way of implementing adjustments gradually and precisely.
+          To achieve precisely time-aligned playback, a <a>media element</a> must continuously monitor and adjust its internal media player. Even if the internal media player is perfectly time-aligned with the <a>timing object</a> at one point in time, media players may slowly drift away from the <a>timing object</a> over time. To counter this, the <a>media element</a> must monitor their time-alignment periodically, and adjust as the error grows too large. Using variable playback rate internally is an effective way of implementing adjustments gradually and precisely.
         </p>
         <p>
           <a lt="media elements">Media elements</a> take direction from a <a>timing object</a>, but playback capabilities are likely limited when it comes to high velocities, backwards playback or acceleration (supported by the <a>timing object</a>). Still, <a>media elements</a> must accept any state that the <a>timing object</a> supports, so throwing exceptions in these circumstances is not acceptable. Instead, <a>media elements</a> are free to fall back to black screen or graphical illustrations whenever the <a>timing object</a> specifies motions that are not supported by the internal media player.
@@ -1048,7 +1058,7 @@
 
 
       <section>
-        <h3>Procedure: Associate <a>media element</a> with <a>timing object</a></h3>
+        <h3>Procedure: Set the current <a>timing object</a> for <a>media element</a>.</h3>
         <p>
           From the perspective of a <a>media element</a>, a <code><a>TimingObject</a></code> plays a role similar to a <code><a>MediaController</a></code>.
         </p>
@@ -1063,11 +1073,11 @@
         </pre>
 
         <p>
-          The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the media element with a timing object</a>.
+          The <code>timingsrc</code> attribute on a <a>media element</a> MUST, on getting, return the <a>current timing source</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>set the current timing object for the media element</a>.
         </p>
      
         <p>
-          When the <a>user agent</a> is to <dfn>associate the media element with a timing object</dfn>, it MUST run the following steps:
+          When the <a>user agent</a> is to <dfn>set the current timing object for the media element</dfn>, it MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>m</var> be the <a>media element</a> in question.</li>
@@ -1132,7 +1142,7 @@
           <li>Let <var>ideal</var> be the result of <code>timing.query().position</code>.</li>
           <li>Let <var>actual</var> be the currentTime of the internal media player.</li>
           <li>Let <var>error</var> be (<var>ideal</var> - <var>actual</var>).</li>
-          <li>If (<var>error</var> &#gt <var>max</var>) start adjust <a>time-alignment</a> with given <var>error</var></li>.
+          <li>If (<var>error</var> &#gt <var>max</var>) start adjust time-alignment with given <var>error</var></li>.
         </ol>
       </section>
 
@@ -1140,10 +1150,10 @@
       <section>
         <h3>Procedure: Time-align <a>media element</a> with <a>timing object</a></h3>
         <p>
-          How the user agent implements adjustments to the <dfn>time-alignment</dfn> is left unspecified. 
+          Below is a rough explanation of how time-alignment may be adjusted. Details are left unspecified. However, a reference implementation of time-alignment, MediaSync [[MEDIASYNC]], is provided by the Multi-device Timing Community Group. This is a pure JavaScript implementation where time-alignment is implemented using the public API of the <a>media element</a>. This demonstrates that time-alignment at the millisecond scale is achievable, even without access to the internals of the <a>media element</a>. The assumption is that time-alignment may be even more precise and effective if supported by <a>media elements</a> internally.     
         </p>
         <p>
-          If the error is big (e.g. after a <a>timing object</a> update event) adjustments may require one or multiple <code>seekTo(X)</code> operations on the internal media player. The expected time-consumption of seekTo() operations should likely be taken into consideration when calculating <code>X</code>. If the internal media player (media format) supports variable playbackRate, this may be an effective way of implementing smaller adjustments gradually and more precisely. In both cases, adjusting the time-alignment is likely a multi-step process that goes on until the <var>error</var> is acceptible or cannot be further reduced.  
+          If the error in time-alignment is very large (e.g. after a <a>timing object</a> update event) adjustments may require one or multiple <code>seekTo(X)</code> operations on the internal media player. The expected time-consumption of seekTo() operations should likely be taken into consideration when calculating <code>X</code>. If the internal media player (media format) supports variable playbackRate, this may be an effective way of implementing smaller adjustments gradually and more precisely. In both cases, adjusting the time-alignment is likely a multi-step process that goes on until the <var>error</var> is acceptible or cannot be further reduced.  
         </p>
       </section>
     
@@ -1172,20 +1182,20 @@
           Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data (e.g. JSON) to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
         </p>
         <ul>
-          <li><b>Data-independency.</b><a>Sequencing</a> logic should be implemented without reference to any specific data format. This way, timing support for a wide range of data formats can be provided, including application-specific data formats.</li>
-          <li><b>UI-independency.</b><a>Sequencing</a> logic should not be bundled with any predefined UI elements or UI frameworks. This ensures that programmers are free to exploit <a>sequencing</a> for any purpose, including purposes that require custom UI solutions or no UI at all. General purpose UI components for <a>sequencing</a> may still be authored and shared independently.</li>
-          <li><b>Precise timing.</b> <a>Sequencing</a> logic should be based on a precise timeout mechanism (e.g. setTimeout) for enter/exit events to be emitted with high precision, ideally correct down to a single millisecond.</li>
-          <li><b>Expressive controls.</b><a>Sequencing</a> logic should support any motion supported by the <a>timing object</a>, including fast forward, slow motion, backwards playback, immediate jumps or acceleration. This way, the <a>sequencing</a> logic may support a variety of media control primitives, appropriate for a wide array of media applications.</li>
-          <li><b>Dynamic data.</b> <a>Sequencing</a> logic should allow modifications of timed data to safely occur at any time, with immediate and consistent effects and without introducing any added complexity for the programmer. This would enable both live authoring and live viewing of dynamic timed media, applicable in both single-device and collaborative, multi-device scenarios.</li> 
+          <li><b>Data-independency.</b> The <a>sequencing</a> mechanism should be implemented without reference to any specific data format. This way, timing support for a wide range of data formats can be provided, including application-specific data formats.</li>
+          <li><b>UI-independency.</b> The <a>sequencing</a> mechanism should not be bundled with any predefined UI elements or UI frameworks. This ensures that programmers are free to exploit it for any purpose, including purposes that require custom UI solutions or no UI at all. General purpose UI components for timed presentation may still be developed and shared independently.</li>
+          <li><b>Precise timing.</b> The <a>sequencing</a> mechanism should be based on a precise timeout mechanism (e.g. setTimeout) for enter/exit events to be emitted with high precision, ideally correct down to a single millisecond.</li>
+          <li><b>Expressive controls.</b> The <a>sequencing</a> mechanism should support any motion supported by the <a>timing object</a>, including fast forward, slow motion, backwards playback, immediate jumps or acceleration. This way, the <a>sequencing</a> mechanism may support a variety of media control primitives, appropriate for a wide range of media applications.</li>
+          <li><b>Dynamic data.</b> The <a>sequencing</a> mechanism should allow modifications of timed data to safely occur at any time, with immediate and consistent effects, and without introducing any added complexity for the programmer. This would enable both live authoring and live viewing of dynamic timed media, applicable in both single-device and collaborative, multi-device scenarios.</li> 
           <li><b>Simple usage</b></li>
         </ul>
      
         <p>
-          In short, <a>sequencing</a> logic should be made available as an generic programming concept/tool. This would presumably benefit both individual programmers as well as developers of advanced media frameworks. The approach is to pursue this in two ways:
+          In short, the <a>sequencing</a> mechanism should be made available as an generic programming concept/tool. This would presumably benefit both individual programmers as well as developers of advanced media frameworks. The approach is to pursue this in two ways:
         </p>
         <ol>
           <li>
-            <b>JavaScript library.</b> Provide a pure JavaScript reference implementation of a <a>sequencer</a>. This will allow developers to quickly start exploring the benefits of <a>sequencing</a> driven by the <a>timing object</a>, as well as reasoning about the need for standardization.
+            <b>JavaScript library.</b> Provide a pure JavaScript reference implementation of such a <a>sequencing</a> mechanism. This will allow developers to quickly start exploring the benefits of <a>sequencing</a> driven by the <a>timing object</a>. It will also be as basis for reasoning about the need for standardization.
           </li>
           <li>
             <b>Integration with existing standards.</b> Integrate with <a>text tracks</a>, providing a new <dfn lt="timing text track|timing text tracks">timing text track</dfn>. 
@@ -1195,7 +1205,7 @@
       </section>
 
       <section>
-        <h3>Example: Timed visualization of subtitles using Sequencer Library
+        <h3>Example: Timed visualization of subtitles using JavaScript Sequencer library
         <pre class="example highlight">
         var elem; // DOM element
         var subtitles = { // timed data
@@ -1211,16 +1221,15 @@
         // register event callbacks
         s.on("enter", function (e) {elem.innerHTML = subtitles[e.key].text;});
         s.on("exit", function (e) {elem.innerHTML = "";})
-        // ready to go - control presentation using timing object
+        // ready to go - control presentation by controlling the timing object
         </pre>
       </section>
 
 
       <section>
-      <h3>JavaScript <a>Sequencer</a> library</h3>
+      <h3>JavaScript Sequencer library</h3>
       <p>
-        The library is available at GitHub. At present the library interfaces with Shared Motion. 
-        Documentation for developers also available at GitHub.
+        The Sequencer [[SEQUENCER]] library is available at GitHub. At present the library interfaces with Shared Motion, but it will be updated to use the <a>timing object</a> as soon as this API is stabilized. Documentation for developers also available at GitHub.
       </p>
       </section>
 
@@ -1247,13 +1256,16 @@
           As opposed to a <a>text track</a>, a <a>timing text track</a> is not and cannot be associated with a <a>media element</a>.
         </p>
         <p class="issue">
-          Is inheriting from <a>TextTrack</a> as proposed above the right approach? An alternative approach would be to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a>. The issue with this appraoch is that <a>TextTrack</a> does not expose a constructor, so the only way to a <a>timing text track</a> would be to add an <code>addTextTrack</code> method to the <a>timing object</a> (similar to the one on <a>HTMLMediaElement</a>). However, this is undesireable, as we would like to maintain a clean separation between <a>timing object</a> and objects that take direction from it. For instance, separation provides the flexibility to dynamically switch <a>timing object</a> for the <a>timing text track</a>. 
+          Is inheriting from <a>TextTrack</a> as proposed above the right approach? An alternative approach would be to extend <a>TextTrack</a> as done for the <a>HTMLMediaElement</a>. The problem with this appraoch is that <a>TextTrack</a> does not expose a constructor, so the only way to create a <a>timing text track</a> would be to add an <code>addTextTrack</code> method to the <a>timing object</a> (similar to the one on <a>HTMLMediaElement</a>). However, this is undesireable, as we would like to maintain a clean separation between <a>timing object</a> and objects that take direction from it. For instance, a clear separation ensures the flexibility to dynamically switch <a>timing object</a> for the <a>timing text track</a>. 
         </p>
         <p class="issue">
-          Note also that <a>TextTrack</a> design bear witness of close integration with <a>media elements</a>. For example, as the <a>media element</a> must provide UI support for <a>text track</a> visualization, it requires meta information such as track type (kind) and language. However, this meta information may quickly become irrelevant in a context where programmers are making custom timed presentations from application-specific data formats. Furthermore, as the programming of timed presentation is made very easy and flexible using the <a>timing object</a> combined with general purpose <a>sequencing</a> logic, programmers will be much less dependent on the limited UI support for subtitles and captions, that is currently provided by <a>media elements</a>. In this perspective it seems odd to insist that <a>timing text tracks</a> must be of a specific kind for example. 
+          Note also that the <a>TextTrack</a> design bear witness of close integration with <a>media elements</a>. For example, as the <a>media element</a> must provide UI support for <a>text track</a> visualization, it requires meta information such as track type (kind) and language. However, this meta information may quickly become irrelevant in a context where programmers are making custom timed presentations from application-specific data formats. Furthermore, as the programming of timed presentation is made very easy and flexible using the <a>timing object</a> combined with a general purpose <a>sequencing</a> mechanism, programmers will be much less dependent on the limited UI support for subtitles and captions, that is currently provided by <a>media elements</a>. In this perspective it seems odd to insist that all <a>timing text tracks</a> must be of a specific kind and declare a language. 
         </p>
         <p class="issue">
-          A <a>media element</a> acts as <a>sequencer</a> for a list of <a>text tracks</a>. It is not clear that <a>timing text tracks</a> similarly need to be managed within a container. If such a container object is deemed necessary (e.g. for consistency with existing standards), an object must be defined in this document, say a <dfn>Timing Track</dfn>. The <a>sequencing</a> logic (<a>track marches on</a>) would then be provided by that container object rather than by <a>timing text tracks</a> individually.         
+          A <a>media element</a> acts as <a>sequencer</a> for a list of <a>text tracks</a>. It is not clear that <a>timing text tracks</a> similarly need to be managed within a container. If such a container object is deemed necessary (e.g. for consistency with existing standards), such a container object must be defined in this document, say a <dfn>Timing Track</dfn>. The <a>sequencing</a> logic (<a>track marches on</a>) would then be provided by that container object rather than by <a>timing text tracks</a> individually.         
+        </p>
+        <p class="issue">
+          There is a tradeoff with respect to how much we want <a>timing text tracks</a> to divert from regular <a>text tracks</a>. Keeping it true to its origins may be awkward in some respects. Taking it too far away may be confusing, possibly suggesting that a clean sheets approach with a new sequencer object might be preferable. Note also that programmers may use regular <a>text tracks</a> with a <a>media element</a>, a then let the <a>media element</a> be directed by a <a>timing object</a>.
         </p>
       </section>
 
@@ -1290,10 +1302,6 @@
         // add timed data
         track.addCue(new TextTrackCue(12.783, 13.612, 'dog bark'));
         </pre>
-
-
-
-
       </section>
 
       <section>
@@ -1304,13 +1312,10 @@
          <li>the <a>current timing source</a> is set.</li>
          <li>the <a>current timing source</a> emits a change event.</li>
          <li>a <a>text track cue</a> is added, modified or removed to the <a>timing text track</a>.</li>
-         <li>an internal timeout signals that an event is due.</li>
+         <li>an internal timeout signals that the procedure must be executed.</li>
         </ul>
         <p> 
-          The specification does not detail the exact implementation of this procedure, except to note that the <a>track marches on</a> steps for the <a>timing text track</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>timing object</a> as returned by a call to <code>query().position</code> at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the <a>text track</a> rendering, since the <a>timing text track</a> is UI-independent.
-        </p>
-        <p>
-          Alternatively, the implementation of the <a>timing text track</a> may be based on the <a>sequencer</a> reference implementation. 
+          The specification does not detail the exact implementation of this procedure, except to note that the <a>track marches on</a> steps for the <a>timing text track</a> are essentially the same steps as the <a>time marches on</a> steps for a <a>media element</a>, replacing the <a>current playback position</a> by the <code>position</code> property of the <a>timing object</a> as returned by a call to <code>query().position</code> at the time of evaluation, and noting that <a>timing text tracks</a> do not have rules for updating the <a>text track</a> rendering, since the <a>timing text track</a> is UI-independent. Alternatively, the implementation of the <a>timing text track</a> may be based on the <a>sequencer</a> reference implementation. 
         </p>
       </section>
 
