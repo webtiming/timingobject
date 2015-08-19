@@ -1142,7 +1142,7 @@
           <li>Let <var>ideal</var> be the result of <code>timing.query().position</code>.</li>
           <li>Let <var>actual</var> be the currentTime of the internal media player.</li>
           <li>Let <var>error</var> be (<var>ideal</var> - <var>actual</var>).</li>
-          <li>If (<var>error</var> &#gt <var>max</var>) start adjust time-alignment with given <var>error</var></li>.
+          <li>If (<var>error</var> &gt; <var>max</var>) start adjust time-alignment with given <var>error</var></li>.
         </ol>
       </section>
 
@@ -1289,9 +1289,7 @@
         </p>
         <ol>
           <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
-          <li>Let <var>old timing</var> be <var>track</var>'s <a>current timing source</a>, if any, or null otherwise.</li>
           <li>Let <var>track</var>'s <a>current timing source</a> be the new value.</li>
-          <li>Let <var>new timing</var> be <var>track</var>'s <a>current timing source</a>.</li>
           <li>Run the <a>track marches on</a> algorithm of <var>track</var>.</li>
         </ol>
 
