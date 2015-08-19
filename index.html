@@ -69,8 +69,8 @@
               href: ""
             },
             "SEQUENCER" : {
-              title: "Sequencer",
-              href: ""
+              title: "Open-source sequencer library",
+              href: "https://github.com/webtiming/sequencer"
             }
         }
       };
@@ -1172,14 +1172,14 @@
         This section specifies how a timing object may be used to direct timed presentation/execution of timed data.
       </p>
 
-      <section>
+      <section class="informative">
         <h3>Introduction</h3>
 
         <p>
           In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn lt="sequencer">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
         </p>
         <p>
-          Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data (e.g. JSON) to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
+          Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
         </p>
         <ul>
           <li><b>Data-independency.</b> The <a>sequencing</a> mechanism should be implemented without reference to any specific data format. This way, timing support for a wide range of data formats can be provided, including application-specific data formats.</li>
@@ -1191,54 +1191,19 @@
         </ul>
      
         <p>
-          In short, the <a>sequencing</a> mechanism should be made available as an generic programming concept/tool. This would presumably benefit both individual programmers as well as developers of advanced media frameworks. The approach is to pursue this in two ways:
+          In short, the <a>sequencing</a> mechanism should be made available as a generic programming concept/tool. This would presumably benefit both individual programmers as well as developers of advanced media frameworks. This specification extends the concept of <a>text track</a> to achieve this result so that application developers that already use <a>text tracks</a> driven by <a>media elements</a> may easily start using <a>timing text tracks</a> driven by a <a>timing object</a>.
         </p>
-        <ol>
-          <li>
-            <b>JavaScript library.</b> Provide a pure JavaScript reference implementation of such a <a>sequencing</a> mechanism. This will allow developers to quickly start exploring the benefits of <a>sequencing</a> driven by the <a>timing object</a>. It will also be as basis for reasoning about the need for standardization.
-          </li>
-          <li>
-            <b>Integration with existing standards.</b> Integrate with <a>text tracks</a>, providing a new <dfn lt="timing text track|timing text tracks">timing text track</dfn>. 
-            A <a>timing text track</a> is a <a>text track</a> that can be associated with a <a>timing object</a>. Applications that use <a>text tracks</a> already (driven by <a>media elements</a>) may then easily integrate with <a>timing objects</a>.
-          </li>
-        </ol>
+
+        <p class="note">
+          An open-source JavaScript implementation of a <a>sequencing</a> mechanism is available [[SEQUENCER]] to allow developers to quickly start exploring the benefits of <a>sequencing</a> driven by a <a>timing object</a>. Please note that interfaces used in that implementation are not entirely aligned with those defined in this specification.
+        </p>
       </section>
-
-      <section>
-        <h3>Example: Timed visualization of subtitles using JavaScript Sequencer library</h3>
-        <pre class="example highlight">
-        var elem; // DOM element
-        var subtitles = { // timed data
-          key1 : {text: "Zed's dead baby", start: 12.2, end: 17.4},
-          key2 : {text: "Zed's dead", start: 19.7, end: 22.5}
-        };
-        var to; // timing object
-        var s = new Sequencer(to); // sequencer operational and connected to timing object
-        // register timed data (i.e. keys) with the sequencer
-        for (key in subtitles) {
-          s.addCue(key, new Interval(subtitles[key].start, subtitles[key].end));
-        }
-        // register event callbacks
-        s.on("enter", function (e) {elem.innerHTML = subtitles[e.key].text;});
-        s.on("exit", function (e) {elem.innerHTML = "";})
-        // ready to go - control presentation by controlling the timing object
-        </pre>
-      </section>
-
-
-      <section>
-      <h3>JavaScript Sequencer library</h3>
-      <p>
-        The Sequencer [[SEQUENCER]] library is available at GitHub. At present the library interfaces with Shared Motion, but it will be updated to use the <a>timing object</a> as soon as this API is stabilized. Documentation for developers also available at GitHub.
-      </p>
-      </section>
-
 
       <section>
         <h3>Timing text track</h3>
     
         <p>
-          A <a>timing text track</a> is a <a>text track</a> that is directed by a <a>timing object</a>. The <a>timing text track</a> includes <a>sequencing</a> logic for the set of <a>text track cues</a> that composes the <a>text track</a>. As such, a <a>timing text track</a> has a <a>current timing source</a> which is the <a>timing object</a>.
+          A <dfn lt="timing text tracks">timing text track</dfn> is a <a>text track</a> that is directed by a <a>timing object</a>. The <a>timing text track</a> includes <a>sequencing</a> logic for the set of <a>text track cues</a> that composes the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a>.
         </p>
     
         <pre class="idl">
@@ -1249,7 +1214,7 @@
         </pre>
 
         <p>
-          The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current timing source</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
+          The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
         </p>
 
         <p class="note">
@@ -1289,16 +1254,30 @@
         </p>
         <ol>
           <li>Let <var>track</var> be the <a>timing text track</a> in question.</li>
-          <li>Let <var>track</var>'s <a>current timing source</a> be the new value.</li>
+          <li>Let <var>track</var>'s <a>current sequencer</a> be the new value.</li>
           <li>Run the <a>track marches on</a> algorithm of <var>track</var>.</li>
         </ol>
 
-        <pre class="example highlight">
-        var to; // timing object
-        var track = new TimingTextTrack(kind, lable, language); // timing text track
-        track.timingsrc = to; // timing text track directed by timing object
-        // add timed data
-        track.addCue(new TextTrackCue(12.783, 13.612, 'dog bark'));
+        <pre class="example highlight" title="Timed visualization of subtitles">
+        var elem; // DOM element that renders subtitles
+        var subtitles = [ // Timed data
+          {text: "Zed's dead baby", start: 12.2, end: 17.4},
+          {text: "Zed's dead", start: 19.7, end: 22.5}
+        ];
+        var track = new TimingTextTrack("metadata");
+        subtitles.forEach(function (subtitle) {
+          var cue = new DataCue(subtitle.start, subtitle.end, subtitle.text));
+          track.addCue(cue);
+        });
+        var timing = new TimingObject(); 
+        track.timingsrc = timing; // Associate timed data with timing object
+
+        // React to cue changes (assuming only one active subtitle)
+        track.on("cuechange", function () {
+          var cue = (track.activeCues.length > 0) ? track.activeCues[0] : null;
+          elem.innerHTML = cue ? cue.data : "";
+        });
+        timing.update({velocity: 1.0}); // Start playback
         </pre>
       </section>
 
@@ -1307,8 +1286,8 @@
         <p>The <dfn>track marches on</dfn> procedure evaluates the state of the <a>timing text track</a> at a specific point in time. The procedure may cause events to be emitted, and it may also cause a timeout to be created for the next execution of the procedure. The user agent must run this procedure whenever:
         </p>
         <ul>
-         <li>the <a>current timing source</a> is set.</li>
-         <li>the <a>current timing source</a> emits a change event.</li>
+         <li>the <a>current sequencer</a> is set.</li>
+         <li>the <a>current sequencer</a> emits a change event.</li>
          <li>a <a>text track cue</a> is added, modified or removed to the <a>timing text track</a>.</li>
          <li>an internal timeout signals that the procedure must be executed.</li>
         </ul>
