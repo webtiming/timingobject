@@ -313,7 +313,7 @@
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
-        <li><dfn lt="text tracks|text track"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
+        <li><dfn lt="text tracks"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
         <li><dfn lt="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
         <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
@@ -619,7 +619,7 @@
             <ol>
               <li>Let <var>t<sub>provider</sub></var> be the result of calling <code>now()</code> on the <a>timing provider source</a> object. If this throws an exception, throw the exception, and abort all remaining steps. Similarly, if the returned value is not a double, throw a <code>TypeError</code> exception, and abort all remaining steps.</li>
               <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an <code>OperationError</code> exception, and abort all remaining steps.</li>
-              <li>Set the <a>last measured time value</a>of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
+              <li>Set the <a>last measured time value</a> of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
               <li>Return <var>t<sub>provider</sub></var>.</li>
             </ol>
           </li>
@@ -659,7 +659,7 @@
           <li>Let <var>p</var> be <var>p<sub>new</sub></var> or <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup> if <var>p<sub>new</sub></var> is null.</li>
           <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a lt="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
           <li>Let <var>v</var> be <var>v<sub>new</sub></var> or <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) if <var>v<sub>new</sub></var> is null.</code>
-          <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var>if <var>a<sub>new</sub></var> is null.</li>
+          <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var> if <var>a<sub>new</sub></var> is null.</li>
           <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
           <li>Set the <a>internal vector</a> of <var>timing</var> to <var>vector</var>.</li>
           <li>If the <a>range</a> of <var>timing</var> is not null, <a>set the internal timeout</a> of <var>timing</var>.</li>
@@ -1176,7 +1176,7 @@
         <h3>Introduction</h3>
 
         <p>
-          In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn lt="sequencer|sequencing">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
+          In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn lt="sequencer">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
         </p>
         <p>
           Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data (e.g. JSON) to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
@@ -1205,7 +1205,7 @@
       </section>
 
       <section>
-        <h3>Example: Timed visualization of subtitles using JavaScript Sequencer library
+        <h3>Example: Timed visualization of subtitles using JavaScript Sequencer library</h3>
         <pre class="example highlight">
         var elem; // DOM element
         var subtitles = { // timed data
