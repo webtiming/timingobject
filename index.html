@@ -1029,7 +1029,7 @@
         If this specification progresses along the standardisation track, this section should be merged in a future version of [[!HTML5]].
       </p>
 
-      <section>
+      <section class="informative">
         <h3>Introduction</h3>
 
         <p>
@@ -1093,7 +1093,7 @@
         </ol>
 
         <p>
-          When a <a>media element</a> has a <a>current timing source</a>, it's <code>currentTime</code> and <code>playbackRate</code> properties reflect the current state of the internal media player, not the <a>timing object</a>. This implies backwards compatibility for applications that uses the <a>media element</a> as timing source. Note that if the velocity of the <a>timing object</a> is 1.0, the effective playbackRate of the <a>media element</a> might be slightly less or slightly larger than 1.0. An internal playback rate of 1.0 generally does NOT imply that playback offset advances with the exact speed of the system clock. In addition, <a>media elements</a> may adjust for error in time-alignment gradually by adjusting their internal playback rate every now and then. 
+          When a <a>media element</a> has a <a>current timing source</a>, its <code>currentTime</code> and <code>playbackRate</code> properties reflect the current state of the internal media player, not the <a>timing object</a>. This implies backwards compatibility for applications that uses the <a>media element</a> as timing source. Note that if the velocity of the <a>timing object</a> is 1.0, the <a>effective playback rate</a> of the <a>media element</a> might be slightly less or slightly larger than 1.0. An internal playback rate of 1.0 generally does NOT imply that playback offset advances with the exact speed of the system clock. In addition, <a>media elements</a> may adjust for error in time-alignment gradually by adjusting their internal playback rate every now and then. 
         </p>
 
         <pre class="example highlight">
