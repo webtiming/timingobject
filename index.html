@@ -379,53 +379,57 @@
 
     <section class="informative">
       <h2>Examples</h2>
-
-      <p class="issue">
-        Add examples for <a>TimingProvider</a>, the proposed <a>HTMLMediaElement</a> extension, and <a>TimingTextTrack</a>.
-      </p>
-
+      <p>This section contains a few minimal code examples that show how a timing object may be used.</p>
 
       <section>
       <h3>Query</h3>
-      <p> Read the current value of the timing object. </p>
-      <pre class="example highlight">
-      var to; // timing object
-      var elem; // DOM Element
+      <pre class="example highlight" title="Read the current position of a timing object">
+      // Create timing object at position 2
+      // (note velocity and acceleration default to 0)
+      var to = new TimingObject({ position: 2.0 });
+
+      // Read and report current value to the console
+      // (renders "pos:2 vel:0, acc:0" in this example)
       var vector = to.query();
-      elem.innerHTML = "pos:" + vector.position +
+      console.log("pos:" + vector.position +
         " vel:" + vector.velocity +
-        " acc:" + vector.acceleration;
+        " acc:" + vector.acceleration);
       </pre>
       </section>
 
       <section>
       <h3>Update</h3>
-      <p>Use play and pause buttons to control the timing object.</p>
-      <pre class="example highlight">
-      var to; // timing object
-      var playbutton;
-      var pausebutton;
-      playbutton.onclick = function (e) {to.update({velocity:1.0})}; // set velocity 1
-      pausebutton.onclick = function (e) {to.update({velocity:0.0})}; // set velocity 0
+      <pre class="example highlight" title="Play and pause buttons to control a timing object">
+      // Pointers to "play" and "pause" buttons in the DOM
+      var playbutton, pausebutton;
+
+      // Start/Stop timing object when buttons are clicked
+      var to = new TimingObject();
+      playbutton.onclick = function () {
+        to.update({ velocity: 1.0 });
+      };
+      pausebutton.onclick = function () {
+        to.update({ velocity: 0.0 });
+      };
       </pre>
       </section>
 
       <section>
       <h3>Polling</h3>
       <p>By querying the timing object repeatedly we can refresh time sensitive UI and demonstrate that the value of the timing object is changing predictably in time.</p>
-      <pre class="example highlight">
-      var to; // timing object
+      <pre class="example highlight" title="Poll and render position periodically">
       var elem; // DOM Element
+      var to = new TimingObject();
       setInterval(function () {
         elem.innerHTML = to.query().position;
       }, 100);
       </pre>
 
-      <p>Alternatively, use the built in <i>timeupdate</i> event (fixed frequency).</p>
-      <pre class="example highlight">
-      var to; // timing object
+      <p>Alternatively, use the built-in <i>timeupdate</i> event (fixed frequency).</p>
+      <pre class="example highlight" title="Render position periodically based on timeupdate event">
       var elem; // DOM Element
-      var to.on("timeupdate", function (r) {
+      var to = new TimingObject();
+      var to.addEventListener("timeupdate", function () {
         elem.innerHTML = to.query().position;
       });
       </pre>
@@ -434,10 +438,10 @@
       <section>
       <h3>Update Event</h3>
       <p>Update operations cause abrupt changes to the timing object. Register a handler to be notified.</p>
-      <pre class="example highlight">
-      var to; // timing object
+      <pre class="example highlight" title="Report when a timing object stops moving">
       var elem; // DOM Element
-      to.on("update", function (e) {
+      var to = new TimingObject();
+      to.addEventListener("update", function (e) {
         var vector = to.query();
         if (vector.velocity === 0.0 &amp;&amp; vector.acceleration === 0.0) {
           elem.innerHTML = "I'm not moving!";
@@ -445,35 +449,69 @@
           elem.innerHTML = "I'm moving!";
         }
       });
+
+      // Make timing object move and then stop it
+      to.update({ velocity: 5, acceleration: 1 });
+      to.update({ velocity: 0, acceleration: 0 });
       </pre>
       </section>
 
       <section>
-      <h3>Connect to a MediaElement</h3>
+      <h3>Connect to a media element</h3>
       <p>
-        A media element connected to a timing object, will provide media playback precisely time-aligned with that timing object. In essence, the media element becomes a slave to the timing object. Pausing the timing object implies pausing the media element, etc.
+        A media element connected to a timing object will provide media playback precisely time-aligned with that timing object. In essence, the media element becomes a slave to the timing object. Pausing the timing object implies pausing the media element, etc.
       </p> 
-      <pre class="example highlight">
-      var to; // timing object
-      var me; // DOM MediaElement
-      me.timingsrc = to; // media element directed by timing object
+      <pre class="example highlight" title="Use timing object to control a video">
+      var video; // Pointer to a video element in the DOM
+      var to = new TimingObject();
+      video.timingsrc = to; // Video now directed by timing object
+
+      // Seek and start video
+      to.update({ position: 5.0, velocity: 1.0 });
       </pre>
       </section>
 
 
       <section>
-      <h3>Connect to a TimingTextTrack</h3>
-      <p>A timing text track connected to a timing object, will provide enter/exit events for timed data, precisely time-aligned with that timing object. In essence, the timing text track becomes a slave to the timing object. Pausing the timing object implies pausing the timing text track, etc. </p>
-      <pre class="example highlight">
-      var to; // timing object
-      var track = new TimingTextTrack(kind, lable, language); // timing text track
-      track.timingsrc = to; // timing text track directed by timing object
-      // add timed data
-      track.addCue(new TextTrackCue(12.783, 13.612, 'dog bark'));
+      <h3>Connect to a timing text track</h3>
+      <p>A timing text track connected to a timing object will provide enter/exit events for timed data, precisely time-aligned with that timing object. In essence, the timing text track becomes a slave to the timing object. Pausing the timing object implies pausing the timing text track, etc. </p>
+      <pre class="example highlight" title="Play simple timed data">
+      var elem; // DOM element
+      var to = new TimingObject();
+
+      // Create timed data
+      var track = new TimingTextTrack("metadata");
+      var cue = new DataCue(12.783, 13.612, "dog bark");
+      track.addCue(cue);
+      cue.addEventListener("enter", function () {
+        elem.innerHTML = "Dog is barking";
+      });
+      cue.addEventListener("exit", function () {
+        elem.innerHTML = "Dog is silent";
+      });
+      track.timingsrc = to; // track directed by timing object
+      to.update({ velocity: 1.0 }); // start playing timed data
       </pre>
       </section>
 
+      <section>
+      <h3>Connect to a timing provider</h3>
+      <p>A timing object may take its input from a TimingProvider object provided by some third-party provider (or developed by the app developer). TimingProvider objects will typically act as proxies to online timing resource, thus enabling cross-device synchronization.</p>
+      <pre class="example highlight" title="Connect to a TimingProvider object">
+      // TimingProvider object
+      // (constructor and parameters are provider-specific)
+      var tp;
 
+      // Create timing object associated with timing provider source
+      var to = new TimingObject(tp);
+      var to.addEventListener("timeupdate", function () {
+        var vector = to.query();
+        console.log("pos:" + vector.position +
+          " vel:" + vector.velocity +
+          " acc:" + vector.acceleration);
+      });
+      </pre>
+      </section>
 
     </section>
 
@@ -1095,14 +1133,6 @@
         <p>
           When a <a>media element</a> has a <a>current timing source</a>, its <code>currentTime</code> and <code>playbackRate</code> properties reflect the current state of the internal media player, not the <a>timing object</a>. This implies backwards compatibility for applications that uses the <a>media element</a> as timing source. Note that if the velocity of the <a>timing object</a> is 1.0, the <a>effective playback rate</a> of the <a>media element</a> might be slightly less or slightly larger than 1.0. An internal playback rate of 1.0 generally does NOT imply that playback offset advances with the exact speed of the system clock. In addition, <a>media elements</a> may adjust for error in time-alignment gradually by adjusting their internal playback rate every now and then. 
         </p>
-
-        <pre class="example highlight">
-        var to; // timing object
-        var me; // MediaElement
-        me.timingsrc = to; // media element directed by timing object
-        </pre>
-
-
       </section>
 
       <section>
@@ -1273,11 +1303,11 @@
         track.timingsrc = timing; // Associate timed data with timing object
 
         // React to cue changes (assuming only one active subtitle)
-        track.on("cuechange", function () {
+        track.addEventListener("cuechange", function () {
           var cue = (track.activeCues.length > 0) ? track.activeCues[0] : null;
           elem.innerHTML = cue ? cue.data : "";
         });
-        timing.update({velocity: 1.0}); // Start playback
+        timing.update({ velocity: 1.0 }); // Start playback
         </pre>
       </section>
 
