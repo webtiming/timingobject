@@ -141,7 +141,7 @@
           <dfn lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
         </p>
         <p>
-          Unfortunately, Web support for linear composition is not great. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
+          Unfortunately, Web support for linear composition is not optimal. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
         </p>
         <p>
           For a more detailed introduction to linear composition on the Web, see [[LINEARCOMPOSITION]].
@@ -183,23 +183,33 @@
 
 
 
-
-
       <section>
         <h3>Connecting the timing object</h3>
 
-        <p class="note">Work in progress...</p>
+        <p>
+          The proposed timing model is one where timed components are <i>connected</i> to <a>timing objects</a>, thereby accepting the <a>timing object</a> as director of timed operation. In other words, the <a>timing object</a> is the master, and the timed component is the slave. However, the <i>connection</i> is not entirely one-way. Timed components may also enforce control over the <a>timing object</a> by issuing update requests. This allows interactive components to implement timing control on behalf of end users. For instance, a UI element implementing media controls may both be a slave of a <a>timing object</a> by slavishly visualizing media offset, while at the same time allow the end user to pause the presentation by clicking a the pause button. Crucially, control enforced on a <a>timing object</a> apply equally on all <i>connected</i> components.
+        </p>
 
-        <p>How things may connect to the timing object</p>
+        <p>
+          Flexibility is another feature with this timing model. Since the <a>timing object</a> is an independent object, timed components and <a>timing objects</a> may be <i>connected</i> and <i>disconnected</i> dynamically. For example, in the context of live media presentation, flexible switching may be enabled between a <i>public</i> <a>timing object</a> (representing the <i>live-head</i> of presentation), and a <i>private</i> <a>timing object</a> (representing personal time-shifted presentation). Another example would be switching to a different <a>timing object</a> in order to join a friend in collaborative presentation. 
+        </p>
       
-        <em>Continuous media</em>
-        <p>MediaElements</p>
-        <em>Timed media</em>
-        <p>TimingTextTracks</p>
-      
-        <p>How the timing object may connect to online timing objects </p>
-        <em>TimingProvider</em>
+        <p>
+          To support this timing model, a clear separation between <a>timing object</a> and consuming components is required. Specifically, a pattern emerges where timed components are given a reference to a <a>timing object</a> through a <i>timingsrc</i> property. On the other hand the <a>timing object</a> is kept usage agnostic and clean of references to consuming components.
+        </p>
 
+        <p>
+          Timed components that need to <i>connect</i> with the <a>timing object</a> broadly fall into two categories; components which already have an internal timing model, and components that do not. Within the first category we specifically have media players and existing media frameworks. For such components <i>connection</i> with the <a>timing object</a> mainly implies time-alignment of the internal timing model with the external <a>timing object</a>. In particular, this document discusses integration with <a>media elements</a>, see <a href="#media-elements-and-the-timing-object">media elements and the timing object</a>. 
+        </p>
+
+        <p>
+          Components within the second category do not provide their own timing model, but may be useful for presenting timed data. UI elements such as map and canvas fall into this category. Custom components such as plotting libraries, media controls, subtitle viewers, Twitter feeds etc., may also need to <i>connect</i> with a <a>timing object</a> (in order to present data consistently in time). In fact, an entire Web page may be considered as a timed component, where replacement of both data and presentational elements is directed by a <a>timing object</a>. All these timed components have a single challenge in common, the need to present or execute timed data at the correct time, i.e. in accordance with the <a>timing object</a>. This document addresses this common need by <i>connecting</i> the <a>timing object</a> with a <a>text track</a>, see <a href="#timed-data-and-the-timing-object">timed data and the timing object</a>.
+        </p>
+
+        <p>
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave as much space as possible open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
+        </p>
+        
       </section>
 
 
@@ -211,7 +221,7 @@
           The timing object is a very simple object, essentially an advanced stop watch (<a href="#fig-stopwatch">Fig. 2</a>). If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value to advance from 3.0 to 5.0 when the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the timing object is a fairly thin wrapping around a monotonic system clock (integration with online timing resources adds complexity). The precision of the timing object is limited by the underlying system clock.
         </p>
         <figure id="fig-stopwatch">
-          <img src="stopwatch_digital.jpg" width="160" alt="The timing object is essentially and advanced stop watch." />
+          <img src="stopwatch_digital.jpg" width="160" alt="The timing object is essentially an advanced stop watch." />
           <figcaption>The timing object is essentially an advanced stop watch.</figcaption>
         </figure>
 
