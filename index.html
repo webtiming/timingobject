@@ -66,7 +66,7 @@
             },
             "MEDIASYNC":{
               title: "MediaSync",
-              href: ""
+              href: "https://github.com/webtiming/mediasync"
             },
             "SEQUENCER" : {
               title: "Open-source sequencer library",
@@ -85,11 +85,11 @@
 
 
 
-  <!-- ABSTRACT -->
+    <!-- ABSTRACT -->
 
     <section id="abstract">
       <p>
-        This specification defines a timing object and an associated API. The timing object is a local object that may be used by Web clients to ensure precisely timed execution. If multiple time-sensitive components take direction from the same timing object, their behaviour will be precisely coordinated in time. Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device as well as multi-device scenarios.
+        This specification defines the timing object. The timing object is a local object that may be used by Web clients to ensure precisely timed operation as well as flexible timing control. If multiple timing-sensitive components take direction from the same timing object, their behaviour will be precisely aligned in time (synchronized). Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device and multi-device scenarios.
       </p>
   
 
@@ -103,7 +103,7 @@
 
 
 
-
+    <!-- STATUS OF DOCUMENT -->
 
     <section id="sotd">
       <p>
@@ -117,53 +117,46 @@
 
 
 
-
     <!-- INTRODUCTION -->
-
 
     <section class="informative">
       <h2>Introduction</h2>
       
       <p>
-        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <code>setTimeout</code>, <code>setInterval</code>, as well as media frameworks and animation frameworks for timed media presentation. Unfortunately, these mechanisms are limited in scope as they only apply to timed operations within a single web page. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation across Web pages hosted by different devices, as well as providing a unifying model to which all frameworks for timed operation may integrate. The timing object is the central concept in this initiative.
+        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <code>setTimeout</code>, <code>setInterval</code>, as well as media frameworks and animation frameworks for timed media presentation. Unfortunately, these mechanisms are limited in scope as they only apply to timed operations within a single web page. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation across Web pages hosted by different devices, as well as providing a unifying timing model to which all frameworks for timed operation may integrate. The timing object is the central concept in this initiative.
       </p>
 
       <p>
-        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distributed time-ordering and distributed recording (time-stamping). This way, multi-device timing has applicability in many application domains, including TV and radio (broadcast and IP-based), secondary device applications, online education, video on demand services, scientific visualization, music etc.
+        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distributed time-ordering and distributed capture/recording (time-stamping). This way, multi-device timing has applicability in many application domains, including TV and radio (broadcast and IP-based), secondary device applications, online education, VoD services, social and collaborative media, data visualization, music etc.
       </p>
       <p>
         For a more detailed list of use cases that this specification enables, see <a href="#use-cases-and-requirements"></a>.
       </p>
-
- 
-      
-
-
 
 
       <section>
         <h3>Linear composition</h3>
 
         <p>
-          <dfn>Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply the classical benefits of composition as a design principle, i.e. flexibility, reusability, extensibility and mashup-ability. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition requires interoperability of heterogeneous linear components through precisely coordinated, timed playback.
+          <dfn lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
         </p>
         <p>
           Unfortunately, Web support for linear composition is not great. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
         </p>
         <p>
-          For a more detailed introduction on linear composition on the Web, see [[LINEARCOMPOSITION]].
+          For a more detailed introduction to linear composition on the Web, see [[LINEARCOMPOSITION]].
         </p>
       </section>
 
       <section>
-        <h3>Design goals and architecture</h3>
+        <h3>Design goals</h3>
 
         <p>
           The design of the timing object has two main goals:
         </p>
         <ol>
           <li>
-            <b>provide a unifying API for timed operation</b> that other frameworks &mdash; such as the notion of <em>media timeline</em> in [[HTML5]], <em>timelines</em> in Web Animations [[WEB-ANIMATIONS-1]], <em>timestamps</em> in the Web Audio API [[WEBAUDIO]] and SMIL Timing [[SMIL3]] &mdash; can integrate with. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
+            <b>provide a unifying API for timed operation and temporal control</b> that timed components can integrate with. This would include timing sensitive Web applications in general, as well as existing frameworks for timed media &mdash; such as <a>media elements</a> in [[HTML5]], Web Animations [[WEB-ANIMATIONS-1]], Web Audio API [[WEBAUDIO]] and SMIL Timing [[SMIL3]]. The API must support highly precise timing and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
           </li>
           <li> 
             <b>encapsulate complexity of distributed time synchronization</b>, thereby allowing integrating frameworks to be included in precisely timed multi-device operation. In particular, by providing the same API for local and online timing resources, timed components may be used in single-device and multi-device scenarios, without modification. 
@@ -171,7 +164,7 @@
         </ol>
 
         <p>
-          <a href="#fig-timingobject-overview">Fig. 1</a> below illustrates these functions, as well as the underlying client-server architecture. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive UI components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly.
+          <a href="#fig-timingobject-overview">Fig. 1</a> below illustrates these functions, including an online service to provide multi-device timing. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive UI components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly. Note that the different UI components may go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to <a>linear composability</a>.
         </p>
 
         <figure id="fig-timingobject-overview">
@@ -180,21 +173,42 @@
         </figure>
 
         <p>
-          The different components can go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to linear composability.
-        </p>
-        <p>
           Furthermore, when timing objects are connected to an online timing resource, they merely act as local representatives. For example, when requested to pause, the timing object will simply forward the request to the online timing resource. As the online object pauses, notifications will be multicast to all connected clients. The timing object will only update its internal state and notify connected UI components when it receives this notification. For online timing objects, clients can expect update latency of about one round trip time (RTT), whereas local timing resources should have no update latency. Apart from this, online and local timing resources should be hard to distinguish. Note also that the argument made for the independence of timing-sensitive components in the single-device scenario now applies to the multi-device scenario as well. 
         </p>
 
         <p class="note">
-          This specification describes the integration of timing objects with HTML5 Media elements and text tracks. Integration with other frameworks for timed operation, such as Web Animation, SMIL, and Web Audio [[!HTML5]] will be covered separately.
+          This specification describes the integration of timing objects with HTML5 Media elements and text tracks. Integration with other frameworks for timed operation, such as Web Animation, SMIL, and WebAudio will be covered separately.
         </p>
       </section>
+
+
+
+
+
+      <section>
+        <h3>Connecting the timing object</h3>
+
+        <p class="note">Work in progress...</p>
+
+        <p>How things may connect to the timing object</p>
+      
+        <em>Continuous media</em>
+        <p>MediaElements</p>
+        <em>Timed media</em>
+        <p>TimingTextTracks</p>
+      
+        <p>How the timing object may connect to online timing objects </p>
+        <em>TimingProvider</em>
+
+      </section>
+
+
+
 
       <section>
         <h3>The timing object</h3>
         <p>
-          A timing object is conceptually a very simple object, essentially an advanced stop watch (<a href="#fig-stopwatch">Fig. 2</a>). If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value to advance from 3.0 to 5.0 when the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the timing object is a fairly thin wrapping around a monotonic system clock (integration with online timing resources adds a bit of complexity). The precision of the timing object is limited by the underlying system clock.
+          The timing object is a very simple object, essentially an advanced stop watch (<a href="#fig-stopwatch">Fig. 2</a>). If started, its value changes predictably in time, until at some point later, it is paused, or perhaps reset. It may be queried for its value at any time. For example, it should take exactly 2.0 seconds for the value to advance from 3.0 to 5.0 when the velocity is 1.0. Such deterministic behavior is required for reliable distributed synchronization. In terms of implementation, the timing object is a fairly thin wrapping around a monotonic system clock (integration with online timing resources adds complexity). The precision of the timing object is limited by the underlying system clock.
         </p>
         <figure id="fig-stopwatch">
           <img src="stopwatch_digital.jpg" width="160" alt="The timing object is essentially and advanced stop watch." />
@@ -202,12 +216,12 @@
         </figure>
 
         <p>
-          A timing object is more expressive than a traditional stop watch. It supports any velocity or acceleration, and may jump to any position on the timeline (<a href="#fig-timeline">Fig. 3</a>). In fact, a timing object essentially implements <em>linear motion along a unidimensional axis</em>. State vectors [[MSV]], based on the classical equations of linear motion under constant acceleration, are used to represent that motion. At any point in time, position, velocity or acceleration may be requested to change. Querying the timing object reveals not only its current position but also its velocity and acceleration at that moment. The expressiveness of this model implies that a wide variety of control primitives can be supported. For example, discrete jumps on the timeline may be used to control a slide show, or velocity may correspond to <code>playbackRate</code> for the control of continuous media. Acceleration may be required by animation frameworks.
+          The timing object is more expressive than a traditional stop watch. It supports any velocity or acceleration, and may jump (instantaneously) to any position on the timeline (<a href="#fig-timeline">Fig. 3</a>). In fact, a timing object essentially implements <em>linear motion along a unidimensional axis</em>. State vectors [[MSV]], based on the classical equations of linear motion under constant acceleration, are used to represent that motion. At any point in time, position, velocity or acceleration may be requested to change. Querying the timing object reveals not only its current position but also its velocity and acceleration at that moment. The expressiveness of this model implies that a wide variety of control primitives can be supported. For example, discrete jumps on the timeline may be used to control a slide show, or velocity may correspond to <code>playbackRate</code> for the control of continuous media. Acceleration may be for instance be required by animation frameworks.
         </p>
 
         <figure id="fig-timeline">
           <img src="timeline.png" width="400" alt="The timing object is essentially and advanced stop watch." />
-          <figcaption>The timing object visualized as a cursor moving along a timeline.</figcaption>
+          <figcaption>The timing object visualized as a cursor moving along a time-axis.</figcaption>
         </figure>
       </section>
 
@@ -215,7 +229,7 @@
         <h3>Programming with timing objects</h3>
 
         <p>
-          Timing objects are resources used by your application, and you may define as many as you like. What purposes they serve in the application is up to the programmer. If the application needs a shared, multi-device clock, just start a timing object (and make sure you never stop it). If you want the clock value to represent milliseconds, just set the velocity to 1000 (advances the timing object with 1000 milliseconds per second). If the timing object represents media offset, just specify the playback position, the velocity, and perhaps a media duration. For video you might measure offset in seconds or frames and set the velocity accordingly. Or, for musical applications it may be practical to let the timing object represent beats per second. Note also that the timing object may represent time-changes with any kind of floating-point variable. For instance, if you have data that is organized according to, say height above sea level, you may want to animate how this data changes as you move vertically. In this case the timing object might represent meters or feet above sea level, and positive and negative velocities would allow you to move both upwards and downwards.
+          Timing objects are resources used by a Web application, and the programmer may define as many as required. What purposes they serve in the application is up to the programmer. If the application needs a shared, multi-device clock, simply starting a timing object (and never stopping it) might be sufficient. If the clock value should represent milliseconds, set the velocity to 1000 (advances the timing object with 1000 milliseconds per second). If the timing object represents media offset, specify the playback position, the velocity, and perhaps a media duration. For videos where offset is measured in seconds or frames, set the velocity accordingly. Or, for musical applications it may be practical to let the timing object represent beats per second. Note also that the timing object may represent time-changes with any kind of floating-point variable. For example, if you have data that is organized according to, say height above sea level, you may want to animate how this data changes as you move vertically. In this case the timing object could represent meters or feet above sea level, and positive and negative velocities would allow you to move gradually both upwards and downwards.
         </p>
         <p>
           In general, the timing object is particularly useful when you have a variable that needs to change predictably in time.
@@ -227,10 +241,10 @@
         <h3>Media capture and playback</h3>
 
         <p>
-          Two very common uses of the timing object include media capture and playback. For media playback, the  timing object may play the role of director/controls. Multiple independent components, possibly on different devices, may be responsible for timed presentation of timed media. If all components take direction from a single timing object, playback is ensured to be timing-consistent.
+          Two very common uses of the timing object include media capture and playback. For media playback, the  timing object may play the role of director or controls. Multiple independent components, possibly on different devices, may be responsible for timed presentation of timed media. If all components take direction from a single timing object, playback is ensured to be timing-consistent.
         </p>
         <p>
-          For media capture, the timing object may represent a shared clock for timestamping various types of captured media, also in multi-device scenarios. As long as timestamps are sampled from a shared clock and included in the captured media, time-shifted playback is possible. In live capturing scenarios, the timing object should likely just run continuously like a clock, or perhaps be adjusted slightly from time to time to stay in sync with some real-world clock source, e.g. a trusted source for epoch time. On the other hand, media capture in a studio setting may be a much more of an iterative process, recording one track or sample at a time. In such scenarios, the timing object might have to be paused and rewound for each take. The timing object will then play the dual role of playback director for previously captured media, as well as production clock for current capture.
+          For media capture, the timing object may represent a shared clock for timestamping various types of captured media in multi-device scenarios. As long as timestamps are sampled from a shared clock and included in the captured media, time-shifted playback is possible. In live capturing scenarios, the timing object should likely just run continuously like a clock, or perhaps be adjusted slightly from time to time to stay in sync with some real-world clock source, e.g. a trusted source for epoch time. On the other hand, media capture in a studio setting may be a much more of an iterative process, recording one track or sample at a time. In such scenarios, the timing object might have to be paused and rewound for each take. The timing object will then play the dual role of playback director for previously captured media, as well as production clock for current capture.
         </p>
       </section>
 
@@ -253,10 +267,15 @@
           Strictly speaking, the timing object is usage-agnostic and can not mandate a specific definition for reference point. However, as interoperability of timing-sensitive components (e.g. capture and playback) is a major motivation for the timing object, the above definitions for reference point are recommended.  
         </p>
       </section>
+
+       <section>
+        <h3>Naming</h3>
+        <p>
+          With regards to the naming of the <a>timing object</a>, there were multiple options available, e.g. <i>Clock</i>, <i>WebClock</i>, <i>MediaClock</i> or <i>SharedClock</i>. For a descriptive name, we argue that <i>clock</i> (or variations thereof) might be a bit limiting. A <i>clock</i> (in particular a system clock) is mainly a read-only resource (from the perspective of the programmer). <i>Stop-watch</i> would better indicate the interactive nature of the <a>timing object</a>, however, this too would fail to indicate the role of the <a>timing object</a> as <i>controller</i> or <i>director</i> in media. From a purely descriptive point of view, deterministic <i>motion</i> is perhaps the most precise name, matching the implementation and also indicating that linear media is made from two basic constituents - media <i>content</i> and media <i>motion</i>. On the other hand, the term <i>motion</i> is (still) unfamiliar and does not indicate any specific uses. For these reasons it was decided to name the object after its main purpose which is correct timing and temporal control. Something like <i>TemporalControllerObject</i> or <i>TimingDirectorObject</i> would perhaps be most correct. However, as these terms are a bit clunky <i>TimingObject</i> was selected as an acceptable compromise.
+        </p>
+      </section>
+
     </section>
-
-
-
 
 
 
@@ -278,16 +297,9 @@
 
       <ul>
         <li>A <dfn>user agent</dfn> that provides the Web runtime and implements all the interfaces defined in <a href="#timing-object"></a>, <a href="#state-vector"></a>, <a href="#media-elements-and-the-timing-object"></a> and <a href="#timed-data-and-the-timing-object"></a>.</li>
-        <li>A <dfn>timing resource provider</dfn> that provides whatever logic is necessary to associate a <a>timing object</a> with a <a>timing resource</a> running online. A <a>timing resource provider</a> implements the <code><a>TimingProvider</a></code> interface defined in <a href="#timing-provider"></a>.</li>
+        <li>A <dfn>timing resource provider</dfn> that provides necessary logic to associate a <a>timing object</a> with an online <a>timing resource</a>. A <a>timing resource provider</a> implements the <code><a>TimingProvider</a></code> interface defined in <a href="#timing-provider"></a>.</li>
       </ul>
     </section>
-
-
-
-
-
-
-
 
 
 
@@ -345,19 +357,18 @@
       </p>
 
       <p>
-        A <dfn>timing resource</dfn> represents a point moving along an infinite axis. This motion is defined by the position, velocity and acceleration of the point at a specific moment in time, according to some clock. Essentially, a <a>timing resource</a> represents a linear motion in real time. A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn> under the control of a <a>user agent</a> or an <dfn>external timing resource</dfn> under the control of a <a>timing resource provider</a>. In both cases, the actual <a>timing resource</a> may run locally or may be an <dfn>online timing resource</dfn> hosted somewhere in the cloud.
+        A <dfn>timing resource</dfn> is an object. This object essentially implements the abstraction of a <i>linear motion in real time</i>. For example, imagine a <i>point</i> moving along an <i>axis</i>. At a specific moment in time, this <i>point</i> has a specific <i>position</i> on the <i>axis</i>, a specific <i>velocity</i> and a specific <i>acceleration</i>. These three properties (all floating point values) define the state of the <a>timing resource</a> at that moment in time. Implementation of <a lt="timing resource">timing resources</a> depends on the user agent providing an <dfn>internal clock</dfn> which is both precise, high-resulution and monotonic. [[HR-TIME]].</li>
+      </p>
+      <p>
+        A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn>online timing resource</dfn>, i.e. an object hosted remotely by an online service.
       </p>
       <p class="note">
         A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
       </p>
 
       <p>
-        The <dfn>internal clock</dfn> is a monotonically increasing clock provided by the <a>user agent</a> (such as the one defined in [[HR-TIME]]).</li>
+     
       </p>
-      <p class="issue">
-        Should we simply mandate the use of [[HR-TIME]] for the <a>internal clock</a>? This would have the advantage of clearly defining a time origin and precision for timestamp values.
-      </p>
-
       <p>
         This document provides interface definitions using the [[!WEBIDL]] standard.
       </p>
@@ -429,7 +440,7 @@
       <pre class="example highlight" title="Render position periodically based on timeupdate event">
       var elem; // DOM Element
       var to = new TimingObject();
-      var to.addEventListener("timeupdate", function () {
+      var to.addEventListener("timeupdate", function (e) {
         elem.innerHTML = to.query().position;
       });
       </pre>
@@ -466,7 +477,7 @@
       var to = new TimingObject();
       video.timingsrc = to; // Video now directed by timing object
 
-      // Seek and start video
+      // Start timing object (video seeks and starts by implication)
       to.update({ position: 5.0, velocity: 1.0 });
       </pre>
       </section>
@@ -504,7 +515,7 @@
 
       // Create timing object associated with timing provider source
       var to = new TimingObject(tp);
-      var to.addEventListener("timeupdate", function () {
+      var to.addEventListener("timeupdate", function (e) {
         var vector = to.query();
         console.log("pos:" + vector.position +
           " vel:" + vector.velocity +
