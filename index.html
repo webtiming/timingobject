@@ -125,33 +125,28 @@
       <h2>Introduction</h2>
       
       <p>
-        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <code>setTimeout</code>, <code>setInterval</code>, as well as media frameworks and animation frameworks for timed media presentation. Unfortunately, these mechanisms are limited in scope as they only apply to timed operations within a single web page. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation across Web pages hosted by different devices, as well as providing a unifying model to which all frameworks for timed operation may integrate. The timing object is the central concept in this initiative.
+        Timing mechanisms allow operations to be executed at the correct time. The Web already has several mechanisms supporting timed operations, including <code>setTimeout</code>, <code>setInterval</code>, as well as media frameworks and animation frameworks for timed media presentation. Unfortunately, these mechanisms are limited in scope as they only apply to timed operations within a single web page. The <a href="https://www.w3.org/community/webtiming/">W3C Multi-device Timing Community Group</a> has been formed with the goal of extending the Web with native support for precisely timed operation across Web pages hosted by different devices, as well as providing a unifying timing model to which all frameworks for timed operation may integrate. The timing object is the central concept in this initiative.
       </p>
 
       <p>
-        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distributed time-ordering and distributed recording (time-stamping). This way, multi-device timing has applicability in many application domains, including TV and radio (broadcast and IP-based), secondary device applications, online education, video on demand services, scientific visualization, music etc.
+        Synchronized playback of multi-device linear media is an important use-case for multi-device timing. However, multi-device timing has wide utility for a variety of timing related challenges, including distributed media control and remote control, distributed synchronization, distributed time-shifting, distributed time-ordering and distributed capture/recording (time-stamping). This way, multi-device timing has applicability in many application domains, including TV and radio (broadcast and IP-based), secondary device applications, online education, VoD services, social and collaborative media, data visualization, music etc.
       </p>
       <p>
         For a more detailed list of use cases that this specification enables, see <a href="#use-cases-and-requirements"></a>.
       </p>
-
- 
-      
-
-
 
 
       <section>
         <h3>Linear composition</h3>
 
         <p>
-          <dfn>Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition requires interoperability of heterogeneous linear components through precisely coordinated, timed playback.
+          <dfn lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
         </p>
         <p>
           Unfortunately, Web support for linear composition is not great. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
         </p>
         <p>
-          For a more detailed introduction on linear composition on the Web, see [[LINEARCOMPOSITION]].
+          For a more detailed introduction to linear composition on the Web, see [[LINEARCOMPOSITION]].
         </p>
       </section>
 
@@ -163,7 +158,7 @@
         </p>
         <ol>
           <li>
-            <b>provide a unifying API for timed operation</b> that other frameworks &mdash; such as the notion of <em>media timeline</em> in [[HTML5]], <em>timelines</em> in Web Animations [[WEB-ANIMATIONS-1]], <em>timestamps</em> in the Web Audio API [[WEBAUDIO]] and SMIL Timing [[SMIL3]] &mdash; can integrate with. The API must support highly precise timing, and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
+            <b>provide a unifying API for timed operation and temporal control</b> that timed components can integrate with. This would include timing sensitive Web applications in general, as well as existing frameworks for timed media &mdash; such as <a>media elements</a> in [[HTML5]], Web Animations [[WEB-ANIMATIONS-1]], Web Audio API [[WEBAUDIO]] and SMIL Timing [[SMIL3]]. The API must support highly precise timing and be expressive enough to support control primitives appropriate for a wide range of media types and applications.
           </li>
           <li> 
             <b>encapsulate complexity of distributed time synchronization</b>, thereby allowing integrating frameworks to be included in precisely timed multi-device operation. In particular, by providing the same API for local and online timing resources, timed components may be used in single-device and multi-device scenarios, without modification. 
@@ -171,7 +166,7 @@
         </ol>
 
         <p>
-          <a href="#fig-timingobject-overview">Fig. 1</a> below illustrates these functions, as well as the underlying client-server architecture. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive UI components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly.
+          <a href="#fig-timingobject-overview">Fig. 1</a> below illustrates these functions, including an online service to provide multi-device timing. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive UI components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly. Note that the different UI components may go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to <a>linear composability</a>.
         </p>
 
         <figure id="fig-timingobject-overview">
@@ -180,14 +175,11 @@
         </figure>
 
         <p>
-          The different components can go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to linear composability.
-        </p>
-        <p>
           Furthermore, when timing objects are connected to an online timing resource, they merely act as local representatives. For example, when requested to pause, the timing object will simply forward the request to the online timing resource. As the online object pauses, notifications will be multicast to all connected clients. The timing object will only update its internal state and notify connected UI components when it receives this notification. For online timing objects, clients can expect update latency of about one round trip time (RTT), whereas local timing resources should have no update latency. Apart from this, online and local timing resources should be hard to distinguish. Note also that the argument made for the independence of timing-sensitive components in the single-device scenario now applies to the multi-device scenario as well. 
         </p>
 
         <p class="note">
-          This specification describes the integration of timing objects with HTML5 Media elements and text tracks. Integration with other frameworks for timed operation, such as Web Animation, SMIL, and Web Audio [[!HTML5]] will be covered separately.
+          This specification describes the integration of timing objects with HTML5 Media elements and text tracks. Integration with other frameworks for timed operation, such as Web Animation, SMIL, and WebAudio will be covered separately.
         </p>
       </section>
 
