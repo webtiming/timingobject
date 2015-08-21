@@ -89,7 +89,7 @@
 
     <section id="abstract">
       <p>
-        This specification defines a timing object and an associated API. The timing object is a local object that may be used by Web clients to ensure precisely timed execution. If multiple time-sensitive components take direction from the same timing object, their behaviour will be precisely coordinated in time. Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device as well as multi-device scenarios.
+        This specification defines the timing object. The timing object is a local object that may be used by Web clients to ensure precisely timed operation as well as flexible timing control. If multiple timing-sensitive components take direction from the same timing object, their behaviour will be precisely aligned in time (synchronized). Crucially, this is also the case in distributed settings. A central motivation for the timing object is that it may be connected to an online timing resource. This way, the local timing object is a gateway to precisely timed operations, both in single-device and multi-device scenarios.
       </p>
   
 
@@ -145,7 +145,7 @@
         <h3>Linear composition</h3>
 
         <p>
-          <dfn>Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply the classical benefits of composition as a design principle, i.e. flexibility, reusability, extensibility and mashup-ability. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition requires interoperability of heterogeneous linear components through precisely coordinated, timed playback.
+          <dfn>Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices. In both cases linear composition requires interoperability of heterogeneous linear components through precisely coordinated, timed playback.
         </p>
         <p>
           Unfortunately, Web support for linear composition is not great. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
@@ -253,6 +253,14 @@
           Strictly speaking, the timing object is usage-agnostic and can not mandate a specific definition for reference point. However, as interoperability of timing-sensitive components (e.g. capture and playback) is a major motivation for the timing object, the above definitions for reference point are recommended.  
         </p>
       </section>
+
+       <section>
+        <h3>Naming</h3>
+        <p>
+          With regards to naming the <a>timing object</a>, there were multiple options available, such as <i>Clock</i>, <i>WebClock</i>, <i>MediaClock</i> or <i>SharedClock</i>. For a descriptive name, we argue that <i>clock</i> (or variations thereof) might be a bit limiting. <i>Clocks</i> (in particular system clocks) are mainly read-only resources (from the perspective of the programmer). <i>Stop-watch</i> would better indicate the interactive nature of the <a>timing object</a>, however, this too would fail to indicate the role of the <a>timing object</a> as <i>controller</i> or <i>director</i> in media. From a purely descriptive point of view, deterministic <i>motion</i> is perhaps the most precise name, matching the implementation and also indicating that online media is made from two basic consituents - media <i>content</i> and media <i>motion</i>. On the other hand, the term <i>motion</i> is (still) unfamiliar and does not indicate any specific uses. For these reasons we opted rather to name the object after its main purpose which is timing and temporal control. Something like <i>TemporalControllerObject</i> or <i>TimingDirectorObject</i> would perhaps be most correct. However, as these terms are a bit clunky <i>TimingObject</i> was selected as an acceptable compromise.
+        </p>
+      </section>
+
     </section>
 
 
