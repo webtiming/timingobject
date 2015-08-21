@@ -277,7 +277,7 @@
       </p>
 
       <ul>
-        <li>A <dfn>user agent</dfn> that provides the Web runtime and implements all the interfaces defined in <a href="#timing-object"></a>, <a href="#state-vector"></a>, and <a href="#interval-object"></a>.</li>
+        <li>A <dfn>user agent</dfn> that provides the Web runtime and implements all the interfaces defined in <a href="#timing-object"></a>, <a href="#state-vector"></a>.</li>
         <li>A <dfn>timing resource provider</dfn> that provides whatever logic is necessary to associate a <a>timing object</a> with a <a>timing resource</a> running online. A <a>timing resource provider</a> implements the <code><a>TimingProvider</a></code> interface defined in <a href="#timing-provider"></a>.</li>
       </ul>
     </section>
@@ -536,7 +536,7 @@
         The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
       </p>
       <p>
-        A <a>timing object</a> can have a <dfn>range</dfn>, which is an <code><a>Interval</a></code> object and represents restrictions for the positions of the <a>state vector</a> and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
+        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions that the <a>state vector</a> may take and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
       </p>
       <p>
         A <a>timing object</a> can also have a <dfn>timing provider source</dfn>, which is a <code><a>TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>, and a <dfn>last measured time value</dfn> that is the last timestamp value read from the <a>timing provider source</a> and is used to check the monotonicity of the clock exposed by the <a>timing provider source</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
@@ -551,11 +551,15 @@
       <p>A <a>timing object</a> implements the following interface:</p>
 
       <pre class="idl">
-        [ Constructor (optional TimingStateVectorUpdate vector, optional TimingIntervalInit range),
+        [ Constructor (
+           optional TimingStateVectorUpdate vector,
+           optional unrestricted double startPosition,
+           optional unrestricted double endPosition),
          Constructor (TimingProvider provider)]
         interface TimingObject : EventTarget {
           readonly    attribute TimingObjectState readyState;
-          readonly    attribute TimingInterval    range;
+          readonly    attribute unrestricted double startPosition;
+          readonly    attribute unrestricted double endPosition;
                       attribute EventHandler      onreadystatechange;
                       attribute EventHandler      onchange;
                       attribute EventHandler      ontimeupdate;
@@ -567,7 +571,7 @@
 
       <div dfn-for="TimingObject" link-for="TimingObject">
         <p>
-          The <dfn>range</dfn> attribute MUST be set to the <a>interval</a> that constrains the position of the <a>state vector</a>, if any.
+          The <dfn>startPosition</dfn> and <dfn>endPosition</dfn> attributes MUST respectively be set to the <a>start position</a> and <a>end position</a> that the <a>state vector</a> may take, if any, or <code>-Infinity</code> and <code>Infinity</code> otherwise.
         </p>
         <p>
           The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
@@ -577,24 +581,24 @@
       <section>
         <h3>Create a new timing object</h3>
         <p>
-          When the <code><a>TimingObject</a></code> constructor that takes an optional vector and range is invoked, the <a>user agent</a> MUST run the following steps:
+          When the <code><a>TimingObject</a></code> constructor that takes an optional vector, a start position and an end position is invoked, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code>.</li>
           <li>Let <var>vectorInit</var> be the four-tuple represented by the constructor's first argument or <code>(0.0, 0.0, 0.0, t)</code> if not given, where <code>t</code> is the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
-          <li>Set the <a>internal vector</a> of <var>timing</var> to a newly constructed <code><a>TimingStateVector</a></code> that represents <var>vectorInit</var>.</li>
-          <li>Set the <a>timing provider source</a> of <var>timing</var> to null.</li>
-          <li>Let <var>rangeInit</var> be the constructor's second argument or null if not given.</li>
-          <li>Set the <a>range</a> of <var>timing</var> to null.</li>
-          <li>If <var>rangeInit</var> is null, set the <a>current interval timeout</a> to null.</li>
-          <li>
-            If <var>rangeInit</var> is not null, run the following substeps:
+          <li>Let <var>timing</var>'s <a>internal vector</a> be a newly constructed <code><a>TimingStateVector</a></code> that represents <var>vectorInit</var>.</li>
+          <li>Let <var>timing</var>'s <a>timing provider source</a> be null.</li>
+          <li>Let <var>startPosInit</var> be the constructor's second argument or null if not given.</li>
+          <li>Let <var>timing</var>'s <a>start position</a> be the constructor's second argument or <code>-Infinity</code> if not given.</li>
+          <li>Let <var>timing</var>'s <a>end position</a> be the constructor's thrid argument or <code>Infinity</code> if not given.</li>
+          <li>If <var>timing</var>'s <a>range</a> does not <a lt="covers">cover</a> the <a>internal vector</a>'s position:
             <ol>
-              <li>Set the <a>range</a> of <var>timing</var> to a newly constructed <code><a>Interval</a></code> that represents <var>rangeInit</var>.</li>
-              <li>If the <a>range</a> does not <a lt="covers">cover</a> the position of the <a>internal vector</a>, set that position to the lower bound or upper bound of the <a>range</a>, whichever is closest, and set the velocity and acceleration to <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
+              <li>Let <var>timing</var>'s <a>internal vector</a>'s position be <a>start position</a> or <a>end position</a>, whichever is closest</li>
+              <li>Let <var>timing</var>'s <a>internal vector</a>'s velocity and acceleration be <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
               <li><a>Set the internal timeout</a> of <var>timing</var>.</li>
             </ol>
-          <li>Set the <a>state</a> of <var>timing</var> to <code>open</code>.</li>
+          </li>
+          <li>Let <var>timing</var>'s <a>state</a> be <code>open</code>.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
           <li>Return <var>timing</var>.</li>
         </ol>
@@ -609,17 +613,18 @@
         <ol>
           <li>Let <var>provider</var> be the constructor's argument.</li>
           <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code> whose <a>timing provider source</a> is <var>provider</var>.</li>
-          <li>Set the <a>state</a> of <var>timing</var> to <code>connecting</code>.</li>
-          <li>Set the <a>range</a> of <var>timing</var> to the <code>range</code> property of <var>provider</var>.</li>
-          <li>Set the <a>state</a> of the <a>timing object</a> to the <code>readyState</code> property of <var>provider</var> and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
-          <li>Set the <a>last measured time value</a> of <var>timing</var> to null.</li>
-          <li>Set the <a>internal vector</a> of <var>timing</var> to the <code>vector</code> property of <var>provider</var>.</li>
+          <li>Let <var>timing</var>'s <a>state</a> be <code>connecting</code>.</li>
+          <li>Let <var>timing</var>'s <a>start position</a> be <var>provider</var>'s <code>startPosition</code> property.</li>
+          <li>Let <var>timing</var>'s <a>end position</a> be <var>provider</var>'s <code>endPosition</code> property.</li>
+          <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+          <li>Let <var>timing</var>'s <a>last measured time value</a> be null.</li>
+          <li>Let <var>timing</var>'s <a>internal vector</a> be <var>provider</var>'s <code>vector</code> property.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
           <li><a>Observe</a> <var>provider</var>.</li>
           <li>
             When an update to the <code>readyState</code> property is observed, run the following substeps:
             <ol>
-              <li>If the transition from the current <a>state</a> of <var>timing</var> to the new value is in the list of <a>allowed state transitions</a>, set the <a>state</a> of <var>timing</var> to the new value. Otherwise, set the <code>state</code> of <var>timing</var> to <code>closed</code> and <a>stop observing</a> <var>provider</var>.</li>
+              <li>If the transition from the current <a>state</a> of <var>timing</var> to the new value is in the list of <a>allowed state transitions</a>, let <var>timing</var>'s <a>state</a> be the new value. Otherwise, let <var>timing</var>'s <code>state</code> be <code>closed</code> and <a>stop observing</a> <var>provider</var>.</li>
               <li>If the <code>error</code> property of <var>provider</var> is not null, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>.</li>
               <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
             </ol>
@@ -627,7 +632,7 @@
           <li>
             When an update to the <code>vector</code> property is observed, run the following substeps:
             <ol>
-              <li>Set the <a>internal vector</a> of <var>timing</var> to the new value.</li>
+              <li>Let <var>timing</var>'s <a>internal vector</a> be the new value.</li>
               <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
             </ol>
           </li>
@@ -709,14 +714,16 @@
       <section>
         <h3>Set the internal timeout</h3>
         <p>
-          If <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
+          If a <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
         <p>
         <p>
           When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
         </p>
         <ol>
           <li>If the <a>current interval timeout</a> is not null, cancel the timeout and set the <a>current interval timeout</a> to null.</li>
-          <li>Given the current motion, Let <var>endpoint</var> be the <a>range</a> endpoint <code>(low|high)</code> that will be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
+          <li>Let <var>startPos</var> be the timing object's <a>start position</a>.</li>
+          <li>Let <var>endPos</var> be the timing object's <a>end position</a>.</li>
+          <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
           <li>If <var>endpoint</var> is null, abort these steps.</li>
           <li>Set the <a>current interval timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
         </ol>
@@ -726,6 +733,18 @@
         </p>
       </section>
 
+      <section>
+        <h3>Cover a position</h3>
+        <p>
+          When the <a>user agent</a> is required to evaluate whether a <a>range</a> composed of possibly infinite lower and upper bounds <dfn>covers</dfn> a provided value, the <a>user agent</a> MUST run the following steps:
+        </p>
+        <ol link-for="TimingObject">
+          <li>Let <var>value</var> be the position to evaluate.</li>
+          <li>If <var>value</var> is smaller than the <a>range</a>'s lower bound, return <code>false</code>, and abort these steps.</li>
+          <li>If <var>value</var> is greater than the <a>range</a>'s upper bound, return <code>false</code>, and abort these steps.</li>
+          <li>Return true.</li>
+        </ol>
+      </section>
      
 
       <section>
@@ -826,7 +845,8 @@
       <pre class="idl">
         callback interface TimingProvider {
           readonly    attribute TimingStateVector vector;
-          readonly    attribute TimingInterval    range;
+          readonly    attribute unrestricted double startPosition;
+          readonly    attribute unrestricted double endPosition;
           readonly    attribute DOMString         readyState;
           double  now ();
           Promise update (TimingStateVectorUpdate newVector);
@@ -838,7 +858,10 @@
           The <dfn>vector</dfn> attribute MUST be set to the <a>state vector</a> that represents the initial conditions of the current motion.
         </p>
         <p>
-          The <dfn>range</dfn> attribute MUST be set to the <a>interval</a> that constrains the position of the <a>state vector</a>, if any.
+          The <dfn>startPosition</dfn> attribute MUST be set to the lower bound that constrains the position of the <a>state vector</a>, if any.
+        </p>
+        <p>
+          The <dfn>endPosition</dfn> attribute MUST be set to the upper bound that constrains the position of the <a>state vector</a>, if any.
         </p>
         <p>
           The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>.
@@ -975,84 +998,6 @@
       </section>
     </section>
 
-
-
-
-    <!-- INTERVAL -->
-
-
-
-    <section>
-      <h2>Interval Object</h2>
-      <p>
-        An <dfn>interval</dfn> is a representation of a mathematical interval of real numbers. Attributes <code>low</code> and <code>high</code> are endpoints defining the interval. <code>(low &lt;= high)</code> is always true. If <code>(low === high)</code> the interval is a singular point. <code>low</code> and <code>high</code> may be set to <code>Infinity</code> or <code>-Infinity</code> to represent infinite intervals. Attributes <code>lowInclude</code> and <code>highInclude</code> determine whether endpoints <code>low</code> and <code>high</code> are included or excluded from the interval.
-      </p>
-
-      <pre class="idl">
-        dictionary TimingIntervalInit {
-          double  low;
-          double  high;
-          boolean lowInclude;
-          boolean highInclude;
-        };
-
-        [ Constructor (TimingIntervalInit intervalDict)]
-        interface TimingInterval {
-          readonly    attribute unrestricted double low;
-          readonly    attribute unrestricted double high;
-          readonly    attribute boolean             lowInclude;
-          readonly    attribute boolean             highInclude;
-          boolean covers (unrestricted double value);
-        };
-      </pre>
-
-      <div dfn-for="TimingInterval">
-        <p>
-          The <dfn>low</dfn> attribute MUST be set to the lower bound of the interval.
-        </p>
-        <p>
-          The <dfn>high</dfn> attribute MUST be set to the upper bound of the interval.
-        </p>
-        <p>
-          The <dfn>lowInclude</dfn> attribute MUST be set to <code>true</code> if the lower bound is included in the interval. It MUST be set to <code>false</code> otherwise.
-        </p>
-        <p>
-          The <dfn>highInclude</dfn> attribute MUST be set to <code>true</code> if the upper bound is included in the interval. It MUST be set to <code>false</code> otherwise.
-        </p>
-      </div>
-
-      <section>
-        <h3>Create a new interval</h3>
-
-        <p>
-          When the <code><a>Interval</a></code> constructor is invoked, the <a>user agent</a> MUST run the following steps:
-        </p>
-        <ol>
-          <li>Let <var>interval</var> be a newly created <code><a>Interval</a></code>.</li>
-          <li>Let <var>intervalDict</var> be the constructor's first argument.</li>
-          <li>If <var>intervalDict.low</var> is null, set it to <code>-Infinity</code>.</li>
-          <li>If <var>intervalDict.high</var> is null, set it to <code>Infinity</code>.</li>
-          <li>If <var>intervalDict.low</var> is greater than <var>intervalDict.high</var>, swap <var>intervalDict.low</var> with <var>intervalDict.high</var> and swap <var>intervalDic.lowInclude</var> with <var>intervalDict.highInlude</var>.</li>
-          <li>Initialize the attributes of <var>interval</var> to the computed values of <var>intervalDict</var>.</li>
-          <li>Return <var>interval</var>.</li>
-        </ol>
-      </section>
-
-      <section>
-        <h3>Cover a position</h3>
-        <p>
-          When the <dfn for="Interval">covers</dfn> method is invoked on an <a>interval</a> or when the <a>user agent</a> is required to evaluate whether an <a>interval</a> covers a provided value, the <a>user agent</a> MUST run the following steps:
-        </p>
-        <ol link-for="TimingInterval">
-          <li>Let <var>value</var> be the position to evaluate.</li>
-          <li>If <var>value</var> is smaller than the <a>low</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-          <li>If <var>value</var> equals the <a>low</a> attribute of the <a>interval</a> and the <a>lowInclude</a> attribute is <code>false</code>, return <code>false</code>, and abort these steps.</li>
-          <li>If <var>value</var> is greater than the <a>high</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-          <li>If <var>value</var> equals the <a>high</a> attribute of the <a>interval</a>, return <code>false</code>, and abort these steps.</li>
-          <li>Return true.</li>
-        </ol>
-      </section>
-    </section>
 
 
 
