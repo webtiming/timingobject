@@ -550,7 +550,7 @@
         A <dfn lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
       <p>
-        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. For <a>timing objects</a> that are connected with <a>online timing resources</a> the operational <a>state</a> will reflect the state of underlying communication link. 
+        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. For a <a>timing objects</a> that is connected to an <a>online timing resource</a>, the operational <a>state</a> will reflect the state of underlying communication link. 
       </p>
       <p>
         A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>. The <a>timing object</a> is said to be <dfn>moving</dfn> if the velocity and/or acceleration of its <a>internal vector</a> is non-zero.
@@ -990,11 +990,11 @@
         </p>
 
         <p>
-          The <dfn>velocity</dfn> attribute MUST be set to the velocity of the <a>state vector</a> on its unidimensional axis, in position unit per second.
+          The <dfn>velocity</dfn> attribute MUST be set to the velocity of the <a>state vector</a> on its unidimensional axis. The velocity represents the rate of change of the position, measured in position units per second.
         </p>
 
         <p>
-          The <dfn>acceleration</dfn> attribute MUST be set to the acceleration of the <a>state vector</a> on its unidimensional axis, in position unit per squared second.
+          The <dfn>acceleration</dfn> attribute MUST be set to the acceleration of the <a>state vector</a> on its unidimensional axis. The acceleration represents the rate of change of the velocity, measured in position units per second squared.
         </p>
 
         <p>
