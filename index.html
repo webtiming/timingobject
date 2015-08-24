@@ -550,16 +550,16 @@
         A <dfn lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
       <p>
-        A <a>timing object</a> has a <dfn>state</dfn> that describes the state of the connection with the <a>timing resource</a>, and an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>.
+        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. For <a>timing objects</a> that are connected with <a>online timing resources</a> the operational <a>state</a> will reflect the state of underlying communication link. 
       </p>
       <p>
-        A <a>timing object</a> is said to be <dfn>moving</dfn> if the velocity and/or acceleration of its <a>internal vector</a> is non-zero.
+        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>. The <a>timing object</a> is said to be <dfn>moving</dfn> if the velocity and/or acceleration of its <a>internal vector</a> is non-zero.
       </p>
       <p class="note">
         The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
       </p>
       <p>
-        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions that the <a>state vector</a> may take and a <dfn>current interval timeout</dfn>, which points to a scheduled timeout when set.
+        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> at the exact moment when the <a>range</a> violation was about to occur. The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
       </p>
       <p>
         A <a>timing object</a> can also have a <dfn>timing provider source</dfn>, which is a <code><a>TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>, and a <dfn>last measured time value</dfn> that is the last timestamp value read from the <a>timing provider source</a> and is used to check the monotonicity of the clock exposed by the <a>timing provider source</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
@@ -743,12 +743,12 @@
           When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
         </p>
         <ol>
-          <li>If the <a>current interval timeout</a> is not null, cancel the timeout and set the <a>current interval timeout</a> to null.</li>
+          <li>If the <a>current range timeout</a> is not null, cancel the timeout and set the <a>current range timeout</a> to null.</li>
           <li>Let <var>startPos</var> be the timing object's <a>start position</a>.</li>
           <li>Let <var>endPos</var> be the timing object's <a>end position</a>.</li>
           <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
           <li>If <var>endpoint</var> is null, abort these steps.</li>
-          <li>Set the <a>current interval timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
+          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
         </ol>
 
         <p class="issue">
