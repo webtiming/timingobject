@@ -986,7 +986,7 @@
 
       <div dfn-for="TimingStateVector" link-for="TimingStateVector">
         <p>
-          The <dfn>position</dfn> attribute MUST be set to the position of the <a>state vector</a> on its unidimensional axis. The position unit is usage specific. The position may represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.
+          The <dfn>position</dfn> attribute MUST be set to the position of the <a>state vector</a> on its unidimensional axis. The position unit is usage specific. The position may for example represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.
         </p>
 
         <p>
@@ -998,12 +998,15 @@
         </p>
 
         <p>
-          The <dfn>timestamp</dfn> attribut MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid, in seconds since some arbitrary time origin. The clock used to compute the timestamp depends on whether the <a>state vector</a> represents the motion of an <a>internal timing resource</a> or of an <a>external timing resource</a>.
+          The <dfn>timestamp</dfn> attribute MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid. The <a>timestamp</a> is from the timeline of the user agent defined by [HR-TIME].
         </p>
       </div>
 
       <section>
         <h3>Create a new state vector</h3>
+        <p>
+          The <code>TimingStateVector</code> constructor is used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. It is also used as return value from the <a for="timing object">query</a> method of the <a>timing object</a>.
+        </p>
         <p>
           When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
         </p>
@@ -1015,9 +1018,6 @@
           <li>Initialize <var>vector</var> so that it represents the four-tuple (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>).</li>
           <li>Return <var>vector</var>.</li>
         </ol>
-        <p class="note">
-          The constructor is only meant to be used by a <a>timing resource provider</a>, e.g. to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. In particular, the <a>timing resource provider</a> controls the underlying clock and thus is the only one who can compute a proper <a for="TimingStateVector">timestamp</a> value.
-        </p>
       </section>
     </section>
 
