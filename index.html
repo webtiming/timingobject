@@ -243,7 +243,7 @@
         </p>
 
         <p>
-          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider-object">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
         </p>
         
       </section>
@@ -309,7 +309,7 @@
 
       <ul>
         <li>A <dfn>user agent</dfn> that provides the Web runtime and implements all the interfaces defined in <a href="#timing-object"></a>, <a href="#state-vector"></a>, <a href="#media-elements-and-the-timing-object"></a> and <a href="#timed-data-and-the-timing-object"></a>.</li>
-        <li>A <dfn>timing resource provider</dfn> that provides necessary logic to associate a <a>timing object</a> with an online <a>timing resource</a>. A <a>timing resource provider</a> implements the <code><a>TimingProvider</a></code> interface defined in <a href="#timing-provider"></a>.</li>
+        <li>A <dfn>timing resource provider</dfn> that provides necessary logic to associate a <a>timing object</a> with an online <a>timing resource</a>. A <a>timing resource provider</a> implements the <code><a>TimingProvider</a></code> interface defined in <a href="#timing-provider-object"></a>.</li>
       </ul>
     </section>
 
@@ -549,26 +549,26 @@
       <p>
         A <dfn lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
+
       <p>
-        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. For a <a>timing objects</a> that is connected to an <a>online timing resource</a>, the operational <a>state</a> will reflect the state of underlying communication link. 
+        A <a>timing object</a> can have a <dfn>timing provider source</dfn>, which is a <code><a href="#timing-provider-object">TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
       </p>
+
       <p>
-        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot of the <a>state vector</a> at the current timestamp of the clock associated with the <a>timing object</a>. The <a>timing object</a> is said to be <dfn>moving</dfn> if the velocity and/or acceleration of its <a>internal vector</a> is non-zero.
+        A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing provider</a> uses a different clock. The <a>timing provider</a> provides an estimate of the <dfn>skew</dfn> between the two clocks, so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>.
+        This equation is used by the <a>timing object</a> to convert timestamps between the two timelines. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually.
       </p>
-      <p class="note">
-        The <a>timing object</a> supports any motion that can be expressed in terms of a <a>state vector</a>. This means that a <a>timing object</a> is expressive enough to implement clocks, stop-watches and a variety of media controllers (at least the temporal aspects of media control).
-      </p>
+
       <p>
-        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> at the exact moment when the <a>range</a> violation was about to occur. The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
+        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. The <a>timing object</a> is said to be moving if the velocity and/or acceleration of its <a>internal vector</a> is non-zero. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing provider</a>and therfore includes a timestamp value from the timeline of the <a>timing provider</a>.
       </p>
+
       <p>
-        A <a>timing object</a> can also have a <dfn>timing provider source</dfn>, which is a <code><a>TimingProvider</a></code> object that encapsulates the logic needed to represent an <a>external timing resource</a>, and a <dfn>last measured time value</dfn> that is the last timestamp value read from the <a>timing provider source</a> and is used to check the monotonicity of the clock exposed by the <a>timing provider source</a>. The <a>timing provider source</a> is initialized once and for all when the <a>timing object</a> is created.
+        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. If the <a>timing object</a>is associated with a <a>timing provider object</a>, the operational <a>state</a> will reflect the state of an underlying communication link. 
       </p>
+
       <p>
-        A <a>timing object</a> is associated with a <dfn lt="timing object clock">clock</dfn> which is maintained by the <a>timing resource provider</a> if the <a>timing object</a> has a <a>timing provider source</a>, or is the <a>internal clock</a>.
-      </p>
-      <p>
-        A <a>timing object</a> has a <dfn>current position</dfn>, which represents the position of the <a>timing object</a> along the unidimensional axis at the time of evaluation. When the <a>timing object</a> is <a>moving</a>, its <a>current position</a> must increase monotonically based on the velocity and acceleration of its <a>internal vector</a> per unit time of the <a>timing object clock</a>. (This specification refers to this as an <em>increase</em> but that increase could actually be a <em>decrease</em>.)
+        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> if a <a>range</a> violation occurs. The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
       </p>
 
       <p>A <a>timing object</a> implements the following interface:</p>
@@ -640,7 +640,9 @@
           <li>Let <var>timing</var>'s <a>start position</a> be <var>provider</var>'s <code>startPosition</code> property.</li>
           <li>Let <var>timing</var>'s <a>end position</a> be <var>provider</var>'s <code>endPosition</code> property.</li>
           <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+          <!--
           <li>Let <var>timing</var>'s <a>last measured time value</a> be null.</li>
+          -->
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>provider</var>'s <code>vector</code> property.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
           <li><a>Observe</a> <var>provider</var>.</li>
@@ -677,15 +679,20 @@
         <h3>Process a query operation</h3>
 
         <p>
-          The <dfn for="TimingObject">query</dfn> method returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>timing object clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+          The <dfn for="TimingObject">query</dfn> method returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, return null, and abort these steps.</li>
           <li>If the <a>timing provider source</a> of <var>timing</var> is null, then let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds. Otherwise, let <var>t</var> be the result of running the following substeps:
             <ol>
               <li>Let <var>t<sub>provider</sub></var> be the result of calling <code>now()</code> on the <a>timing provider source</a> object. If this throws an exception, throw the exception, and abort all remaining steps. Similarly, if the returned value is not a double, throw a <code>TypeError</code> exception, and abort all remaining steps.</li>
-              <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an <code>OperationError</code> exception, and abort all remaining steps.</li>
+              <!--
+              <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an 
+              -->
+              <code>OperationError</code> exception, and abort all remaining steps.</li>
+              <!--
               <li>Set the <a>last measured time value</a> of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
+              -->
               <li>Return <var>t<sub>provider</sub></var>.</li>
             </ol>
           </li>
@@ -847,11 +854,9 @@
 
     <!-- TimingProvider -->
 
-
-
     <section>
 
-      <h3>Timing Provider</h3>
+      <h3>Timing Provider Object</h3>
       <p>
         A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
@@ -1315,7 +1320,7 @@
         Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a>Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of <a>state vectors</a> and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
       </p>
       <p class="note">
-        The guideline discusses communication between an <a>online timing resource</a> and a <a>timing object</a>. In reality though, these two entities do not communicate directly, but indirectly through a mediating <a href="#timing-provider">timing provider object</a> running on the user agent. In the perspective of the <a>timing object</a> the <a>timing provider object</a> is a proxy object for the <a>online timing resource</a>.
+        The guideline discusses communication between an <a>online timing resource</a> and a <a>timing object</a>. In reality though, these two entities do not communicate directly, but indirectly through a mediating <a href="#timing-provider-object">timing provider object</a> running on the user agent. In the perspective of the <a>timing object</a> the <a>timing provider object</a> is a proxy object for the <a>online timing resource</a>.
       </p>
 
       <section>
