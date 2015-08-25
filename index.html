@@ -903,21 +903,6 @@
         </p>
       </div>
 
-      <!--
-      <section>
-        <h3>Retrieve the current time</h3>
-        <p>
-          When the <dfn for="TimingProvider">now</dfn> method is invoked, the <a>timing resource provider</a> MUST return the number of seconds from some arbitrary time origin defined by the <a>timing resource provider</a> when the <a>timing provider object</a> is created to the occurrence of the call to the method, as evaluated by some software clock maintained by the <a>timing resource provider</a>.
-        </p>
-        <p>
-          The time values returned when calling the <a for="TimingProvider">now</a> method MUST be monotonically increasing.
-        </p>
-        <p class="note">
-          If the <a>external timing resource</a> that the <a>timing provider object</a> represents is hosted online, the <a>timing resource provider</a> may typically want to adjust the software clock through periodic measurements of this clock's skew against the clock of the server that hosts the resource in order to synchronize these clocks. How that synchronization is performed is up to the <a>timing resource provider</a> (see <a href="#implementation-guidelines"></a>).
-        </p>
-      </section>
-      -->
-
 
       <section>
         <h3>Process an update operation</h3>
@@ -935,7 +920,7 @@
       <section>
         <h3>Report new conditions of the current motion</h3>
         <p>
-          When the <a>timing resource provider</a> needs to report an update to the motion conditions (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">vector</a> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
+          When the <a>timing resource provider</a> needs to report an update to the <a>state vector</a> (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">vector</a> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
         </p>
       </section>
 
@@ -943,6 +928,13 @@
         <h3>Report a state change</h3>
         <p>
           When the <a>timing resource provider</a> needs to report a change of connection state with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">readyState</a> property to the new value.
+        </p>
+      </section>
+
+       <section>
+        <h3>Report a skew change</h3>
+        <p>
+          When the <a>timing resource provider</a> needs to report a change of the skew estimate with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">skew</a> property to the new value.
         </p>
       </section>
 
@@ -1020,7 +1012,7 @@
       <section>
         <h3>Create a new state vector</h3>
         <p>
-          The <code>TimingStateVector</code> constructor is used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. It is also used as return value from the <code>query()</code> method of the <a>timing object</a>.
+          The <code>TimingStateVector</code> constructor is used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. It is also used as return value from the <code>query()</code> method of the <a>timing object</a> and as parmeter to the <code>update</code> of a <a>timing provider object</a>.
         </p>
         <p>
           When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
