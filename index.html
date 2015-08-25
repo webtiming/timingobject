@@ -851,29 +851,25 @@
 
     <section>
 
-       <p>
-          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <a>timing provider</a> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
-      </p>
-
-
-      <h2>Timing Provider</h2>
+      <h3>Timing Provider</h3>
       <p>
         A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
-        The concept of <a>timing provider</a> is introduced in order to leave space open for innovation among online timing providers. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. So, the purpose of the <a>timing provider</a> mechanism is to to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate motion updates to connected clients are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
+        The concept of <a>timing provider</a> is introduced in order to leave space open for innovation among online timing providers. The idea is that third parties may provide different implementations of <a>timing provider</a> objects in JavaScript, to which <a>timing objects</a> may be connected. So, the purpose of the <a>timing provider</a> mechanism is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
       </p>
       <p>
         In practice, a Web application willing to use a particular <a>timing resource provider</a> needs to load the corresponding JavaScript library provided by this <a>timing resource provider</a>, create a <a>timing provider object</a> and pass that object to the <a>timing object</a> constructor.
       </p>
       <p>
-        The communication between a <a>timing object</a> and a <a>timing provider</a> is mainly concerned with <a>clock</a> synchronization and the exchange of <a>state vectors</a>.  
+        The <a>timing provider</a> interface allows the <a>timing object</a> to exercise control over the <a>timing provider object</a>, as well as be notified of state changes as soon as they occur, in particular <a href="#state-vector-synchronization">state vectors</a> and <a href="#clock-synchronization">clock skew estimates</a>. As the clock of the <a>timing object</a> [[HR-TIME]] defines its own local timeline (on load) - timestamps must be translated between the timeline employed by the <a>timing provider</a> and [[HR-TIME]]. For this, an estimate of the <i>skew</i> between the two timelines is required. In the case of online timing resources this <i>skew</i> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <i>skew</i> estimate received from the <a>timing provider object</a>. <i>Skew</i> is defined below;
       </p>
-
-
-
-
-
+      <p>
+        <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>
+      </p>
+      <p>
+        As the <a>timing provider object</a> and the <a>timing object</a> do not execute in the same thread, timely notifications from the <a>timing provider object</a> to the <a>timing object</a> is achieved through the use of observable properties.
+      </p>
       <p>
         A <a>timing provider object</a> implements the following interface:
       </p>
@@ -884,7 +880,7 @@
           readonly    attribute unrestricted double startPosition;
           readonly    attribute unrestricted double endPosition;
           readonly    attribute DOMString         readyState;
-          double  now ();
+          readonly    attribute unrestricted double skew;
           Promise update (TimingStateVectorUpdate newVector);
         };
       </pre>
@@ -902,8 +898,12 @@
         <p>
           The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>.
         </p>
+        <p>
+          The <dfn>skew</dfn> attribute MUST be set to the current estimate of the skew.
+        </p>
       </div>
 
+      <!--
       <section>
         <h3>Retrieve the current time</h3>
         <p>
@@ -916,16 +916,18 @@
           If the <a>external timing resource</a> that the <a>timing provider object</a> represents is hosted online, the <a>timing resource provider</a> may typically want to adjust the software clock through periodic measurements of this clock's skew against the clock of the server that hosts the resource in order to synchronize these clocks. How that synchronization is performed is up to the <a>timing resource provider</a> (see <a href="#implementation-guidelines"></a>).
         </p>
       </section>
+      -->
+
 
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
+          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the <a>external timing resource</a>, based on the provided <a>state vector</a>, and returns a <code>Promise</code> that the update was processed by the <a>timing provider</a> (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>promise</var> be a new <code>Promise</code>.</li>
           <li>Return <var>promise</var> and run the following steps in parallel.</li>
-          <li>Run whatever logic is necessary to pass the update request to the <a>external timing resource</a> that <var>provider</var> represents and alter the motion conditions accordingly.</li>
+          <li>Run whatever logic is necessary to pass the update request to the <a>external timing resource</a> that <var>provider</var> represents.</li>
           <li>If this logic succeeds, resolve <var>promise</var>. Otherwise reject <var>promise</var> with an error.</li>
         </ol>
       </section>
@@ -1308,9 +1310,6 @@
       </section>
 
     </section>
-
-
-
 
 
 
