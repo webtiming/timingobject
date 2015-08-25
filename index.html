@@ -223,11 +223,11 @@
         <h3>Connecting the timing object</h3>
 
         <p>
-          The proposed timing model is one where timed components are <i>connected</i> to <a>timing objects</a>, thereby accepting the <a>timing object</a> as director of timed operation. In other words, the <a>timing object</a> is the master, and the timed component is the slave. However, the <i>connection</i> is not entirely one-way. Timed components may also enforce control over the <a>timing object</a> by issuing update requests. This allows interactive components to implement timing control on behalf of end users. For instance, a UI element implementing media controls may both be a slave of a <a>timing object</a> by slavishly visualizing media offset, while at the same time allow the end user to pause the presentation by clicking a the pause button. Crucially, control enforced on a <a>timing object</a> apply equally on all <i>connected</i> components.
+          The proposed timing model is one where timed components are <i>connected</i> to <a>timing objects</a>, thereby accepting the <a>timing object</a> as director of timed operation. In other words, the <a>timing object</a> is the master, and the timed component is the slave. However, the <i>connection</i> is not entirely one-way. Timed components may also enforce control over the <a>timing object</a> by issuing update requests. This allows interactive components to implement timing control on behalf of end users. For instance, a UI element implementing media controls may both be a slave of a <a>timing object</a> by slavishly visualizing media offset, while at the same time allow the end user to pause the presentation by clicking a the pause button. Crucially, control enforced on a <a>timing object</a> applies equally on all <i>connected</i> components.
         </p>
 
         <p>
-          Flexibility is another feature with this timing model. Since the <a>timing object</a> is an independent object, timed components and <a>timing objects</a> may be <i>connected</i> and <i>disconnected</i> dynamically. For example, in the context of live media presentation, flexible switching may be enabled between a <i>public</i> <a>timing object</a> (representing the <i>live-head</i> of presentation), and a <i>private</i> <a>timing object</a> (representing personal time-shifted presentation). Another example would be switching to a different <a>timing object</a> in order to join a friend in collaborative presentation. 
+          Flexibility is another feature with this timing model. Since the <a>timing object</a> is an independent object, timed components and <a>timing objects</a> may be <i>connected</i> and <i>disconnected</i> dynamically. For example, in the context of live media presentation, flexible switching may be enabled between a <a>timing object</a> (representing the <i>public, live-head</i> of an experience), and a different <a>timing object</a> (representing <i>private, personal, time-shifted</i> experience). Another example would be switching to a different <a>timing object</a> in order to join a friend in a co-viewing session. 
         </p>
       
         <p>
@@ -239,11 +239,11 @@
         </p>
 
         <p>
-          Components within the second category do not provide their own timing model, but may be useful for presenting timed data. UI elements such as map and canvas fall into this category. Custom components such as plotting libraries, media controls, subtitle viewers, Twitter feeds etc., may also need to <i>connect</i> with a <a>timing object</a> (in order to present data consistently in time). In fact, an entire Web page may be considered as a timed component, where replacement of both data and presentational elements is directed by a <a>timing object</a>. All these timed components have a single challenge in common, the need to present or execute timed data at the correct time, i.e. in accordance with the <a>timing object</a>. This document addresses this common need by <i>connecting</i> the <a>timing object</a> with a <a>text track</a>, see <a href="#timed-data-and-the-timing-object">timed data and the timing object</a>.
+          Components within the second category do not provide their own timing model, but may be useful for presenting timed data. UI elements such as map and canvas fall into this category. Custom components such as plotting libraries, media controls, subtitle viewers, Twitter widgets etc., may also need to <i>connect</i> with a <a>timing object</a> (in order to present data consistently in time). In fact, an entire Web page may be considered a timed component, where replacement of both data and presentational elements is directed by a <a>timing object</a>. All these timed components have a single challenge in common, the need to present or execute timed data at the correct time, i.e. time-aligned with the <a>timing object</a>. This document addresses this common need by <i>connecting</i> the <a>timing object</a> with a <a>text track</a>, see <a href="#timed-data-and-the-timing-object">timed data and the timing object</a>.
         </p>
 
         <p>
-          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave as much space as possible open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
         </p>
         
       </section>
@@ -850,16 +850,29 @@
 
 
     <section>
+
+       <p>
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <a>timing provider</a> interface is introduced, see <a href="#timing-provider">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
+      </p>
+
+
       <h2>Timing Provider</h2>
       <p>
-        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates whatever logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
-        This mechanism is designed to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate motion updates to connected clients are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
+        The concept of <a>timing provider</a> is introduced in order to leave space open for innovation among online timing providers. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. So, the purpose of the <a>timing provider</a> mechanism is to to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate motion updates to connected clients are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
       </p>
       <p>
         In practice, a Web application willing to use a particular <a>timing resource provider</a> needs to load the corresponding JavaScript library provided by this <a>timing resource provider</a>, create a <a>timing provider object</a> and pass that object to the <a>timing object</a> constructor.
       </p>
+      <p>
+        The communication between a <a>timing object</a> and a <a>timing provider</a> is mainly concerned with <a>clock</a> synchronization and the exchange of <a>state vectors</a>.  
+      </p>
+
+
+
+
 
       <p>
         A <a>timing provider object</a> implements the following interface:
@@ -1308,34 +1321,32 @@
       <h3>Implementation guidelines</h3>
 
       <p>
-        Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a>Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of motion updates and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
+        Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a>Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of <a>state vectors</a> and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
       </p>
       <p class="note">
-        Guidelines below are phrased against <a>timing objects</a> but the guidelines apply to <a>timing provider objects</a> as well.
+        The guideline discusses communication between an <a>online timing resource</a> and a <a>timing object</a>. In reality though, these two entities do not communicate directly, but indirectly through a mediating <a href="#timing-provider">timing provider object</a> running on the user agent. In the perspective of the <a>timing object</a> the <a>timing provider object</a> is a proxy object for the <a>online timing resource</a>.
       </p>
 
       <section>
-        <h3>Motion update synchronization</h3>
-
+        <h3>State vector synchronization</h3>
         <p>
-          If an <a>online timing resource</a> is updated, effects must apply equally to all connected <a>timing objects</a> as quickly as possible, including to the <a>timing object</a> on which the update request might have been issued. This has implications for the processing of update requests. Local timing objects should simply forward the request (i.e. the <a>state vector</a>) across the network to the <a>online timing resource</a>, where the request will be processed. Effects (i.e. the new <a>state vector</a>) will be multicast by the <a>online timing resource</a> to all connected <a>timing objects</a>, finally triggering a <code>change</code> event on these objects. Queries are always resolved locally, using the last <a>state vector</a> received from the server.
+          If an <a>online timing resource</a> is updated, effects must apply equally to all connected <a>timing objects</a> as quickly as possible, including the <a>timing object</a> on which the update request might have been issued. This has implications for the processing of update requests. Local timing objects should simply forward the request, i.e. a new <a>state vector</a>), across the network to the <a>online timing resource</a>, where the request will be processed. Effects (i.e. the resulting <a>state vector</a>) will be multicast by the <a>online timing resource</a> to all connected <a>timing objects</a>, finally triggering a <code>change</code> event on these objects. Queries are always resolved locally, using the last <a>state vector</a> received from the <a>online timing resource</a>.
         </p>
-
         <p>
-          Note that this strategy does not guarantee that <a>timing objects</a> receive the update notification at exactly the same time. It is possible to mask the differences in network latency by introducing an additional delay, but note that this might hurt the user experience.
+          Note that this strategy does not guarantee that <a>timing objects</a> emit <code>change</code> events exactly at the same time. It is possible to achieve this by adding additional delay (thereby masking the differences in network latency). This would be a trade-off against the responsiveness of the user experience.
         </p>
       </section>
 
       <section>
         <h3>Clock synchronization</h3>
         <p>
-          Ideally, if multiple <a>timing objects</a> that represent the same <a>online timing resource</a> are queried at the exact same moment, they should return the same <a>state vector</a> (same position, velocity and acceleration). This requires that the local clock associated with the <a>timing object</a> be synchronized with that of the <a>online timing resource</a>.
+          Ideally, if multiple <a>timing objects</a> (e.g. on different devices) connected to the same <a>online timing resource</a> are queried at the exact same moment, they should ideally return the same <a>state vector</a> (same position, velocity and acceleration). This requires that <a>state vectors</a> are synchronized, and that the clock skew between <a>online timing resource</a> is zero (synchronized clocks) or known (so that it can be compensated).
         </p>
         <p>
-          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock synchronization must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> should maintain a software clock that is continuously synchronized with the system clock of the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> with respect to their own local clock.
+          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock skew estimation must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> (or <a>timing provider object</a>) should maintain a software clock that is continuously synchronized with the clock used by the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> into the timeframe of their own local clock, i.e. [[HR-TIME]].
         </p>
         <p>
-          Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a>timing objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
+          Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a>timing provider objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
         </p>
       </section>
     </section>
