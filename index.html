@@ -681,7 +681,7 @@
           The <dfn for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
-          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, throw exception.</li>
+          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, throw  new <code>InvalidStateError</code> and abort all further steps.</li>
           <li>Let <var>t<sub>u</sub></var> be the reading of the <a>internal clock</a> of the useragent, defining the processing time of the operation.</li>
           <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
           <li>If the <a>timing provider source</a> of <var>timing</var> is null, let <var>d</var> be <code><var>t<sub>u</sub></var>-<var>t<sub>int</sub></var></code>.</li>
@@ -693,7 +693,7 @@
           <li>Let <var>a</var> be <var>a<sub>int</sub></var></li>
           <li>Let <var>result</var> be newly created <code><a>TimingStateVector</a></code> from four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>u</sub></var>)
 
-          <li>Range violation is detected if not <a>range</a> <a>covers</a> <var>p</var>. Run the following substeps:
+          <li>Range violation is detected. If not <a>range</a> <a>covers</a> <var>p</var>. Run the following substeps:
             <ol>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
@@ -714,30 +714,46 @@
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingObject">update</dfn> method sends a request to the <a>timing resource</a> to have it update the motion based on the provided vector and return a <code>Promise</code> that the update was taken into account. The method supports null values for the provided vector's attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>.
+          The <dfn for="TimingObject">update</dfn> method sends a request for the <a>timing object</a> to update its current motion based on the provided <a>state vector</a>, or, if the <a>timing object</a> is associated with a <a>timing provider</a>, the request is sent to an <a>external timing resource</a> via the <a>timing provider source</a>. In both cases, a <code>Promise</code> that the update was taken into account is returned. The method supports <code>null</code> or <code>undefined</code> values for the provided <a>state vector</a> attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>. If all attributes of the <a>state vector</a> are <code>null</code> or <code>undefined</code>, the method is a noop and returns immediately.
         </p>
         <p>
           When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
-          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort these steps.</li>
-          <li>Let <var>newVector</var> be the method's first parameter</li>
+          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code> and abort all further steps.</li>
+
+          <li>Let <var>newVector</var> be the method's first parameter.</li>
           <li>If the <a>timing provider source</a> of <var>timing</var> is not null, run the following substeps, and abort the remaining steps:
             <ol>
-              <li>Let <var>promise<sub>provider</sub></var> be the result of calling <code>update()</code> on the <a>timing provider source</a> object with <var>newVector</var> as parameter. If the call throws an exception, return a new <code>Promise</code>, reject the promise with the exception, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps. Similarly, if the call does not return a <code>Promise</code>, return a new <code>Promise</code>, reject the promise with a <code>TypeError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, and abort all remaining steps.</li>
+              <li>Let <var>promise<sub>provider</sub></var> be the result of calling <code>update()</code> on the <a>timing provider source</a> object with <var>newVector</var> as parameter. If the call throws an exception, return a new <code>Promise</code>, reject the promise with the exception and abort all remaining steps. Similarly, if the call does not return a <code>Promise</code>, return a new <code>Promise</code>, reject the promise with a <code>TypeError</code> and abort all remaining steps.</li>
               <li>Return <var>promise<sub>provider</sub></var>.</li>
             </ol>
           </li>
-          <li>Let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
-          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
+
+          <li>Let <var>nowVector</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var>.</li>
+          <li>Let <var>intVector</var> be <var>timing</var>'s' <a>internal vector</a>.</li> 
+
           <li>Let (<var>p<sub>new</sub></var>, <var>v<sub>new</sub></var>, <var>a<sub>new</sub></var>) be the three-tuple represented by <var>newVector</var>.</li>
-          <li>Let <var>p</var> be <var>p<sub>new</sub></var> or <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup> if <var>p<sub>new</sub></var> is null.</li>
-          <li>If the <a>range</a> of <var>timing</var> is not null and if it does not <a lt="covers">cover</a> <var>p</var>, reject <var>promise</var> with <code>InvalidAccessError</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var> and abort these steps.</li>
-          <li>Let <var>v</var> be <var>v<sub>new</sub></var> or <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) if <var>v<sub>new</sub></var> is null.</code>
-          <li>Let <var>a</var> be <var>a<sub>new</sub></var> or <var>a<sub>int</sub></var> if <var>a<sub>new</sub></var> is null.</li>
-          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
+          <li>Let (<var>p<sub>now</sub></var>, <var>v<sub>now</sub></var>, <var>a<sub>now</sub></var>, <var>t<sub>now</sub></var>) be the four-tuple represented <var>nowVector</var>.</li>
+          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) be the four-tuple represented <var>intVector</var>.</li>
+
+          <li>Let <var>p</var> be <var>p<sub>new</sub></var>, or <var>p<sub>now</sub></var> if <var>p<sub>new</sub></var> is <code>null</code> or <code>undefined</code>.
+          <li>Let <var>v</var> be <var>v<sub>new</sub></var>, or <var>v<sub>now</sub></var> if <var>v<sub>new</sub></var> is <code>null</code> or <code>undefined</code>.
+          <li>Let <var>a</var> be <var>a<sub>new</sub></var>, or <var>a<sub>now</sub></var> if <var>a<sub>new</sub></var> is <code>null</code> or <code>undefined</code>.
+
+          <li>Avoid range violation. Run the following substeps:
+            <ol>
+              <li>If not <a>range</a> <a>covers</a> <var>p</var> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
+              <li>If <code><var>p</var> = start && <var>v</var> < 0</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
+              <li>If <code><var>p</var> = end && <var>v</var> > 0</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+            </ol>
+          </li>
+ 
+          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>now</sub></var>).</li>
           <li>Set the <a>internal vector</a> of <var>timing</var> to <var>vector</var>.</li>
-          <li>If the <a>range</a> of <var>timing</var> is not null, <a>set the internal timeout</a> of <var>timing</var>.</li>
+          <li><a lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
           <li>Resolve <var>promise</var>.</li>
         </ol>
@@ -789,14 +805,14 @@
       <section>
         <h3>Translate u2p</h3>
         <p>
-          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing object</a> (user agent) to the timeline of the <a>timing provider</a>.
+          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing provider</a> (p).
         </p>
       </section>
 
       <section>
         <h3>Translate p2u</h3>
         <p>
-          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing provider</a>  to the timeline of the <a>timing object</a> (user agent).
+          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing provider</a> (p) to the timeline of the <a>user agent</a> (u).
         </p>
       </section>
 
