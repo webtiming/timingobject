@@ -243,7 +243,7 @@
         </p>
 
         <p>
-          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn lt="timing provider|timing providers">timing provider</dfn> interface is introduced, see <a href="#timing-provider-object">timing provider</a>. The idea is that third parties may provide different implementations of <a>timing provider</a> objects (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider</a> may be provided by the inclusion of a third party JavaScript library.
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn>TimingProvider</dfn> interface is introduced (see <a href="#timing-provider-object"></a>). The idea is that third parties may provide different implementations of <a>timing provider objects</a> (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider object</a> may be provided by the inclusion of a third party JavaScript library.
         </p>
         
       </section>
@@ -369,10 +369,14 @@
       </p>
 
       <p>
-        A <dfn>timing resource</dfn> is an object. This object essentially implements the abstraction of a <i>linear motion in real time</i>. For example, imagine a <i>point</i> moving along an <i>axis</i>. At a specific moment in time, this <i>point</i> has a specific <i>position</i> on the <i>axis</i>, a specific <i>velocity</i> and a specific <i>acceleration</i>. These three properties (all floating point values) define the state of the <a>timing resource</a> at that moment in time. Implementation of <a lt="timing resource">timing resources</a> depends on the user agent providing an <dfn>internal clock</dfn> which is both precise, high-resulution and monotonic. [[HR-TIME]].</li>
+        The <dfn>performance clock</dfn> refers to the precise, high-resolution, and monotonic clock defined in [[!HR-TIME]] (and exposed through the <code>Performance.now()</code> method).</li>
+      </p>
+
+      <p>
+        A <dfn>timing resource</dfn> is an object. This object essentially implements the abstraction of a <i>linear motion in real time</i>. For example, imagine a <i>point</i> moving along an <i>axis</i>. At a specific moment in time, this <i>point</i> has a specific <i>position</i> on the <i>axis</i>, a specific <i>velocity</i> and a specific <i>acceleration</i>. These three properties (all floating point values) define the state of the <a>timing resource</a> at that moment in time.
       </p>
       <p>
-        A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn>online timing resource</dfn>, i.e. an object hosted remotely by an online service.
+        A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn lt="online timing resources">online timing resource</dfn>, i.e. an object hosted remotely by an online service.
       </p>
       <p class="note">
         A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
@@ -555,11 +559,19 @@
       </p>
 
       <p>
+<<<<<<< HEAD
         A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
       </p>
 
       <p>
         A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing provider</a> and therefore includes a timestamp value from the timeline of the <a>timing provider</a>.
+=======
+        A <a>timing object</a> has an <dfn>internal clock</dfn> which is a monotonic clock. The <a>internal clock</a> is the <a>performance clock</a> if the <a>timing object</a> is not associated with a <a>timing provider object</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal clock</a> is a <dfn>logical clock</dfn> that the <a>user agent</a> dynamically adjusts to follow the updates made by the <a>timing resource provider</a> to the <code>skew</code> property of the <a>timing provider object</a>. The <i>skew</i> is an estimation of the difference between the <a>timing resource provider</a> clock and the <a>performance clock</a>, so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. The <a>user agent</a> must ensure the monotonicity of the <a>logical clock</a> by applying skew changes gradually, if necessary.
+      </p>
+
+      <p>
+        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. The <a>timing object</a> is said to be moving if the velocity and/or acceleration of its <a>internal vector</a> is non-zero. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing resource provider</a> and therefore includes a timestamp value from the timeline of the <a>timing resource provider</a>.
+>>>>>>> 7243da8282da0b75a6504e779f98ff42a5e488b5
       </p>
 
       <p>
@@ -634,7 +646,11 @@
           <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code> whose <a>timing provider source</a> is <var>provider</var>.</li>
           <li>Let <var>timing</var>'s <a>start position</a> be <var>provider</var>'s <code>startPosition</code> property.</li>
           <li>Let <var>timing</var>'s <a>end position</a> be <var>provider</var>'s <code>endPosition</code> property.</li>
+<<<<<<< HEAD
           <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property.</li>
+=======
+          <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
+>>>>>>> 7243da8282da0b75a6504e779f98ff42a5e488b5
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>provider</var>'s <code>vector</code> property.</li>
           <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>provider</var>'s <code>skew</code> property.</li>
           <li><a>Observe</a> <var>provider</var>.</li>
@@ -654,11 +670,15 @@
             </ol>
           </li>
           <li>
+<<<<<<< HEAD
             When an update to the <code>skew</code> property is observed, run the following substeps:
             <ol>
               <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be the new value.</li>
               <li>Run <a>Process skew change</a></li>
             </ol> 
+=======
+            When an update to the <code>skew</code> property is observed, the <a>user agent</a> MUST adjust <var>timing</var>'s <a>logical clock</a>, gradually if necessary to preserve the monotonicity of the clock.
+>>>>>>> 7243da8282da0b75a6504e779f98ff42a5e488b5
           </li>
           <li>Return <var>timing</var>.</li>
         </ol>
@@ -671,6 +691,9 @@
         </p>
         <p class="issue">
           This <a lt="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
+        </p>
+        <p class="issue">
+          Should the procedure detail how to apply <code>skew</code> changes gradually to preserve the monotonicity of the <a>logical clock</a> or should that rather be left as an implementation detail?
         </p>
       </section>
 
@@ -705,9 +728,7 @@
               <li>Let <var>result</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
             </ol>
           </li>
-
           <li>Return <var>result</var>.</li>
-
         </ol>
       </section>
 
@@ -902,19 +923,18 @@
         A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
-        The concept of <a>timing provider</a> is introduced in order to leave space open for innovation among online timing providers. The idea is that third parties may provide different implementations of <a>timing provider</a> objects in JavaScript, to which <a>timing objects</a> may be connected. So, the purpose of the <a>timing provider</a> mechanism is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
+        The concept is introduced in order to leave space open for innovation among online timing providers. The purpose is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>: third parties may provide different implementations of <a>timing provider objects</a> in JavaScript, to which <a>timing objects</a> may be connected. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
       </p>
       <p>
         In practice, a Web application willing to use a particular <a>timing resource provider</a> needs to load the corresponding JavaScript library provided by this <a>timing resource provider</a>, create a <a>timing provider object</a> and pass that object to the <a>timing object</a> constructor.
       </p>
       <p>
-        The <a>timing provider</a> interface allows the <a>timing object</a> to exercise control over the <a>timing provider object</a>, as well as be notified of state changes as soon as they occur, in particular <a href="#state-vector-synchronization">state vectors</a> and <a href="#clock-synchronization">clock skew estimates</a>. As the clock of the <a>timing object</a> [[HR-TIME]] defines its own local timeline (on load) - timestamps must be translated between the timeline employed by the <a>timing provider</a> and [[HR-TIME]]. For this, an estimate of the <i>skew</i> between the two timelines is required. In the case of online timing resources this <i>skew</i> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <i>skew</i> estimate received from the <a>timing provider object</a>. <i>Skew</i> is defined below;
+        The <a>TimingProvider</a> interface allows the <a>timing object</a> to exercise control over the <a>timing provider object</a>, as well as be notified of state changes as soon as they occur, in particular <a href="#state-vector-synchronization">state vectors</a> and <a href="#clock-synchronization">clock skew estimates</a>.</p>
+      <p>
+        The <dfn>skew</dfn> specifies how timestamps may be translated between the timeline of the <a>performance clock</a> and that used by the <a>timing resource provider</a>. In the case of <a>online timing resources</a>, the <a>skew</a> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <a>skew</a> estimate received from the <a>timing provider object</a>. <a>Skew</a> is defined by the following equation (where <var>clock<sub>user agent</sub></var> is the <a>performance clock</a>):
       </p>
       <p>
         <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>
-      </p>
-      <p>
-        As the <a>timing provider object</a> and the <a>timing object</a> do not execute in the same thread, timely notifications from the <a>timing provider object</a> to the <a>timing object</a> is achieved through the use of observable properties.
       </p>
       <p>
         A <a>timing provider object</a> implements the following interface:
@@ -953,7 +973,7 @@
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the <a>external timing resource</a>, based on the provided <a>state vector</a>, and returns a <code>Promise</code> that the update was processed by the <a>timing provider</a> (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
+          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the <a>external timing resource</a>, based on the provided <a>state vector</a>, and returns a <code>Promise</code> that the update was processed by the <a>timing resource provider</a> (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>promise</var> be a new <code>Promise</code>.</li>
@@ -1058,7 +1078,7 @@
       <section>
         <h3>Create a new state vector</h3>
         <p>
-          The <code>TimingStateVector</code> constructor is used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object. It is also used as return value from the <code>query()</code> method of the <a>timing object</a> and as parmeter to the <code>update</code> of a <a>timing provider object</a>.
+          The <code>TimingStateVector</code> constructor is only intended to be used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object.
         </p>
         <p>
           When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
