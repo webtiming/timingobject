@@ -555,8 +555,7 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, that <a>timing provider</a> always uses a different clock. The <a>timing provider</a> provides an estimate of the <dfn>skew</dfn> between the two clocks, so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>.
-        This equation is used by the <a>timing object</a> to convert timestamps between the two timelines. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually.
+        A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
       </p>
 
       <p>
@@ -597,7 +596,7 @@
           The <dfn>startPosition</dfn> and <dfn>endPosition</dfn> attributes MUST respectively be set to the <a>start position</a> and <a>end position</a> that the <a>state vector</a> may take, if any, or <code>-Infinity</code> and <code>Infinity</code> otherwise.
         </p>
         <p>
-          The <dfn>readyState</dfn> attribute MUST be set to the current state of the connection with the <a>timing resource</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
+          The <dfn>readyState</dfn> attribute MUST be set to the current state of the <a>timing provider</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
         </p>
       </div>
 
@@ -608,13 +607,13 @@
         </p>
         <ol>
           <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code>.</li>
-          <li>Let <var>vectorInit</var> be the four-tuple represented by the constructor's first argument or <code>(0.0, 0.0, 0.0, t)</code> if not given, where <code>t</code> is the reading of the <a>internal clock</a> at the time of query, in seconds.</li>
+          <li>Let <var>t</var> be a fresh timestamp read from the <a>internal clock</a>, defining the time of creation.
+          <li>Let <var>vectorInit</var> be the four-tuple <code>(p, v, a, t)</code>, where <code>(p, v, a)</code> are from the constructors first argument, or <code>(0,0,0)</code> if no argument is provided.</li> 
           <li>Let <var>timing</var>'s <a>internal vector</a> be a newly constructed <code><a>TimingStateVector</a></code> that represents <var>vectorInit</var>.</li>
           <li>Let <var>timing</var>'s <a>timing provider source</a> be null.</li>
-          <li>Let <var>startPosInit</var> be the constructor's second argument or null if not given.</li>
           <li>Let <var>timing</var>'s <a>start position</a> be the constructor's second argument or <code>-Infinity</code> if not given.</li>
-          <li>Let <var>timing</var>'s <a>end position</a> be the constructor's thrid argument or <code>Infinity</code> if not given.</li>
-          <li>If <var>timing</var>'s <a>range</a> does not <a lt="covers">cover</a> the <a>internal vector</a>'s position:
+          <li>Let <var>timing</var>'s <a>end position</a> be the constructor's third argument or <code>Infinity</code> if not given.</li>
+          <li>If <var>timing</var>'s <a>range</a> does not <a lt="covers">cover</a> the position of the <a>internal vector</a>:
             <ol>
               <li>Let <var>timing</var>'s <a>internal vector</a>'s position be <a>start position</a> or <a>end position</a>, whichever is closest</li>
               <li>Let <var>timing</var>'s <a>internal vector</a>'s velocity and acceleration be <code>0.0</code> if the direction of the motion would make the position leave the <a>range</a> immediately.</li>
@@ -625,10 +624,7 @@
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
           <li>Return <var>timing</var>.</li>
         </ol>
-        <p class="note">
-          When the initial vector is not provided to the constructor, the timing object is initialized as a non moving point (velocity and acceleration equal <code>0.0</code>) at position <code>0.0</code>.
-        </p>
-
+ 
 
         <p>
           When the <code><a>TimingObject</a></code> constructor that takes a <code><a>TimingProvider</a></code> is invoked, the <a>user agent</a> MUST run the following steps:
@@ -636,15 +632,11 @@
         <ol>
           <li>Let <var>provider</var> be the constructor's argument.</li>
           <li>Let <var>timing</var> be a newly created <code><a>TimingObject</a></code> whose <a>timing provider source</a> is <var>provider</var>.</li>
-          <li>Let <var>timing</var>'s <a>state</a> be <code>connecting</code>.</li>
           <li>Let <var>timing</var>'s <a>start position</a> be <var>provider</var>'s <code>startPosition</code> property.</li>
           <li>Let <var>timing</var>'s <a>end position</a> be <var>provider</var>'s <code>endPosition</code> property.</li>
-          <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property and, if different from <code>connecting</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>readystatechange</code> at <var>timing</var>.</li>
-          <!--
-          <li>Let <var>timing</var>'s <a>last measured time value</a> be null.</li>
-          -->
+          <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>provider</var>'s <code>vector</code> property.</li>
-          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
+          <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>provider</var>'s <code>skew</code> property.</li>
           <li><a>Observe</a> <var>provider</var>.</li>
           <li>
             When an update to the <code>readyState</code> property is observed, run the following substeps:
@@ -660,6 +652,13 @@
               <li>Let <var>timing</var>'s <a>internal vector</a> be the new value.</li>
               <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
             </ol>
+          </li>
+          <li>
+            When an update to the <code>skew</code> property is observed, run the following substeps:
+            <ol>
+              <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be the new value.</li>
+              <li>Run <a>Process skew change</a></li>
+            </ol> 
           </li>
           <li>Return <var>timing</var>.</li>
         </ol>
@@ -679,35 +678,38 @@
         <h3>Process a query operation</h3>
 
         <p>
-          The <dfn for="TimingObject">query</dfn> method returns a snapshot of the <a>internal vector</a> evaluated against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+          The <dfn for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
-          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, <a>queue a task</a> to <a>fire a simple event</a> named <code>error</code> at <var>timing</var>, return null, and abort these steps.</li>
-          <li>If the <a>timing provider source</a> of <var>timing</var> is null, then let <var>t</var> be the reading of the <a>internal clock</a> at the time of query, in seconds. Otherwise, let <var>t</var> be the result of running the following substeps:
+          <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, throw exception.</li>
+          <li>Let <var>t<sub>u</sub></var> be the reading of the <a>internal clock</a> of the useragent, defining the processing time of the operation.</li>
+          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
+          <li>If the <a>timing provider source</a> of <var>timing</var> is null, let <var>d</var> be <code><var>t<sub>u</sub></var>-<var>t<sub>int</sub></var></code>.</li>
+          
+          <li>If the <a>timing provider source</a> of <var>timing</var> is not null, let <var>d</var> be <code><a>translate_u2p</a>(<var>t<sub>u</sub></var>)-<var>t<sub>int</sub></var></code>.</li>
+          
+          <li>Let <var>p</var> be <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * <var>d</var> + 1/2 * <var>a<sub>int</sub></var> * <var>d</var><sup>2</sup></li>
+          <li>Let <var>v</var> be <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * <var>d</var></li>
+          <li>Let <var>a</var> be <var>a<sub>int</sub></var></li>
+          <li>Let <var>result</var> be newly created <code><a>TimingStateVector</a></code> from four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>u</sub></var>)
+
+          <li>Range violation is detected if not <a>range</a> <a>covers</a> <var>p</var>. Run the following substeps:
             <ol>
-              <li>Let <var>t<sub>provider</sub></var> be the result of calling <code>now()</code> on the <a>timing provider source</a> object. If this throws an exception, throw the exception, and abort all remaining steps. Similarly, if the returned value is not a double, throw a <code>TypeError</code> exception, and abort all remaining steps.</li>
-              <!--
-              <li>If the <a>last measured time value</a> of <var>timing</var> is not null and is greater than <var>t<sub>provider</sub></var> then throw an 
-              -->
-              <code>OperationError</code> exception, and abort all remaining steps.</li>
-              <!--
-              <li>Set the <a>last measured time value</a> of <var>timing</var> to <var>t<sub>provider</sub></var>.</li>
-              -->
-              <li>Return <var>t<sub>provider</sub></var>.</li>
+              <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
+              <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
+              <li>Let <var>p<sub>modified</sub></var> be either <var>start</var> or <var>end</var>, whichever is closest to <var>p</var>.</li>
+              <li>Let <var>vector</var> be newly created <code>TimingStateVectorUpdate</code> that from three-tuple (<var>p<sub>modified</sub></var>, 0, 0).</li>
+              <li>Invoke <a for="TimingObject">update</a> method on <var>timing</var> with <var>vector</var> as parameter.</li>
+              <li>Let <var>result</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
             </ol>
           </li>
-          <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
-          <li>Let <var>p</var> be <var>p<sub>int</sub></var> + <var>v<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>) + 1/2 * <var>a<sub>int</sub></var> (<var>t</var> - <var>t<sub>int</sub></var>)<sup>2</sup>.</li>
-          <li>Let <var>v</var> be <var>v<sub>int</sub></var> + <var>a<sub>int</sub></var> * (<var>t</var> - <var>t<sub>int</sub></var>).</li>
-          <li>Let <var>a</var> be <var>a<sub>int</sub></var>.</li>
-          <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t</var>).</li>
-          <li>Return <var>vector</var>.</li>
-        </ol>
 
-        <p class="issue">
-          The mechanism that detects non-monotonic readings of a <code><a>TimingProvider</a></code> clock and throws an exception when that happens could perhaps be replaced by a procedure that asks the <a>user agent</a> to create a monotonic clock out of these non-monotonic readings and to use that clock instead. This would allow to drop the requirement on <a>timing resource provider</a> to expose a monotonic clock.
-        </p>
+          <li>Return <var>result</var>.</li>
+
+        </ol>
       </section>
+
+
 
       <section>
         <h3>Process an update operation</h3>
@@ -775,7 +777,29 @@
           <li>Return true.</li>
         </ol>
       </section>
+
+
+      <section>
+        <h3>Process Skew Change</h3>
+        <p>
+          <dfn>Process skew change</dfn>
+        </p>
+      </section>
      
+      <section>
+        <h3>Translate u2p</h3>
+        <p>
+          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing object</a> (user agent) to the timeline of the <a>timing provider</a>.
+        </p>
+      </section>
+
+      <section>
+        <h3>Translate p2u</h3>
+        <p>
+          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing provider</a>  to the timeline of the <a>timing object</a> (user agent).
+        </p>
+      </section>
+
 
       <section>
         <h3>Connection states</h3>
