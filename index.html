@@ -555,20 +555,20 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing provider</a> uses a different clock. The <a>timing provider</a> provides an estimate of the <dfn>skew</dfn> between the two clocks, so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>.
+        A <a>timing object</a> has an <a>internal clock</a> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, that <a>timing provider</a> always uses a different clock. The <a>timing provider</a> provides an estimate of the <dfn>skew</dfn> between the two clocks, so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>.
         This equation is used by the <a>timing object</a> to convert timestamps between the two timelines. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually.
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. The <a>timing object</a> is said to be moving if the velocity and/or acceleration of its <a>internal vector</a> is non-zero. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing provider</a>and therfore includes a timestamp value from the timeline of the <a>timing provider</a>.
+        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing provider</a> and therefore includes a timestamp value from the timeline of the <a>timing provider</a>.
       </p>
 
       <p>
-        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. If the <a>timing object</a>is associated with a <a>timing provider object</a>, the operational <a>state</a> will reflect the state of an underlying communication link. 
+        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the operational <a>state</a> will reflect the state of the <a>timing provider</a>, and by implication the underlying communication link. 
       </p>
 
       <p>
-        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> if a <a>range</a> violation occurs. The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
+        A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> if a <a>range</a> violation occurs (at the correct moment). The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
       </p>
 
       <p>A <a>timing object</a> implements the following interface:</p>
