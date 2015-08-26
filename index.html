@@ -574,6 +574,15 @@
         A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> if a <a>range</a> violation occurs (at the correct moment). The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
       </p>
 
+      <p>
+        A <a>timing object</a> must implement skew changes gradually, in order to ensure monotonic behavior. For example, if the skew estimate increases by 2 ms at one point, one might want to apply this change at a certain rate, for instance 1 ms change per 10ms. So, after 20ms the 2ms change is fully applied. To implement this, update the internal skew immediately on skew change, and then define a linear adjustment function that is subtracted from the skew. In the above example the function will subtract the full 2ms initially, and then 0ms after 20ms. New skew changes must be integrated into the adjustment function. This logic is left unspecified.
+      </p>
+      <p class="note">
+        In practice, it is not clear that monotonic behavior at the millisecond scale is required by any of the existing use cases. Monotonic behavior is still included as requirement on the assumption that it may enable future use cases, and that is does not add much complexity. 
+      </p>
+
+
+
       <p>A <a>timing object</a> implements the following interface:</p>
 
       <pre class="idl">
@@ -583,6 +592,7 @@
            optional unrestricted double endPosition),
          Constructor (TimingProvider provider)]
         interface TimingObject : EventTarget {
+          readonly    attribute TimingProviderObject timingProviderSource;
           readonly    attribute TimingObjectState readyState;
           readonly    attribute unrestricted double startPosition;
           readonly    attribute unrestricted double endPosition;
@@ -653,15 +663,15 @@
           <li>
             When an update to the <code>vector</code> property is observed, run the following substeps:
             <ol>
-              <li>Let <var>timing</var>'s <a>internal vector</a> be the new value.</li>
-              <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
+              <li>Let <var>newVector</var> be the new value of <a>timing provider</a>'s <code>vector</code> property.</li>
+              <li>Run <var>Process vector change</var> with <var>newVector</var> as parameter.</li>
             </ol>
           </li>
           <li>
             When an update to the <code>skew</code> property is observed, run the following substeps:
             <ol>
-              <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be the new value.</li>
-              <li>Run <a>Process skew change</a></li>
+              <li>Let <var>newSkew</var> be the new value of <a>timing provider</a>'s <code>skew</code> property.</li>
+              <li>Run <a>Process skew change</a> with <var>newSkew</var> as parameter.</li>
             </ol> 
           </li>
           <li>Return <var>timing</var>.</li>
@@ -675,9 +685,6 @@
         </p>
         <p class="issue">
           This <a lt="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
-        </p>
-        <p class="issue">
-          Should the procedure detail how to apply <code>skew</code> changes gradually to preserve the monotonicity of the <a>timing object</a> or should that rather be left as an implementation detail?
         </p>
       </section>
 
@@ -800,12 +807,29 @@
         </ol>
       </section>
 
+      <section>
+        <h3>Process Vector Change</h3>
+        <p>
+          When the <a>user agent</a> is required to <dfn>process vector change</dfn>, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
+           <li>Let <var>newVector</var> be the first parameter.</li>
+          <li>Let <var>timing</var>'s <a>internal vector</a> be <var>newVector</var>.</li>
+          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
+        </ol>
+      </section>
 
       <section>
         <h3>Process Skew Change</h3>
         <p>
-          <dfn>Process skew change</dfn>
+          When the <a>user agent</a> is required to <dfn>process skew change</dfn>, it must run the following steps:
         </p>
+        <ol>
+          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
+          <li>Let <var>newSkew</var> be the first parameter.</li>
+          <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>newSkew</var>.</li>
+        </ol>
       </section>
      
       <section>
@@ -813,14 +837,46 @@
         <p>
           <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing provider</a> (p).
         </p>
+        <p>
+          When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>t<sub>u</sub></var> be the first parameter.</li>
+          <li>Let <var>effectiveskew</var> be the result of <code><a lt="calculate effective skew">calculate_effective_skew()</a></code></li>
+          <li>Return <code><var>t<sub>u</sub></var> + <var>effectiveskew</var></code>.</li>
+        </ol>
       </section>
+
 
       <section>
         <h3>Translate p2u</h3>
         <p>
           <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing provider</a> (p) to the timeline of the <a>user agent</a> (u).
         </p>
+        <p>
+          When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>t<sub>p</sub></var> be the first parameter.</li>
+          <li>Let <var>effectiveskew</var> be the result of <code><a lt="calculate effective skew">calculate_effective_skew()</a></code></li>
+          <li>Return <code><var>t<sub>u</sub></var> - <var>effectiveskew</var></code>.</li>
+        </ol>
       </section>
+
+
+      <section>
+        <h3>Calculate effective skew</h3>
+
+        <p>
+            When the <a>user agent</a> is required to <dfn>calculate effective skew</dfn>, it must run the following steps:
+        </p>
+        <ol>
+          <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
+          <li>Let <var>adjustment</var> be result of calculating gradually applied skew change.</li>
+          <li>Return <code><var>skew</var> - <var>adjustment</var></code>.</li>
+        </ol>
+      </section>
+
 
 
       <section>
