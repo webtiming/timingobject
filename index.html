@@ -681,6 +681,7 @@
           The <dfn for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
+          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
           <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, throw  new <code>InvalidStateError</code> and abort all further steps.</li>
           <li>Let <var>t<sub>u</sub></var> be the reading of the <a>internal clock</a> of the useragent, defining the processing time of the operation.</li>
           <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
@@ -721,6 +722,7 @@
           When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
+          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
           <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code> and abort all further steps.</li>
 
           <li>Let <var>newVector</var> be the method's first parameter.</li>
@@ -763,19 +765,20 @@
       <section>
         <h3>Set the internal timeout</h3>
         <p>
-          If <a>timing</a>'s properties <code>startPosition</code> and <code>endPosition</code> are specified, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
+          If <a>timing object</a>'s properties <code>startPosition</code> and <code>endPosition</code> are specified, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
         <p>
         <p>
-          When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
+          When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a>, it must run the following steps:
         </p>
         <ol>
+          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
           <li>If the <a>current range timeout</a> is not null, cancel the timeout and set the <a>current range timeout</a> to null.</li>
-          <li>Let <var>startPos</var> be <a>timing</a>'s <code>startPosition</code>.</li>
-          <li>Let <var>endPos</var> be <a>timing</a>'s <code>endPosition</code>.</li>
+          <li>Let <var>startPos</var> be <var>timing</var>'s <code>startPosition</code>.</li>
+          <li>Let <var>endPos</var> be <var>timing</var>'s <code>endPosition</code>.</li>
           <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
           <li>If <var>endpoint</var> is null, abort all further steps.</li>
-          <li>Let <a>vector</a> be the <code>TimingStateVector</code> represented by four-tuple (<var>endpoint</var>, 0, 0, t).</li>
-          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <a>vector</a> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
+          <li>Let <var>vector</var> be the <code>TimingStateVector</code> represented by four-tuple (<var>endpoint</var>, 0, 0, t).</li>
+          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>vector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
         </ol>
       </section>
 
