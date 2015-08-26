@@ -699,7 +699,8 @@
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
               <li>Let <var>p<sub>modified</sub></var> be either <var>start</var> or <var>end</var>, whichever is closest to <var>p</var>.</li>
               <li>Let <var>vector</var> be newly created <code>TimingStateVectorUpdate</code> that from three-tuple (<var>p<sub>modified</sub></var>, 0, 0).</li>
-              <li>Invoke <a for="TimingObject">update</a> method on <var>timing</var> with <var>vector</var> as parameter.</li>
+              <li>Invoke <a for="TimingObject">update</a> method on <var>timing</var> with <var>vector</var> as parameter. <span class="issue"> Update method should only have local effects.</span>
+              </li>
               <li>Let <var>result</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
             </ol>
           </li>
@@ -741,13 +742,13 @@
           <li>Let <var>v</var> be <var>v<sub>new</sub></var>, or <var>v<sub>now</sub></var> if <var>v<sub>new</sub></var> is <code>null</code> or <code>undefined</code>.
           <li>Let <var>a</var> be <var>a<sub>new</sub></var>, or <var>a<sub>now</sub></var> if <var>a<sub>new</sub></var> is <code>null</code> or <code>undefined</code>.
 
-          <li>Avoid range violation. Run the following substeps:
+          <li>Avoid range violation on update. Run the following substeps:
             <ol>
               <li>If not <a>range</a> <a>covers</a> <var>p</var> throw new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
-              <li>If <code><var>p</var> = start && <var>v</var> < 0</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> = start && (<var>v</var> < 0|| (<var>v</var> = 0 && <var>a</var> < 0))</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
-              <li>If <code><var>p</var> = end && <var>v</var> > 0</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> = end && (<var>v</var> > 0 || (<var>v</var> = 0 && <var>a</var> > 0))</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
             </ol>
           </li>
  
@@ -762,23 +763,20 @@
       <section>
         <h3>Set the internal timeout</h3>
         <p>
-          If a <a>range</a> is specified for the timing object, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
+          If <a>timing</a>'s properties <code>startPosition</code> and <code>endPosition</code> are specified, e.g. <code>[0,123]</code>, the timing object must schedule a future <code>update</code> operation on itself, to ensure that the <a>range</a> is not violated.
         <p>
         <p>
           When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a> <var>timing</var>, it must run the following steps:
         </p>
         <ol>
           <li>If the <a>current range timeout</a> is not null, cancel the timeout and set the <a>current range timeout</a> to null.</li>
-          <li>Let <var>startPos</var> be the timing object's <a>start position</a>.</li>
-          <li>Let <var>endPos</var> be the timing object's <a>end position</a>.</li>
+          <li>Let <var>startPos</var> be <a>timing</a>'s <code>startPosition</code>.</li>
+          <li>Let <var>endPos</var> be <a>timing</a>'s <code>endPosition</code>.</li>
           <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
-          <li>If <var>endpoint</var> is null, abort these steps.</li>
-          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with the new vector (<var>endpoint</var>, <code>0.0</code>, <code>0.0</code>) when the <a>internal clock</a> reaches <var>t</var>. <span class="note">This mechanism may be extended to support loopback</span></li> 
+          <li>If <var>endpoint</var> is null, abort all further steps.</li>
+          <li>Let <a>vector</a> be the <code>TimingStateVector</code> represented by four-tuple (<var>endpoint</var>, 0, 0, t).</li>
+          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <a>vector</a> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
         </ol>
-
-        <p class="issue">
-          What would be a proper way to introduce the notion of timeout according to the <a>internal clock</a> here?
-        </p>
       </section>
 
       <section>
