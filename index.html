@@ -559,7 +559,7 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal clock</dfn> which is [[HR-TIME]]. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
+        A <a>timing object</a> has an <dfn>internal clock</dfn> which is <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
       </p>
 
       <p>
@@ -708,14 +708,15 @@
           <li>Let <var>a</var> be <var>a<sub>int</sub></var></li>
           <li>Let <var>result</var> be newly created <code><a>TimingStateVector</a></code> from four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>u</sub></var>)
 
-          <li>Range violation is detected. If not <a>range</a> <a>covers</a> <var>p</var>. Run the following substeps:
+          <li>Range violation is detected. If not <a>range</a> <a>covers</a> <var>p</var>, run the following substeps:
             <ol>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
               <li>Let <var>p<sub>modified</sub></var> be either <var>start</var> or <var>end</var>, whichever is closest to <var>p</var>.</li>
               <li>Let <var>vector</var> be newly created <code>TimingStateVectorUpdate</code> that from three-tuple (<var>p<sub>modified</sub></var>, 0, 0).</li>
-              <li>Invoke <a for="TimingObject">update</a> method on <var>timing</var> with <var>vector</var> as parameter. <span class="issue"> Update method should only have local effects.</span>
-              </li>
+              <li>Let <var>timing</var>'s <a>internal vector</a> be <var>vector</var>.</li>
+              <li>Clear the <a>current range timeout</a> of <var>timing</var>.</li>
+              <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
               <li>Let <var>result</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
             </ol>
           </li>
@@ -828,7 +829,9 @@
         <ol>
           <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
           <li>Let <var>newSkew</var> be the first parameter.</li>
+          <li>Let <var>oldSkew</var> be <var>timing</var>'s <a lt="clock skew">internal skew</a>.</li>
           <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>newSkew</var>.</li>
+          <li>Update variables used by <code><a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code> based on <var>newSkew</var> and <var>oldSkew</var></li>
         </ol>
       </section>
      
@@ -842,7 +845,9 @@
         </p>
         <ol>
           <li>Let <var>t<sub>u</sub></var> be the first parameter.</li>
-          <li>Let <var>effectiveskew</var> be the result of <code><a lt="calculate effective skew">calculate_effective_skew()</a></code></li>
+
+          <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
+          <li>Let <var>effectiveskew</var> be the result of <code><var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code></li>
           <li>Return <code><var>t<sub>u</sub></var> + <var>effectiveskew</var></code>.</li>
         </ol>
       </section>
@@ -858,23 +863,19 @@
         </p>
         <ol>
           <li>Let <var>t<sub>p</sub></var> be the first parameter.</li>
-          <li>Let <var>effectiveskew</var> be the result of <code><a lt="calculate effective skew">calculate_effective_skew()</a></code></li>
-          <li>Return <code><var>t<sub>u</sub></var> - <var>effectiveskew</var></code>.</li>
+
+          <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
+          <li>Let <var>adjustment</var> be the result of <code><var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code></li>
+          <li>Return <code><var>t<sub>u</sub></var> - <var>adjustment</var></code>.</li>
         </ol>
       </section>
 
 
       <section>
-        <h3>Calculate effective skew</h3>
-
-        <p>
-            When the <a>user agent</a> is required to <dfn>calculate effective skew</dfn>, it must run the following steps:
+        <h3>Calculate skew adjustment</h3>
+        <p> 
+          <dfn>Calculate skew adjustment</dfn> must implement the logic to ensure that skew changes are applied gradually. If the method returns <code>0</code> always, skew changes are fully applied as soon as they are received (i.e. not gradually applied). The logic of this method involves some bookkeeping, i.e. how much of the skew changed is already applied at a given point, and how much remains. New skew changes require this imformation to be re-evaluated. Note that this function is only invoked as part of a query operation. The actual logic of this is left unspecified. 
         </p>
-        <ol>
-          <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>adjustment</var> be result of calculating gradually applied skew change.</li>
-          <li>Return <code><var>skew</var> - <var>adjustment</var></code>.</li>
-        </ol>
       </section>
 
 
@@ -1111,7 +1112,7 @@
         </p>
 
         <p>
-          The <dfn>timestamp</dfn> attribute MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid. The <a>timestamp</a> is from the timeline of the user agent defined by [HR-TIME].
+          The <dfn>timestamp</dfn> attribute MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid. The <a>timestamp</a> is from the timeline of the user agent defined by <a>performance clock</a>.
         </p>
       </div>
 
@@ -1126,8 +1127,6 @@
         <ol>
           <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code>.</li>
           <li>Let (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>) be the four-tuple represented by the constructor's first argument.</li>
-          <li>If <var>t<sub>init</sub></var> is null, throw an <code>InvalidParameter</code> exception and abort these steps.</li>
-          <li>For each other variable, if the value is null, set it to <code>0.0</code>.</li>
           <li>Initialize <var>vector</var> so that it represents the four-tuple (<var>p<sub>init</sub></var>, <var>v<sub>init</sub></var>, <var>a<sub>init</sub></var>, <var>t<sub>init</sub></var>).</li>
           <li>Return <var>vector</var>.</li>
         </ol>
@@ -1415,7 +1414,7 @@
 
 
     <section class="informative appendix">
-      <h3>Implementation guidelines</h3>
+      <h3>Implementation guidelines multi-device synchronization</h3>
 
       <p>
         Distributed synchronization is a main use case that a <a>user agent</a> or a <a>timing resource provider</a> may enable. <a>Timing objects</a> running on different devices will be synchronized if they are associated with the same online <a>timing resource</a>. To achieve precise and reliable synchronization across the Internet, the implementation needs to address two distinct issues: the synchronization of <a>state vectors</a> and the synchronization of clocks. A brief introduction to a specific solution is given below. Details are available in [[MSV]].
@@ -1440,7 +1439,7 @@
           Ideally, if multiple <a>timing objects</a> (e.g. on different devices) connected to the same <a>online timing resource</a> are queried at the exact same moment, they should ideally return the same <a>state vector</a> (same position, velocity and acceleration). This requires that <a>state vectors</a> are synchronized, and that the clock skew between <a>online timing resource</a> is zero (synchronized clocks) or known (so that it can be compensated).
         </p>
         <p>
-          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock skew estimation must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> (or <a>timing provider object</a>) should maintain a software clock that is continuously synchronized with the clock used by the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> into the timeframe of their own local clock, i.e. [[HR-TIME]].
+          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock skew estimation must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> (or <a>timing provider object</a>) should maintain a software clock that is continuously synchronized with the clock used by the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> into the timeframe of their own local clock, i.e. <a>performance clock</a>.
         </p>
         <p>
           Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a>timing provider objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
@@ -1584,32 +1583,32 @@
       </section>
 
       <section>
-      <h3> Distributed Recording and Replayability </h3>
+      <h3> Distributed Capture and Replayability </h3>
       <p>
-        use case ...
+        Web browsers are increasingly useful for capturing user generated data. The trivial example is basic interaction, where users manually post comments or upload media. More interestingly, browser integration with peripheral devices such as Web-cameras and microphones allow Web browsers to become input devices for live, distributed media productions. Also, mobil devices come with a range of built-in sensors. All this imput data may become even more valuable if it is timestamped according to the same clock. The timing objects, with support for multi-device synchronization enables precise timestamping of media capture for distributed phenomena. Furthermore, the same data may be replayed time-shifted in multi-screen presentations using the timing object as playback director.
       </p>
       <p>
-        requirements ...
+        Shared timing resources enables timed capture and preservation of timing relations in the distributed scenario.
       </p>
       </section>
 
       <section>
       <h3> Distributed Music Production and Playback  </h3>
       <p>
-        use case ...
+        Musical productions are naturally distributed when multiple instruments play together. In the domain of music orchestration, the MIDI protocol has been uses as a carrier of tempo and rythm among electronic instruments. However, as MIDI signals are broadcast over physical (and wireless) links, higher latency reduces the synchronization. For this reason, the use of MIDI orchestration is typically limited to in-house setups. In contrast, the timing object with support for online synchronization supports millisecond precision globally, opening up for innovative distributed musical experiences. It also allows the involvement of visual components and devices that are not instruments. Support for MIDI instruments can still be achieved by synchronization of MIDI controllers using the timing object.   
       </p>
       <p>
-        requirements ...
+        Shared timing resources closes the gap between the world of musical orchestration and multi-device orchestration in the Web.
       </p>
       </section>
 
       <section>
-      <h3> Time sensitive Interactive Commercials </h3>
+      <h3> Ad-insertion and Time-sensitive Ads </h3>
       <p>
-        use case ...
+        Seamless switching between video content and inserted segments of Ads is identified as an important use case for commercial interests. <a href="https://www.w3.org/wiki/HTML/Media_Task_Force/MSE_Ad_Insertion_Use_Cases">Media Task Force Ad Insertion Use Cases</a>. Support for precisely timed playback of video elements is the basis for seamless switching. The timing object object may define a common timeline for both main content and ads, and timed text track support may be used to schedule videos in and out at the correct time, possibly with cross-fading implememted in css. The timing text track may even be used to implement pre-loading of videos, so that they are ready to play content just before a video switch. Using a timing object as director of media playback like this additionally opens up the possibility of presenting time-sensitive ads at the right time, possibly on a secondary device.
       </p>
       <p>
-        requirements ...
+        The timing object enables seamless, dynamic switching between different sources of timed media, and opens up for timed advertisements on multiple devices.
       </p>
       </section>
     </section>
