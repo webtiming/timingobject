@@ -369,7 +369,7 @@
       </p>
 
       <p>
-        The <dfn>performance clock</dfn> refers to the precise, high-resolution, and monotonic clock defined in [[!HR-TIME]] (and exposed through the <code>Performance.now()</code> method).</li>
+        The <dfn>internal clock</dfn> refers to the precise, high-resolution, and monotonic clock defined in [[!HR-TIME]] (and exposed through the <code>Performance.now()</code> method).</li>
       </p>
 
       <p>
@@ -555,7 +555,7 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal clock</dfn> which is the <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>performance clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
+        If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>internal clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
       </p>
 
       <p>
@@ -967,7 +967,7 @@
       <p>
         The <a>TimingProvider</a> interface allows the <a>timing object</a> to exercise control over the <a>timing provider object</a>, as well as be notified of state changes as soon as they occur, in particular <a href="#state-vector-synchronization">state vectors</a> and <a href="#clock-synchronization">clock skew estimates</a>.</p>
       <p>
-        The <dfn>skew</dfn> specifies how timestamps may be translated between the timeline of the <a>performance clock</a> and that used by the <a>timing resource provider</a>. In the case of <a>online timing resources</a>, the <a>skew</a> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <a>skew</a> estimate received from the <a>timing provider object</a>. <a>Skew</a> is defined by the following equation (where <var>clock<sub>user agent</sub></var> is the <a>performance clock</a>):
+        The <dfn>skew</dfn> specifies how timestamps may be translated between the timeline of the <a>internal clock</a> and that used by the <a>timing resource provider</a>. In the case of <a>online timing resources</a>, the <a>skew</a> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <a>skew</a> estimate received from the <a>timing provider object</a>. <a>Skew</a> is defined by the following equation (where <var>clock<sub>user agent</sub></var> is the <a>internal clock</a>):
       </p>
       <p>
         <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>
@@ -1107,7 +1107,7 @@
         </p>
 
         <p>
-          The <dfn>timestamp</dfn> attribute MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid. The <a>timestamp</a> is from the timeline of the user agent defined by <a>performance clock</a>.
+          The <dfn>timestamp</dfn> attribute MUST be set to the moment in time when <a>position</a>, <a>velocity</a> and <a>acceleration</a> were|are|will be valid. The <a>timestamp</a> is from the timeline of the user agent defined by the <a>internal clock</a>.
         </p>
       </div>
 
@@ -1434,7 +1434,7 @@
           Ideally, if multiple <a>timing objects</a> (e.g. on different devices) connected to the same <a>online timing resource</a> are queried at the exact same moment, they should ideally return the same <a>state vector</a> (same position, velocity and acceleration). This requires that <a>state vectors</a> are synchronized, and that the clock skew between <a>online timing resource</a> is zero (synchronized clocks) or known (so that it can be compensated).
         </p>
         <p>
-          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock skew estimation must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> (or <a>timing provider object</a>) should maintain a software clock that is continuously synchronized with the clock used by the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> into the timeframe of their own local clock, i.e. <a>performance clock</a>.
+          As synchronized system clocks is not a valid assumption in the Web environment, it follows that clock skew estimation must be resolved as part of the communication between <a>timing objects</a> and the <a>online timing resource</a>. To do this, <a>timing objects</a> (or <a>timing provider objects</a>) should maintain a software clock that is continuously synchronized with the clock used by the <a>online timing resource</a>. This may be achieved through periodic exchange with the <a>online timing resource</a> to evaluate the clock skew, taking into account the round-trip time (RTT) of these exchanges to improve the measurements. Using this evaluation, <a>timing objects</a> can tranform <a>state vectors</a> into the timeframe of their own local clock, i.e. the <a>internal clock</a>.
         </p>
         <p>
           Clock synchronization can be very fast. Stable estimates may be reached within fractions of a second. Implementations may for instance use an open Web sockets [[WEBSOCKETS]] connection to minimize the latency between <a>timing provider objects</a> and the <a>online timing resource</a>. If implemented correctly on both ends, this approach provides a basis to achieve &lt; 10ms media synchronization across the Internet.
