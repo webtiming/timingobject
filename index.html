@@ -555,7 +555,7 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal clock</dfn> which is <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
+        A <a>timing object</a> has an <dfn>internal clock</dfn> which is the <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>performance clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
       </p>
 
       <p>
@@ -569,14 +569,6 @@
       <p>
         A <a>timing object</a> can have a <dfn>start position</dfn> and an <dfn>end position</dfn> that together define the <dfn>range</dfn> of positions for the <a>timing object</a>. Internally, the <a>timing object</a> must enforce this <a>range</a> restriction by updating its <a>internal vector</a> if a <a>range</a> violation occurs (at the correct moment). The <a>timing object</a> will maintain a <dfn>current range timeout</dfn> for this purpose, pointing to a scheduled timeout when set.
       </p>
-
-      <p>
-        A <a>timing object</a> must implement skew changes gradually, in order to ensure monotonic behavior. For example, if the skew estimate increases by 2 ms at one point, one might want to apply this change at a certain rate, for instance 1 ms change per 10ms. So, after 20ms the 2ms change is fully applied. To implement this, update the internal skew immediately on skew change, and then define a linear adjustment function that is subtracted from the skew. In the above example the function will subtract the full 2ms initially, and then 0ms after 20ms. New skew changes must be integrated into the adjustment function. This logic is left unspecified.
-      </p>
-      <p class="note">
-        In practice, it is not clear that monotonic behavior at the millisecond scale is required by any of the existing use cases. Monotonic behavior is still included as requirement on the assumption that it may enable future use cases, and that is does not add much complexity. 
-      </p>
-
 
 
       <p>A <a>timing object</a> implements the following interface:</p>
@@ -660,14 +652,14 @@
             When an update to the <code>vector</code> property is observed, run the following substeps:
             <ol>
               <li>Let <var>newVector</var> be the new value of <var>provider</var>'s <code>vector</code> property.</li>
-              <li>Run <var>Process vector change</var> with <var>newVector</var> as parameter.</li>
+              <li><a>Process vector change</a> with <var>newVector</var> as parameter.</li>
             </ol>
           </li>
           <li>
             When an update to the <code>skew</code> property is observed, run the following substeps:
             <ol>
               <li>Let <var>newSkew</var> be the new value of <var>provider</var>'s <code>skew</code> property.</li>
-              <li>Run <a>Process skew change</a> with <var>newSkew</var> as parameter.</li>
+              <li><a>Process skew change</a> with <var>newSkew</var> as parameter.</li>
             </ol> 
           </li>
           <li>Return <var>timing</var>.</li>
@@ -691,9 +683,9 @@
           The <dfn for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
-          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
+          <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
           <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, throw  new <code>InvalidStateError</code> and abort all further steps.</li>
-          <li>Let <var>t<sub>u</sub></var> be the reading of the <a>internal clock</a> of the useragent, defining the processing time of the operation.</li>
+          <li>Let <var>t<sub>u</sub></var> be the reading of the <a>internal clock</a>, defining the processing time of the operation.</li>
           <li>Let (<var>p<sub>int</sub></var>, <var>v<sub>int</sub></var>, <var>a<sub>int</sub></var>, <var>t<sub>int</sub></var>) represent the <a>internal vector</a> of <var>timing</var>.</li>
           <li>If the <a>timing provider source</a> of <var>timing</var> is null, let <var>d</var> be <code><var>t<sub>u</sub></var>-<var>t<sub>int</sub></var></code>.</li>
           
@@ -704,7 +696,7 @@
           <li>Let <var>a</var> be <var>a<sub>int</sub></var></li>
           <li>Let <var>result</var> be newly created <code><a>TimingStateVector</a></code> from four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>u</sub></var>)
 
-          <li>Range violation is detected. If not <a>range</a> <a>covers</a> <var>p</var>, run the following substeps:
+          <li>Range violation is detected. If <var>timing</var>'s <a>range</a> does not <a>cover</a> <var>p</var>, run the following substeps:
             <ol>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
@@ -731,7 +723,7 @@
           When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
-          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
+          <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
           <li>If the <a>state</a> of <var>timing</var> is not <code>open</code>, return a new <code>Promise</code>, reject the promise with <code>InvalidStateError</code> and abort all further steps.</li>
 
           <li>Let <var>newVector</var> be the method's first parameter.</li>
@@ -755,11 +747,11 @@
 
           <li>Avoid range violation on update. Run the following substeps:
             <ol>
-              <li>If not <a>range</a> <a>covers</a> <var>p</var> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <var>timing</var>'s <a>range</a> does not <a>cover</a> <var>p</var> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
-              <li>If <code><var>p</var> = start && (<var>v</var> < 0|| (<var>v</var> = 0 && <var>a</var> < 0))</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> = start &amp;&amp; (<var>v</var> &lt; 0|| (<var>v</var> = 0 &amp;&amp; <var>a</var> &lt; 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
-              <li>If <code><var>p</var> = end && (<var>v</var> > 0 || (<var>v</var> = 0 && <var>a</var> > 0))</code> throw new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> = end &amp;&amp; (<var>v</var> > 0 || (<var>v</var> = 0 &amp;&amp; <var>a</var> > 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
             </ol>
           </li>
  
@@ -780,14 +772,14 @@
           When the <a>user agent</a> is required to <dfn>set the internal timeout</dfn> of a <a>timing object</a>, it must run the following steps:
         </p>
         <ol>
-          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
-          <li>If the <a>current range timeout</a> is not null, cancel the timeout and set the <a>current range timeout</a> to null.</li>
+          <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
+          <li>If <var>timing</var>'s <a>current range timeout</a> is not null, cancel the timeout and let <var>timing</var>'s <a>current range timeout</a> be null.</li>
           <li>Let <var>startPos</var> be <var>timing</var>'s <code>startPosition</code>.</li>
           <li>Let <var>endPos</var> be <var>timing</var>'s <code>endPosition</code>.</li>
           <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
           <li>If <var>endpoint</var> is null, abort all further steps.</li>
           <li>Let <var>vector</var> be the <code>TimingStateVector</code> represented by four-tuple (<var>endpoint</var>, 0, 0, t).</li>
-          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>vector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
+          <li>Let <var>timing</var>'s <a>current range timeout</a> be a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>vector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
         </ol>
       </section>
 
@@ -807,73 +799,76 @@
       <section>
         <h3>Process Vector Change</h3>
         <p>
-          When the <a>user agent</a> is required to <dfn>process vector change</dfn>, it must run the following steps:
+          When the <a>user agent</a> is required to <dfn>process vector change</dfn> on a <a>timing object</a>, it MUST run the following steps:
         </p>
         <ol>
-          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
-           <li>Let <var>newVector</var> be the first parameter.</li>
+          <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
+           <li>Let <var>newVector</var> be the new vector.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>newVector</var>.</li>
-          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
+          <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
         </ol>
       </section>
 
       <section>
         <h3>Process Skew Change</h3>
         <p>
-          When the <a>user agent</a> is required to <dfn>process skew change</dfn>, it must run the following steps:
+          When the <a>user agent</a> is required to <dfn>process skew change</dfn> on a <a>timing object</a>, it MUST run the following steps:
         </p>
         <ol>
-          <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
-          <li>Let <var>newSkew</var> be the first parameter.</li>
-          <li>Let <var>oldSkew</var> be <var>timing</var>'s <a lt="clock skew">internal skew</a>.</li>
-          <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>newSkew</var>.</li>
+          <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
+          <li>Let <var>newSkew</var> be the new skew.</li>
+          <li>Let <var>oldSkew</var> be <var>timing</var>'s <a>internal clock skew</a>.</li>
+          <li>Let <var>timing</var>'s <a>internal clock skew</a> be <var>newSkew</var>.</li>
           <li>Update variables used by <code><a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code> based on <var>newSkew</var> and <var>oldSkew</var></li>
         </ol>
       </section>
      
       <section>
-        <h3>Translate u2p</h3>
+        <h3>Translate timestamp from user agent to timing resource provider timeline</h3>
         <p>
           <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing resource provider</a> (p).
         </p>
         <p>
-          When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
+          When the <a>translate_u2p</a> method is invoked, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>t<sub>u</sub></var> be the first parameter.</li>
-
           <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>effectiveskew</var> be the result of <code><var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code></li>
-          <li>Return <code><var>t<sub>u</sub></var> + <var>effectiveskew</var></code>.</li>
+          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
+          <li>Return <var>t<sub>u</sub></var> + <var>effectiveskew</var>.</li>
         </ol>
       </section>
 
 
       <section>
-        <h3>Translate p2u</h3>
+        <h3>Translate timestamp from timing resource provider to user agent timeline</h3>
         <p>
           <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing resource provider</a> (p) to the timeline of the <a>user agent</a> (u).
         </p>
         <p>
-          When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
+          When the <a>translate_p2u</a> method is invoked, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>t<sub>p</sub></var> be the first parameter.</li>
-
           <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>adjustment</var> be the result of <code><var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code></li>
-          <li>Return <code><var>t<sub>u</sub></var> - <var>adjustment</var></code>.</li>
+          <li>Let <var>adjustment</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
+          <li>Return <var>t<sub>u</sub></var> - <var>adjustment</var>.</li>
         </ol>
       </section>
 
 
       <section>
         <h3>Calculate skew adjustment</h3>
-        <p> 
-          <dfn>Calculate skew adjustment</dfn> must implement the logic to ensure that skew changes are applied gradually. If the method returns <code>0</code> always, skew changes are fully applied as soon as they are received (i.e. not gradually applied). The logic of this method involves some bookkeeping, i.e. how much of the skew changed is already applied at a given point, and how much remains. New skew changes require this imformation to be re-evaluated. Note that this function is only invoked as part of a query operation. The actual logic of this is left unspecified. 
+        <p>
+          A <a>user agent</a> MUST implement skew changes reported by a <a>timing provider object</a> gradually, in order to ensure the monotonicity of <code>timestamp</code> values reported by the <a for="TimingObject">query</a> method of a <a>timing object</a>. For example, if the skew estimate increases by 2 ms at one point, one might want to apply this change at a certain rate, for instance 1 ms change per 10ms, so that, after 20ms, the 2ms change is fully applied. To achieve this, the <a>user agent</a> may update the <a>internal clock skew</a> immediately on skew change, and then define a linear adjustment function that is subtracted from the skew. In the above example the function will subtract the full 2ms initially, 1ms after 10ms, and then 0ms after 20ms. New skew changes must be integrated into the adjustment function.
+        </p>
+        <p>
+          The internal <dfn lt="calculate_skew_adjustment"><code>calculate_skew_adjustment()</code></dfn> method implements this logic. If the method always returns <code>0</code>, skew changes are fully applied as soon as they are received (i.e. not gradually applied). The logic of this method involves some bookkeeping, i.e. how much of the skew changed is already applied at a given point, and how much remains. New skew changes require this information to be re-evaluated. Note that this function is only invoked as part of a query operation. The actual logic of this method is left unspecified.
+        </p>
+        <p class="note">
+          In practice, it is not clear that monotonic behavior at the millisecond scale is required by any of the existing use cases. Monotonic behavior is still included as requirement on the assumption that it may enable future use cases, and that is does not add much complexity. 
         </p>
       </section>
-
 
 
       <section>
@@ -957,7 +952,7 @@
 
       <h3>Timing Provider Object</h3>
       <p>
-        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates the logic necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
         The concept is introduced in order to leave space open for innovation among online timing providers. The purpose is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>: third-parties may provide different implementations of <a>timing provider objects</a> in JavaScript, to which <a>timing objects</a> may be connected. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
