@@ -141,7 +141,7 @@
           <dfn lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
         </p>
         <p>
-          Unfortunately, Web support for linear composition is not optimal. Each media framework tend to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
+          Unfortunately, Web support for linear composition is not optimal. Each media framework tends to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
         </p>
         <p>
           For a more detailed introduction to linear composition on the Web, see [[LINEARCOMPOSITION]].
@@ -164,7 +164,7 @@
         </ol>
 
         <p>
-          <a href="#fig-timingobject-overview">Fig. 1</a> below illustrates these functions, including an online service to provide multi-device timing. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive UI components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly. Note that the different UI components may go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to <a>linear composability</a>.
+          <a href="#fig-timingobject-overview">Fig. 1</a> illustrates these functions, including an online service to provide multi-device timing. In this example, a timing object is instantiated on each of the three devices, and each instance is connected to a single, shared online timing resource. On each device, the timing object acts as the director for independent, timing-sensitive User Interface (UI) components. This way, a video will aim to present video frames in accordance with the timing resource. Similarly, a timing-sensitive Twitter widget might replay timestamped Tweets. If the timing object pauses, all the connected components are notified and react accordingly. Note that the different UI components may go about their business in complete isolation. There is no need for components to communicate, except indirectly through the timing object. This loose coupling is the key to <a>linear composability</a>.
         </p>
 
         <figure id="fig-timingobject-overview">
@@ -231,19 +231,19 @@
         </p>
       
         <p>
-          To support this timing model, a clear separation between <a>timing object</a> and consuming components is required. Specifically, a pattern emerges where timed components are given a reference to a <a>timing object</a> through a <i>timingsrc</i> property. On the other hand the <a>timing object</a> is kept usage agnostic and clean of references to consuming components.
+          To support this timing model, a clear separation between <a>timing object</a> and consuming components is required. Specifically, a pattern emerges where timed components are given a reference to a <a>timing object</a> through a <code>timingsrc</code> property. On the other hand the <a>timing object</a> is kept usage agnostic and clean of references to consuming components.
         </p>
 
         <p>
-          Timed components that need to <i>connect</i> with the <a>timing object</a> broadly fall into two categories; components which already have an internal timing model, and components that do not. Within the first category we specifically have media players and existing media frameworks. For such components <i>connection</i> with the <a>timing object</a> mainly implies time-alignment of the internal timing model with the external <a>timing object</a>. In particular, this document discusses integration with <a>media elements</a>, see <a href="#media-elements-and-the-timing-object">media elements and the timing object</a>. 
+          Timed components that need to <i>connect</i> with the <a>timing object</a> broadly fall into two categories: components which already have an internal timing model, and components that do not. Within the first category we specifically have media players and existing media frameworks. For such components <i>connection</i> with the <a>timing object</a> mainly implies time-alignment of the internal timing model with the external <a>timing object</a>. In particular, this document discusses integration with <a>media elements</a>, see <a href="#media-elements-and-the-timing-object"></a>. 
         </p>
 
         <p>
-          Components within the second category do not provide their own timing model, but may be useful for presenting timed data. UI elements such as map and canvas fall into this category. Custom components such as plotting libraries, media controls, subtitle viewers, Twitter widgets etc., may also need to <i>connect</i> with a <a>timing object</a> (in order to present data consistently in time). In fact, an entire Web page may be considered a timed component, where replacement of both data and presentational elements is directed by a <a>timing object</a>. All these timed components have a single challenge in common, the need to present or execute timed data at the correct time, i.e. time-aligned with the <a>timing object</a>. This document addresses this common need by <i>connecting</i> the <a>timing object</a> with a <a>text track</a>, see <a href="#timed-data-and-the-timing-object">timed data and the timing object</a>.
+          Components within the second category do not provide their own timing model, but may be useful for presenting timed data. UI elements such as map and canvas fall into this category. Custom components such as plotting libraries, media controls, subtitle viewers, Twitter widgets etc., may also need to <i>connect</i> with a <a>timing object</a> (in order to present data consistently in time). In fact, an entire Web page may be considered a timed component, where replacement of both data and presentational elements is directed by a <a>timing object</a>. All these timed components have a single challenge in common, the need to present or execute timed data at the correct time, i.e. time-aligned with the <a>timing object</a>. This document addresses this common need by <i>connecting</i> the <a>timing object</a> with a <a>text track</a>, see <a href="#timed-data-and-the-timing-object"></a>.
         </p>
 
         <p>
-          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <dfn>TimingProvider</dfn> interface is introduced (see <a href="#timing-provider-object"></a>). The idea is that third parties may provide different implementations of <a>timing provider objects</a> (JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider object</a> may be provided by the inclusion of a third party JavaScript library.
+          Finally, in order to support precisely timed operation in multi-device applications, the <a>timing object</a> must be <i>connected</i> with an <a>online timing resource</a>. One could imagine future standardization of a protocol between <a>timing object</a> and the online timing service. Currently though, the decision is rather to leave space open for innovation among timing providers. The <a>TimingProvider</a> interface is introduced, see <a href="#timing-provider-object"></a>. The idea is that third-parties may provide different implementations of <a>timing provider objects</a> (in JavaScript), to which <a>timing objects</a> may then connect. As a result, the <i>connection</i> to a <a>timing provider object</a> may be provided by the inclusion of a third-party JavaScript library.
         </p>
         
       </section>
@@ -267,10 +267,10 @@
           The concept of reference point refers to the exact time-alignment of timing object and media in capture and playback. Disagreement about the details of this alignment may be a source of (small) synchronization errors. For this reason, a common definition of reference points for time alignment in capture and playback is helpful.
         </p>
         <p>
-          For media capture, media timestamps should reflect the point in time when external, physical signals are received by sensors. I.e., ideally when photons hit the lense or when sound waves hit the microphone. So, as timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency (if significant). If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.
+          For media capture, media timestamps should reflect the point in time when external, physical signals are received by sensors, i.e. ideally when photons hit the lense or when sound waves hit the microphone. As timestamping activity is delayed relative to this ideal reference point, timestamps picked from the timing object must be adjusted (upstream delay subtracted). This implies that capturing components must know (or figure out) their upstream latency (if significant). If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.
         </p>
         <p>
-          For media playback, media timestamps should reflect the point in time when timed media fragments take physical effect. I.e., ideally when pixels are modified on the screen, or when the loudspeaker modifies its vibration frequency. If playback commands are subject to non-negligible delay before they take effect, the playback component must schedule commands earlier. This implies that playback component must know (or figure out) their downstream delay. If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.  
+          For media playback, media timestamps should reflect the point in time when timed media fragments take physical effect. I.e., ideally when pixels are modified on the screen, or when the loudspeaker modifies its vibration frequency. If playback commands are subject to non-negligible delay before they take effect, the playback component must schedule commands earlier. This implies that playback component must know (or figure out) their downstream delay. If all components are able to do this correctly, variation in processing delay will not produce synchronization errors.
         </p>
         <p class="note">
           This definition of reference points is in accordance with definitions used in related standardization work, for instance see [[DVB-CSS]] / HbbTV2.0 CSS clause 5.7.2.
@@ -379,11 +379,7 @@
         A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn lt="online timing resources">online timing resource</dfn>, i.e. an object hosted remotely by an online service.
       </p>
       <p class="note">
-        A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
-      </p>
-
-      <p>
-     
+        A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB-CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
       </p>
       <p>
         This document provides interface definitions using the [[!WEBIDL]] standard.
@@ -523,7 +519,7 @@
 
       <section>
       <h3>Connect to a timing provider</h3>
-      <p>A timing object may take its input from a TimingProvider object provided by some third-party provider (or developed by the app developer). TimingProvider objects will typically act as proxies to online timing resource, thus enabling cross-device synchronization.</p>
+      <p>A <a>timing object</a> may take its input from a <a>timing provider object</a> provided by some third-party provider (or developed by the app developer). <a>Timing provider objects</a> will typically act as proxies to online timing resource, thus enabling cross-device synchronization.</p>
       <pre class="example highlight" title="Connect to a TimingProvider object">
       // TimingProvider object
       // (constructor and parameters are provider-specific)
@@ -559,15 +555,15 @@
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal clock</dfn> which is <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
+        A <a>timing object</a> has an <dfn>internal clock</dfn> which is <a>performance clock</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> additionally has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the clock of the <a>timing object</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>timing object</a> to convert timestamps between the timelines of the two clocks. The <a>timing object</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually. 
       </p>
 
       <p>
-        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing provider</a> and therefore includes a timestamp value from the timeline of the <a>timing provider</a>.
+        A <a>timing object</a> has an <dfn>internal vector</dfn> that represents the initial conditions of the current motion. The <a>internal vector</a> is used by the <code>query()</code> operation to calculate a snapshot <a>state vector</a> of the current motion. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>internal vector</a> is provided by the <a>timing resource provider</a> and therefore includes a timestamp value from the timeline of the <a>timing resource provider</a>.
       </p>
 
       <p>
-        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the operational <a>state</a> will reflect the state of the <a>timing provider</a>, and by implication the underlying communication link. 
+        A <a>timing object</a> has a <dfn>state</dfn> property that describes the operational state of the <a>timing object</a>. If the <a>timing object</a> is associated with a <a>timing provider object</a>, the operational <a>state</a> will reflect the state of the <a>timing provider object</a>, and by implication the underlying communication link. 
       </p>
 
       <p>
@@ -610,7 +606,7 @@
           The <dfn>startPosition</dfn> and <dfn>endPosition</dfn> attributes MUST respectively be set to the <a>start position</a> and <a>end position</a> that the <a>state vector</a> may take, if any, or <code>-Infinity</code> and <code>Infinity</code> otherwise.
         </p>
         <p>
-          The <dfn>readyState</dfn> attribute MUST be set to the current state of the <a>timing provider</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
+          The <dfn>readyState</dfn> attribute MUST be set to the current state of the <a>timing provider object</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
         </p>
       </div>
 
@@ -663,14 +659,14 @@
           <li>
             When an update to the <code>vector</code> property is observed, run the following substeps:
             <ol>
-              <li>Let <var>newVector</var> be the new value of <a>timing provider</a>'s <code>vector</code> property.</li>
+              <li>Let <var>newVector</var> be the new value of <var>provider</var>'s <code>vector</code> property.</li>
               <li>Run <var>Process vector change</var> with <var>newVector</var> as parameter.</li>
             </ol>
           </li>
           <li>
             When an update to the <code>skew</code> property is observed, run the following substeps:
             <ol>
-              <li>Let <var>newSkew</var> be the new value of <a>timing provider</a>'s <code>skew</code> property.</li>
+              <li>Let <var>newSkew</var> be the new value of <var>provider</var>'s <code>skew</code> property.</li>
               <li>Run <a>Process skew change</a> with <var>newSkew</var> as parameter.</li>
             </ol> 
           </li>
@@ -729,7 +725,7 @@
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingObject">update</dfn> method sends a request for the <a>timing object</a> to update its current motion based on the provided <a>state vector</a>, or, if the <a>timing object</a> is associated with a <a>timing provider</a>, the request is sent to an <a>external timing resource</a> via the <a>timing provider source</a>. In both cases, a <code>Promise</code> that the update was taken into account is returned. The method supports <code>null</code> or <code>undefined</code> values for the provided <a>state vector</a> attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>. If all attributes of the <a>state vector</a> are <code>null</code> or <code>undefined</code>, the method is a noop and returns immediately.
+          The <dfn for="TimingObject">update</dfn> method sends a request for the <a>timing object</a> to update its current motion based on the provided <a>state vector</a>, or, if the <a>timing object</a> is associated with a <a>timing provider object</a>, the request is sent to an <a>external timing resource</a> via the <a>timing provider source</a>. In both cases, a <code>Promise</code> that the update was taken into account is returned. The method supports <code>null</code> or <code>undefined</code> values for the provided <a>state vector</a> attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>. If all attributes of the <a>state vector</a> are <code>null</code> or <code>undefined</code>, the method is a noop and returns immediately.
         </p>
         <p>
           When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
@@ -838,7 +834,7 @@
       <section>
         <h3>Translate u2p</h3>
         <p>
-          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing provider</a> (p).
+          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing resource provider</a> (p).
         </p>
         <p>
           When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
@@ -856,7 +852,7 @@
       <section>
         <h3>Translate p2u</h3>
         <p>
-          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing provider</a> (p) to the timeline of the <a>user agent</a> (u).
+          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing resource provider</a> (p) to the timeline of the <a>user agent</a> (u).
         </p>
         <p>
           When the <a>user agent</a> is required to translate a timestamp, it must run the following steps:
@@ -961,10 +957,10 @@
 
       <h3>Timing Provider Object</h3>
       <p>
-        A <dfn lt="timing provider object|timing provider objects|timing provider">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates logic is necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
-        The concept is introduced in order to leave space open for innovation among online timing providers. The purpose is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>: third parties may provide different implementations of <a>timing provider objects</a> in JavaScript, to which <a>timing objects</a> may be connected. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
+        The concept is introduced in order to leave space open for innovation among online timing providers. The purpose is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>: third-parties may provide different implementations of <a>timing provider objects</a> in JavaScript, to which <a>timing objects</a> may be connected. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
       </p>
       <p>
         In practice, a Web application willing to use a particular <a>timing resource provider</a> needs to load the corresponding JavaScript library provided by this <a>timing resource provider</a>, create a <a>timing provider object</a> and pass that object to the <a>timing object</a> constructor.
