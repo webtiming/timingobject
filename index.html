@@ -789,7 +789,7 @@
           <li>Let <var>startPos</var> be <var>timing</var>'s <code>startPosition</code>.</li>
           <li>Let <var>endPos</var> be <var>timing</var>'s <code>endPosition</code>.</li>
           <li>Given the current motion, let <var>endpoint</var> be the first of <var>startPos</var> or <var>endPos</var> to be violated first, if any, and let <var>t</var> be the time when this will occur according to the <a>internal clock</a>.</li>
-          <li>If <var>endpoint</var> is null, abort all further steps.</li>
+          <li>If <var>endpoint</var> is null or Infinity or -Infinity, abort all further steps.</li>
           <li>Let <var>vector</var> be the <code>TimingStateVector</code> represented by four-tuple (<var>endpoint</var>, 0, 0, t).</li>
           <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>vector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
         </ol>
@@ -817,6 +817,7 @@
           <li>Let <var>timing</var> be a <code><a>TimingObject</a></code>.</li>
            <li>Let <var>newVector</var> be the first parameter.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>newVector</var>.</li>
+          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>newVector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
         </ol>
       </section>
