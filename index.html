@@ -580,7 +580,7 @@
            optional unrestricted double endPosition),
          Constructor (TimingProvider provider)]
         interface TimingObject : EventTarget {
-          readonly    attribute TimingProviderObject timingProviderSource;
+          readonly    attribute TimingProvider timingProviderSource;
           readonly    attribute TimingObjectState readyState;
           readonly    attribute unrestricted double startPosition;
           readonly    attribute unrestricted double endPosition;
@@ -598,7 +598,10 @@
           The <dfn>startPosition</dfn> and <dfn>endPosition</dfn> attributes MUST respectively be set to the <a>start position</a> and <a>end position</a> that the <a>state vector</a> may take, if any, or <code>-Infinity</code> and <code>Infinity</code> otherwise.
         </p>
         <p>
-          The <dfn>readyState</dfn> attribute MUST be set to the current state of the <a>timing provider object</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
+          The <dfn>readyState</dfn> attribute MUST be set to the current state of the <a>timing object</a>. If the <a>timing object</a> represents an <a>internal timing resource</a>, this will typically always be <code>connecting</code> or <code>open</code>. The <a>readyState</a> attribute may take other values when the <a>timing object</a> represents an <a>external timing resource</a>.
+        </p>
+        <p>
+          The <dfn>timingProviderSource</dfn> attribute MUST be set to the <a>timing provider source</a> of the <a>timing object</a>, if any, or null otherwise.
         </p>
       </div>
 
