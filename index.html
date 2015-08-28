@@ -696,7 +696,7 @@
           <li>Let <var>a</var> be <var>a<sub>int</sub></var></li>
           <li>Let <var>result</var> be newly created <code><a>TimingStateVector</a></code> from four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>u</sub></var>)
 
-          <li>Range violation is detected. If <var>timing</var>'s <a>range</a> does not <a>cover</a> <var>p</var>, run the following substeps:
+          <li>Range violation is detected. If <var>timing</var>'s <a>range</a> does not <a>covers</a> <var>p</var>, run the following substeps:
             <ol>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
@@ -747,7 +747,7 @@
 
           <li>Avoid range violation on update. Run the following substeps:
             <ol>
-              <li>If <var>timing</var>'s <a>range</a> does not <a>cover</a> <var>p</var> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <var>timing</var>'s <a>range</a> does not <a>covers</a> <var>p</var> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
               <li>If <code><var>p</var> = start &amp;&amp; (<var>v</var> &lt; 0|| (<var>v</var> = 0 &amp;&amp; <var>a</var> &lt; 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
@@ -852,8 +852,8 @@
         <ol>
           <li>Let <var>t<sub>p</sub></var> be the first parameter.</li>
           <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>adjustment</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
-          <li>Return <var>t<sub>u</sub></var> - <var>adjustment</var>.</li>
+          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
+          <li>Return <var>t<sub>p</sub></var> - <var>effectiveskew</var>.</li>
         </ol>
       </section>
 
