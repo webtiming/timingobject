@@ -555,7 +555,7 @@
       </p>
 
       <p>
-        If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>internal clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
+        If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>internal clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> === <var>clock<sub>user agent</sub></var> + <var>skew</var>. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
       </p>
 
       <p>
@@ -752,9 +752,9 @@
             <ol>
               <li>If <var>timing</var>'s <a>range</a> does not <a>cover</a> <var>p</var> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>start</var> be <var>timing</var>'s <code>startPosition</code> property.</li>
-              <li>If <code><var>p</var> = start &amp;&amp; (<var>v</var> &lt; 0|| (<var>v</var> = 0 &amp;&amp; <var>a</var> &lt; 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> === start &amp;&amp; (<var>v</var> &lt; 0|| (<var>v</var> === 0 &amp;&amp; <var>a</var> &lt; 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
               <li>Let <var>end</var> be <var>timing</var>'s <code>endPosition</code> property.</li>
-              <li>If <code><var>p</var> = end &amp;&amp; (<var>v</var> > 0 || (<var>v</var> = 0 &amp;&amp; <var>a</var> > 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
+              <li>If <code><var>p</var> === end &amp;&amp; (<var>v</var> > 0 || (<var>v</var> === 0 &amp;&amp; <var>a</var> > 0))</code> throw a new <code>IllegalValueError</code> and abort any further steps.</li>
             </ol>
           </li>
  
@@ -970,7 +970,7 @@
         The <dfn>skew</dfn> specifies how timestamps may be translated between the timeline of the <a>internal clock</a> and that used by the <a>timing resource provider</a>. In the case of <a>online timing resources</a>, the <a>skew</a> is a floating estimate (due to variance in network latency and relative clock drift over time). The <code>query</code> operation on the <a>timing object</a> should always be resolved using a fresh <a>skew</a> estimate received from the <a>timing provider object</a>. <a>Skew</a> is defined by the following equation (where <var>clock<sub>user agent</sub></var> is the <a>internal clock</a>):
       </p>
       <p>
-        <var>clock<sub>timing provider</sub></var> = <var>clock<sub>user agent</sub></var> + <var>skew</var>
+        <var>clock<sub>timing provider</sub></var> === <var>clock<sub>user agent</sub></var> + <var>skew</var>
       </p>
       <p>
         A <a>timing provider object</a> implements the following interface:
