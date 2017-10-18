@@ -846,7 +846,7 @@
           <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
           <li>Let <var>newVector</var> be the new vector.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>newVector</var>.</li>
-          <li>Set the <a>current range timeout</a> to a newly created timeout to execute an <code>update</code> operation on <var>timing</var> with <var>newVector</var> as parameter, at the moment when the <a>internal clock</a> reaches <var>t</var>.</li> 
+          <li><a lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
         </ol>
       </section>
