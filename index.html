@@ -3,24 +3,24 @@
   <head>
     <title>Timing Object</title>
     <meta charset="utf-8">
-    <script src="http://www.w3.org/Tools/respec/respec-w3c-common"
+    <script src="https://www.w3.org/Tools/respec/respec-w3c-common"
             async class="remove"></script>
     <script class="remove">
       var respecConfig = {
           specStatus: "CG-DRAFT",
-          edDraftURI: "http://webtiming.github.io/timingobject",
+          edDraftURI: "https://webtiming.github.io/timingobject",
           shortName:  "timing-object",
           editors: [
             {
               name:       "Ingar M. Arntzen",
               company:    "Norut Northern Research Institute and Motion Corporation",
-              companyURL: "http://motioncorporation.com/",
+              companyURL: "https://motioncorporation.com/",
               mailto: "ingar.arntzen@motioncorporation.com"
             },
             {
               name:       "François Daoust",
               company:    "W3C",
-              companyURL: "http://www.w3.org",
+              companyURL: "https://www.w3.org",
               mailto:     "fd@w3.org"
             }
           ],
@@ -28,12 +28,12 @@
             {
               name:       "Njål T. Borch",
               company:    "Norut Northern Research Institute and Motion Corporation",
-              companyURL: "http://motioncorporation.com/",
+              companyURL: "https://motioncorporation.com/",
               mailto: "njaal.borch@motioncorporation.com"
             }
           ],
           wg:           "Multi-Device Timing Community Group",
-          wgURI:        "http://www.w3.org/community/webtiming/",
+          wgURI:        "https://www.w3.org/community/webtiming/",
           wgPublicList: "public-webtiming",
 
           localBiblio:  {
@@ -49,7 +49,7 @@
             },
             "MSV": {
               title:    "The Media State Vector: A unifying concept for multi-device media navigation",
-              href:     "http://dl.acm.org/citation.cfm?doid=2457413.2457427",
+              href:     "https://dl.acm.org/citation.cfm?doid=2457413.2457427",
               authors:  [
                 "Ingar M. Arntzen",
                 "Njål T. Borch",
@@ -58,11 +58,11 @@
             },
             "DVB-CSS": {
               title: "ETSI TS 103 256-2 V1.1.1 Digital Video Broadcasting (DVB); Companion Screens and Streams; Part 2: Content Identification and Media Synchronization",
-              href: "http://www.etsi.org/modules/mod_StandardSearch/pdf.png"
+              href: "https://www.etsi.org/modules/mod_StandardSearch/pdf.png"
             },
             "SHAREDMOTION": {
               title: "Shared Motion",
-              href: "http://motioncorporation.com"
+              href: "https://motioncorporation.com"
             },
             "MEDIASYNC":{
               title: "MediaSync",
@@ -360,47 +360,47 @@
         The following terms, procedures and interfaces are defined in [[!HTML5]]:
       </p>
       <ul>
-        <li><dfn lt="event handler|event handlers"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
-        <li><dfn lt="event handler event type|event handler event types"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
-        <li><dfn lt="media element|media elements"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#slaved-media-elements">slaved media elements</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
-        <li><dfn lt="text tracks"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
-        <li><dfn lt="text track cue|text track cues"><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-language">text track language</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-mode">text track mode</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-hidden">text track hidden</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-loaded">text track loaded</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-readiness-state">text track readiness state</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-list-of-cue">text track list of cues</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-text-tracks">list of text tracks</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-newly-introduced-cues">list of newly introduced cues</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-playback-position">current playback position</a></dfn></li>
-        <li><dfn><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#time-marches-on">time marches on</a></dfn></li>
-        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#htmlmediaelement">HTMLMediaElement</a></code></dfn></li>
-        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#mediacontroller">MediaController</a></code></dfn></li>
-        <li><dfn><code><a href="http://www.w3.org/html/wg/drafts/html/master/webappapis.html#texttrack">TextTrack</a></code></dfn></li>
+        <li><dfn lt="event handler|event handlers"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
+        <li><dfn lt="event handler event type|event handler event types"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
+        <li><dfn lt="media element|media elements"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#slaved-media-elements">slaved media elements</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
+        <li><dfn lt="text tracks"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
+        <li><dfn lt="text track cue|text track cues"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-language">text track language</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-mode">text track mode</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-hidden">text track hidden</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-loaded">text track loaded</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-readiness-state">text track readiness state</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-list-of-cue">text track list of cues</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-text-tracks">list of text tracks</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-newly-introduced-cues">list of newly introduced cues</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-playback-position">current playback position</a></dfn></li>
+        <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#time-marches-on">time marches on</a></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#htmlmediaelement">HTMLMediaElement</a></code></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#mediacontroller">MediaController</a></code></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#texttrack">TextTrack</a></code></dfn></li>
       </ul>
 
       <p>
         The following interfaces are defined in [[!DOM]]:
       </p>
       <ul>
-        <li><dfn><code><a href="http://www.w3.org/TR/dom/#event">Event</a></code></dfn></li>
-        <li><dfn><code><a href="http://www.w3.org/TR/dom/#interface-eventtarget">EventTarget</a></code></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/TR/dom/#event">Event</a></code></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/TR/dom/#interface-eventtarget">EventTarget</a></code></dfn></li>
       </ul>
 
       <p>
-        The <code><a href="http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code> interface represents a callback used for <a>event handlers</a> as defined in [[!HTML5]].
+        The <code><a href="https://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code> interface represents a callback used for <a>event handlers</a> as defined in [[!HTML5]].
       </p>
 
       <p>
@@ -1506,7 +1506,7 @@
         Allow people to enjoy the same content at the same time. Alice and Bob would like to watch the next episode together, even if Alice is on a train and Bob stays at home. If Alice pauses the video while briefly speaking with the conductor, Bob's video pauses too. Alice and Bob may always trust the other to see the exact same thing, making it very easy for them to maintain a conversation, for instance by using a chat service or the phone. It would also be possible for Alice and Bob to split temporarily. Alice would see Bob moving along the progress line without her, and Bob would see Alice staying behind. When Alice is ready to resume viewing a bit later, she may continue on her own, play doublespeed or skip to catch up with Bob, or convice Bob to wait for her or jump back to see the segment again with her.      
       </p>
       <p>
-        This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-3 Identical Media Stream Synchronization</a>, a use case defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
+        This use case is based on <a href="https://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-3 Identical Media Stream Synchronization</a>, a use case defined by the <a href="https://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
       </p>
       <p>
         This use case requires the management and sharing of multiple timing objects, at least one for Alice and one for Bob. Precision requirements for video synchronization are quite coarse as the use case is described. However, Alice and Bob might also choose to use this application in circumstances where they are sitting next to eachother, or they might hook their devices on to projectors in order to show a movie to a larger audience. Sub-framerate precision is required in order to avoid echo from device speakers. 
@@ -1539,7 +1539,7 @@
         Alice opens the BBC Sport Web page on her iPad during the olympic games. The backend service consults Alice's profile and learns that she is already watching figure skating from the iPlayer on her laptop computer. As a result, the BBC Sports Web page is personalized with an offer to load BBC's Web-based extra material for figure skating. Alice accepts, and the iPad goes on to present stats, images, infographics, commentary and alternative camera angles, all precisely timed with the iPlayer. Alice notices that other viewers have already highlighted a Chinese athlete performing a bit earlier. She clicks to see it, and both the iPlayer (on the laptop) and the timed Web presentation (on the iPad) immediately skip back. After having seen the athlete's performance, now with added commentary provided by excited viewers, Alice contributes by giving it a thumbs up, and then clicks the back-to-live button. Both the laptop and the iPad snap back to presenting the live action.
       </p>
       <p>
-        This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-4 Related Media Stream Synchronization</a>, a use case defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
+        This use case is based on <a href="https://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-4 Related Media Stream Synchronization</a>, a use case defined by the <a href="https://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
       </p>
       <p>
         This use case requires managing personal timing resources for individual viewers, as well as a common timing resource representing the live clock. Both iPlayer and Web-based secondary device offerings must take direction from online timing resources, and allow dynamic switching of timing objects based on user input. Presenting alternative camera angles as part of secondary device offerings requires precise synchronization.   
@@ -1587,7 +1587,7 @@
         Alice's Portuguese mother has a hearing deficiency, so as the two of them sit down to watch a movie together, Alice hooks her smart phone up with the Portuguese audio track and lets her mother adjust the sound volume. Any issues with lip-sync should be due to the dubbing, not the audio synchronization.
       </p>
       <p>
-        This use case is based on <a href="http://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-6 Clean Audio</a>, a use case defined by the <a href="http://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
+        This use case is based on <a href="https://www.w3.org/2011/webtv/wiki/New_Ideas">UC2-6 Clean Audio</a>, a use case defined by the <a href="https://www.w3.org/2011/webtv/">W3C Web and TV Interest Group</a>
       </p>
       <p>
         This requires lip-synch precision between video and audio. 
