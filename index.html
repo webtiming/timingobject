@@ -145,7 +145,7 @@
         The specification is intended for discussion within the Multi-Device Timing Community Group. Its content does not yet represent the consensus of the Community Group.
       </p>
       <p class="warning">
-        This specification is incomplete. Some procedures are either missing or described as <em>similar to procedures defined in [[!HTML5]]</em>. The main goal of this draft is to propose a technical solution, show how it could be integrated in [[!HTML5]] and gather feedback from interested parties before dwelving into details.
+        This specification is incomplete. Some procedures are either missing or described as <em>similar to procedures defined in [[HTML5]]</em>. The main goal of this draft is to propose a technical solution, show how it could be integrated in [[HTML5]] and gather feedback from interested parties before dwelving into details.
       </p>
     </section>
     
@@ -173,7 +173,7 @@
         <h3>Linear composition</h3>
 
         <p>
-          <dfn lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
+          <dfn data-lt="linear composition|linear composability">Linear composition</dfn> or <dfn>temporal composition</dfn> is simply the idea that complex linear media can be built from simpler, independent linear components. Web support for linear composition would imply that classical benefits of composition, i.e. flexibility, reusability, extensibility and mashup-ability, apply to the construction of Web-based linear media. For example, in the single-device scenario, imagine a linear presentation made from HTML5 video, some timed meta-information, a SMIL component, a Web Animation, a map with timed georeferenced data, and a timed Twitter widget. Or, in the multi-device scenario, imagine the same components distributed or duplicated across multiple devices in a room or within a social group. In both cases linear composition requires temporal interoperability among heterogeneous linear components, available through precisely coordinated, timed playback.
         </p>
         <p>
           Unfortunately, Web support for linear composition is not optimal. Each media framework tends to define its own custom timing control mechanisms, making it difficult to achieve <a>linear composition</a> in practice. The central purpose of the timing object is thus to simplify interoperability by providing a common basis for timed operation and control in linear media.
@@ -360,11 +360,11 @@
         The following terms, procedures and interfaces are defined in [[!HTML5]]:
       </p>
       <ul>
-        <li><dfn lt="event handler|event handlers"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
-        <li><dfn lt="event handler event type|event handler event types"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
+        <li><dfn data-lt="event handler|event handlers"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handlers">event handler</a></dfn></li>
+        <li><dfn data-lt="event handler event type|event handler event types"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#event-handler-event-type">event handler event type</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#queue-a-task">queue a task</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#fire-a-simple-event">fire a simple event</a></dfn></li>
-        <li><dfn lt="media element|media elements"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
+        <li><dfn data-lt="media element|media elements"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-element">media element</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-timeline">media timeline</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#effective-playback-rate">effective playback rate</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-media-controller">current media controller</a></dfn></li>
@@ -372,8 +372,8 @@
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#report-the-controller-state">report the controller state</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#seek">seek</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#media-data">media data</a></dfn></li>
-        <li><dfn lt="text tracks"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
-        <li><dfn lt="text track cue|text track cues"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
+        <li><dfn data-lt="text tracks"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track">text track</a></dfn></li>
+        <li><dfn data-lt="text track cue|text track cues"><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-cue">text track cue</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-kind">text track kind</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-label">text track label</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#text-track-language">text track language</a></dfn></li>
@@ -386,9 +386,11 @@
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#list-of-newly-introduced-cues">list of newly introduced cues</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#current-playback-position">current playback position</a></dfn></li>
         <li><dfn><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#time-marches-on">time marches on</a></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#eventhandler">EventHandler</a></code></dfn></li>
         <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#htmlmediaelement">HTMLMediaElement</a></code></dfn></li>
         <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#mediacontroller">MediaController</a></code></dfn></li>
         <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#texttrack">TextTrack</a></code></dfn></li>
+        <li><dfn><code><a href="https://www.w3.org/html/wg/drafts/html/master/webappapis.html#texttrackkind">TextTrackKind</a></code></dfn></li>
       </ul>
 
       <p>
@@ -411,7 +413,7 @@
         A <dfn>timing resource</dfn> is an object. This object essentially implements the abstraction of a <i>linear motion in real time</i>. For example, imagine a <i>point</i> moving along an <i>axis</i>. At a specific moment in time, this <i>point</i> has a specific <i>position</i> on the <i>axis</i>, a specific <i>velocity</i> and a specific <i>acceleration</i>. These three properties (all floating point values) define the state of the <a>timing resource</a> at that moment in time.
       </p>
       <p>
-        A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn lt="online timing resources">online timing resource</dfn>, i.e. an object hosted remotely by an online service.
+        A <a>timing resource</a> may either be an <dfn>internal timing resource</dfn>, an object under the control of a <a>user agent</a>, or an <dfn>external timing resource</dfn>, an object under the control of a <a>timing resource provider</a>. Both types exist locally in the user agent, but the <a>external timing resource</a> may be a proxy object for an <dfn data-lt="online timing resources">online timing resource</dfn>, i.e. an object hosted remotely by an online service.
       </p>
       <p class="note">
         A <a>user agent</a> may typically offer native implementations of <a>timing objects</a>, especially when the protocol needed is not available to Web applications. For instance, the clock synchronization mechanism defined in DVB for companion screens and streams [[DVB-CSS]] uses a UDP-based protocol. A <a>user agent</a> could perhaps expose a <code>DVBCSSTimingObject</code> interface to allow Web applications to connect to a companion screen that supports this protocol.
@@ -582,7 +584,7 @@
       <h2>Timing Object</h2>
 
       <p>
-        A <dfn lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
+        A <dfn data-lt="timing object|timing objects">timing object</dfn> is an object that exposes a <a>timing resource</a> represented by a <a>state vector</a> to a Web application.
       </p>
 
       <p>
@@ -590,7 +592,7 @@
       </p>
 
       <p>
-        If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> has an <dfn lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>internal clock</a> and the clock employed by the <a>timing resource provider</a>. The <a lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> === <var>clock<sub>user agent</sub></var> + <var>skew</var>, where <var>clock<sub>user agent</sub></var> is the <a>internal clock</a> of the <a>timing object</a>, expressed in seconds. <a lt="clock skew">internal clock skew</a> is also expressed in seconds. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
+        If the <a>timing object</a> is associated with a <a>timing provider object</a>, the <a>timing object</a> has an <dfn data-lt="clock skew">internal clock skew</dfn>. This represents the current estimate of the skew between the <a>internal clock</a> and the clock employed by the <a>timing resource provider</a>. The <a data-lt="clock skew">internal clock skew</a> is provided by the <a>timing provider object</a>, and defined so that <var>clock<sub>timing provider</sub></var> === <var>clock<sub>user agent</sub></var> + <var>skew</var>, where <var>clock<sub>user agent</sub></var> is the <a>internal clock</a> of the <a>timing object</a>, expressed in seconds. <a data-lt="clock skew">internal clock skew</a> is also expressed in seconds. This equation is used by the <a>user agent</a> to convert timestamps between the timelines of the two clocks. The <a>user agent</a> must ensure monotonic behavior by, if necessary, applying skew changes gradually (see <a href="#calculate-skew-adjustment"></a>). 
       </p>
 
       <p>
@@ -609,12 +611,12 @@
       <p>A <a>timing object</a> implements the following interface:</p>
 
       <pre class="idl">
-        [ Constructor (
-           optional TimingStateVectorUpdate vector,
-           optional unrestricted double startPosition,
-           optional unrestricted double endPosition),
-         Constructor (TimingProvider provider)]
+        [Exposed=Window]
         interface TimingObject : EventTarget {
+          constructor(optional TimingStateVectorUpdate vector = {},
+                      optional unrestricted double startPosition,
+                      optional unrestricted double endPosition);
+          constructor(TimingProvider provider);
           readonly    attribute TimingProvider timingProviderSource;
           readonly    attribute TimingObjectState readyState;
           readonly    attribute unrestricted double startPosition;
@@ -624,11 +626,11 @@
                       attribute EventHandler      ontimeupdate;
                       attribute EventHandler      onerror;
           TimingStateVector query ();
-          Promise           update (TimingStateVectorUpdate newVector);
+          Promise&lt;void&gt; update (optional TimingStateVectorUpdate newVector = {});
         };
       </pre>
 
-      <div dfn-for="TimingObject" link-for="TimingObject">
+      <div data-dfn-for="TimingObject" data-link-for="TimingObject">
         <p>
           The <dfn>startPosition</dfn> and <dfn>endPosition</dfn> attributes MUST respectively be set to the <a>start position</a> and <a>end position</a> that the <a>state vector</a> may take, if any, or <code>-Infinity</code> and <code>Infinity</code> otherwise.
         </p>
@@ -679,7 +681,7 @@
           <li>Let <var>timing</var>'s <a>end position</a> be <var>provider</var>'s <code>endPosition</code> property.</li>
           <li>Let <var>timing</var>'s <a>state</a> be <var>provider</var>'s <code>readyState</code> property.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>provider</var>'s <code>vector</code> property.</li>
-          <li>Let <var>timing</var>'s <a lt="clock skew">internal skew</a> be <var>provider</var>'s <code>skew</code> property.</li>
+          <li>Let <var>timing</var>'s <a data-lt="clock skew">internal skew</a> be <var>provider</var>'s <code>skew</code> property.</li>
           <li><a>Observe</a> <var>provider</var>.</li>
           <li>
             When an update to the <code>readyState</code> property is observed, run the following substeps:
@@ -713,7 +715,7 @@
           When a <a>user agent</a> is required to <dfn>stop observing</dfn> an object, it MUST stop any monitoring that was running on that object in the background.
         </p>
         <p class="issue">
-          This <a lt="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
+          This <a data-lt="observe">observing</a> mechanism is meant to emulate the <code>Object.observe</code> method that is being proposed in EcmaScript 7 to simplify the <code><a>TimingProvider</a></code> interface and requirements set on a <a>timing resource provider</a>, as well as to work around the fact that <code><a>TimingProvider</a></code> cannot inherit <code><a>EventTarget</a></code>. The Multi-Device Timing Community Group welcomes feedback as to whether this approach is doable in practice.
         </p>
       </section>
 
@@ -721,7 +723,7 @@
         <h3>Process a query operation</h3>
 
         <p>
-          The <dfn for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+          The <dfn data-dfn-for="TimingObject">query</dfn> method returns a snapshot derived from the evaluation of <a>internal vector</a> against the current timestamp of the <a>internal clock</a>. When the method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
@@ -746,7 +748,7 @@
               <li>Let <var>timing</var>'s <a>internal vector</a> be <var>vector</var>.</li>
               <li>Clear the <a>current range timeout</a> of <var>timing</var>.</li>
               <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at the <var>timing</var>.</li>
-              <li>Let <var>result</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
+              <li>Let <var>result</var> be result from invoking <a data-link-for="TimingObject">query</a> method on <var>timing</var> (recursively).</li>
             </ol>
           </li>
           <li>Return <var>result</var>.</li>
@@ -758,10 +760,10 @@
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingObject">update</dfn> method sends a request for the <a>timing object</a> to update its current motion based on the provided <a>state vector</a>, or, if the <a>timing object</a> is associated with a <a>timing provider object</a>, the request is sent to an <a>external timing resource</a> via the <a>timing provider source</a>. In both cases, a <code>Promise</code> that the update was taken into account is returned. The method supports <code>null</code> or <code>undefined</code> values for the provided <a>state vector</a> attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>. If all attributes of the <a>state vector</a> are <code>null</code> or <code>undefined</code>, the method is a noop and returns immediately.
+          The <dfn data-dfn-for="TimingObject">update</dfn> method sends a request for the <a>timing object</a> to update its current motion based on the provided <a>state vector</a>, or, if the <a>timing object</a> is associated with a <a>timing provider object</a>, the request is sent to an <a>external timing resource</a> via the <a>timing provider source</a>. In both cases, a <code>Promise</code> that the update was taken into account is returned. The method supports <code>null</code> or <code>undefined</code> values for the provided <a>state vector</a> attributes. This provides a simple mechanism for tying movements together. The idea is to allow one aspect of the movement to be updated while preserving the others. For instance, <code>{position:null, velocity:value, acceleration:null}</code> means <i>update the velocity to the given value while preserving the current position and acceleration</i>. If all attributes of the <a>state vector</a> are <code>null</code> or <code>undefined</code>, the method is a noop and returns immediately.
         </p>
         <p>
-          When the <a for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
+          When the <a data-link-for="TimingObject">update</a> method is invoked on a <a>timing object</a> <var>timing</var>, the <a>user agent</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
@@ -775,7 +777,7 @@
             </ol>
           </li>
 
-          <li>Let <var>nowVector</var> be result from invoking <a for="TimingObject">query</a> method on <var>timing</var>.</li>
+          <li>Let <var>nowVector</var> be result from invoking <a data-link-for="TimingObject">query</a> method on <var>timing</var>.</li>
           <li>Let <var>intVector</var> be <var>timing</var>'s' <a>internal vector</a>.</li> 
 
           <li>Let (<var>p<sub>new</sub></var>, <var>v<sub>new</sub></var>, <var>a<sub>new</sub></var>) be the three-tuple represented by <var>newVector</var>.</li>
@@ -798,7 +800,7 @@
  
           <li>Let <var>vector</var> be a newly created <code><a>TimingStateVector</a></code> that represents the four-tuple (<var>p</var>, <var>v</var>, <var>a</var>, <var>t<sub>now</sub></var>).</li>
           <li>Set the <a>internal vector</a> of <var>timing</var> to <var>vector</var>.</li>
-          <li><a lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
+          <li><a data-lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
           <li>Resolve <var>promise</var>.</li>
         </ol>
@@ -827,9 +829,9 @@
       <section>
         <h3>Cover a position</h3>
         <p>
-          When the <a>user agent</a> is required to evaluate whether a <a>range</a> composed of possibly infinite lower and upper bounds <dfn lt="cover">covers</dfn> a provided value, the <a>user agent</a> MUST run the following steps:
+          When the <a>user agent</a> is required to evaluate whether a <a>range</a> composed of possibly infinite lower and upper bounds <dfn data-lt="cover">covers</dfn> a provided value, the <a>user agent</a> MUST run the following steps:
         </p>
-        <ol link-for="TimingObject">
+        <ol data-link-for="TimingObject">
           <li>Let <var>value</var> be the position to evaluate.</li>
           <li>If <var>value</var> is smaller than the <a>range</a>'s lower bound, return <code>false</code>, and abort these steps.</li>
           <li>If <var>value</var> is greater than the <a>range</a>'s upper bound, return <code>false</code>, and abort these steps.</li>
@@ -846,7 +848,7 @@
           <li>Let <var>timing</var> be that <code><a>TimingObject</a></code>.</li>
           <li>Let <var>newVector</var> be the new vector.</li>
           <li>Let <var>timing</var>'s <a>internal vector</a> be <var>newVector</var>.</li>
-          <li><a lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
+          <li><a data-lt="set the internal timeout">Set the internal timeout</a> of <var>timing</var>.</li>
           <li><a>Queue a task</a> to <a>fire a simple event</a> named <code>change</code> at <var>timing</var>.</li>
         </ol>
       </section>
@@ -861,14 +863,14 @@
           <li>Let <var>newSkew</var> be the new skew.</li>
           <li>Let <var>oldSkew</var> be <var>timing</var>'s <a>internal clock skew</a>.</li>
           <li>Let <var>timing</var>'s <a>internal clock skew</a> be <var>newSkew</var>.</li>
-          <li>Update variables used by <code><a lt="calculate skew adjustment">calculate_skew_adjustment()</a></code> based on <var>newSkew</var> and <var>oldSkew</var></li>
+          <li>Update variables used by <code><a data-lt="calculate skew adjustment">calculate_skew_adjustment()</a></code> based on <var>newSkew</var> and <var>oldSkew</var></li>
         </ol>
       </section>
      
       <section>
         <h3>Translate timestamp from user agent to timing resource provider timeline</h3>
         <p>
-          <dfn lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing resource provider</a> (p).
+          <dfn data-lt="translate_u2p"><code><var>t<sub>p</sub></var> = translate_u2p(<var>t<sub>u</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>user agent</a> (u) to the timeline of the <a>timing resource provider</a> (p).
         </p>
         <p>
           When the <a>translate_u2p</a> method is invoked, the <a>user agent</a> MUST run the following steps:
@@ -876,7 +878,7 @@
         <ol>
           <li>Let <var>t<sub>u</sub></var> be the first parameter.</li>
           <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
+          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a data-lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
           <li>Return <var>t<sub>u</sub></var> + <var>effectiveskew</var>.</li>
         </ol>
       </section>
@@ -885,7 +887,7 @@
       <section>
         <h3>Translate timestamp from timing resource provider to user agent timeline</h3>
         <p>
-          <dfn lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing resource provider</a> (p) to the timeline of the <a>user agent</a> (u).
+          <dfn data-lt="translate_p2u"><code><var>t<sub>u</sub></var> = translate_p2u(<var>t<sub>p</sub></var>)</code></dfn> translates a timestamp from the timeline of the <a>timing resource provider</a> (p) to the timeline of the <a>user agent</a> (u).
         </p>
         <p>
           When the <a>translate_p2u</a> method is invoked, the <a>user agent</a> MUST run the following steps:
@@ -893,7 +895,7 @@
         <ol>
           <li>Let <var>t<sub>p</sub></var> be the first parameter.</li>
           <li>Let <var>skew</var> be the value of <a>timing provider source</a>'s <code>skew</code> property.</li>
-          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
+          <li>Let <var>effectiveskew</var> be the result of <var>skew</var> - <a data-lt="calculate skew adjustment">calculate_skew_adjustment()</a></li>
           <li>Return <var>t<sub>p</sub></var> - <var>effectiveskew</var>.</li>
         </ol>
       </section>
@@ -902,10 +904,10 @@
       <section>
         <h3>Calculate skew adjustment</h3>
         <p>
-          A <a>user agent</a> MUST implement skew changes reported by a <a>timing provider object</a> gradually, in order to ensure the monotonicity of <code>timestamp</code> values reported by the <a for="TimingObject">query</a> method of a <a>timing object</a>. For example, if the skew estimate increases by 2 ms at one point, one might want to apply this change at a certain rate, for instance 1 ms change per 10ms, so that, after 20ms, the 2ms change is fully applied. To achieve this, the <a>user agent</a> may update the <a>internal clock skew</a> immediately on skew change, and then define a linear adjustment function that is subtracted from the skew. In the above example the function will subtract the full 2ms initially, 1ms after 10ms, and then 0ms after 20ms. New skew changes must be integrated into the adjustment function.
+          A <a>user agent</a> MUST implement skew changes reported by a <a>timing provider object</a> gradually, in order to ensure the monotonicity of <code>timestamp</code> values reported by the <a data-link-for="TimingObject">query</a> method of a <a>timing object</a>. For example, if the skew estimate increases by 2 ms at one point, one might want to apply this change at a certain rate, for instance 1 ms change per 10ms, so that, after 20ms, the 2ms change is fully applied. To achieve this, the <a>user agent</a> may update the <a>internal clock skew</a> immediately on skew change, and then define a linear adjustment function that is subtracted from the skew. In the above example the function will subtract the full 2ms initially, 1ms after 10ms, and then 0ms after 20ms. New skew changes must be integrated into the adjustment function.
         </p>
         <p>
-          The internal <dfn lt="calculate_skew_adjustment"><code>calculate_skew_adjustment()</code></dfn> method implements this logic. If the method always returns <code>0</code>, skew changes are fully applied as soon as they are received (i.e. not gradually applied). The logic of this method involves some bookkeeping, i.e. how much of the skew changed is already applied at a given point, and how much remains. New skew changes require this information to be re-evaluated. Note that this function is only invoked as part of a query operation. The actual logic of this method is left unspecified.
+          The internal <dfn data-lt="calculate_skew_adjustment"><code>calculate_skew_adjustment()</code></dfn> method implements this logic. If the method always returns <code>0</code>, skew changes are fully applied as soon as they are received (i.e. not gradually applied). The logic of this method involves some bookkeeping, i.e. how much of the skew changed is already applied at a given point, and how much remains. New skew changes require this information to be re-evaluated. Note that this function is only invoked as part of a query operation. The actual logic of this method is left unspecified.
         </p>
         <p class="note">
           In practice, it is not clear that monotonic behavior at the millisecond scale is required by any of the existing use cases. Monotonic behavior is still included as requirement on the assumption that it may enable future use cases, and that is does not add much complexity. 
@@ -918,17 +920,25 @@
         <p>
           The connection with the <a>timing resource</a> that the <a>timing object</a> represents may take the following states:
         </p>
-        <dl title="enum TimingObjectState" class="idl">
-          <dt>connecting</dt>
+        <pre class="idl">
+          enum TimingObjectState {
+            "connecting",
+            "open",
+            "closing",
+            "closed"
+          };
+        </pre>
+        <dl data-dfn-for="TimingObjectState">
+          <dt><dfn>connecting</dfn></dt>
           <dd>The <a>timing object</a> is attempting to establish a connection with the <a>timing resource</a> it represents. This is the initial state when a new <code><a>TimingObject</a></code> is created. This state is also used when a <code><a>TimingProvider</a></code> object is associated with the <code><a>TimingObject</a></code>.</dd>
 
-          <dt>open</dt>
+          <dt><dfn>open</dfn></dt>
           <dd>The connection with the <a>timing resource</a> is established and communication is possible.</dd>
 
-          <dt>closing</dt>
+          <dt><dfn>closing</dfn></dt>
           <dd>The procedure to close down the connection with the <a>timing resource</a> has started.</dd>
 
-          <dt>closed</dt>
+          <dt><dfn>closed</dfn></dt>
           <dd>The connection with the <a>timing resource</a> has been closed or could not be established.</dd>
         </dl>
 
@@ -947,7 +957,7 @@
 
         <p>The following are the <a>event handlers</a> (and their corresponding <a>event handler event types</a>) that MUST be supported as attributes by a <a>TimingObject</a> object. All events use the <a>Event</a> interface.</p>
 
-        <table dfn-for="TimingObject">
+        <table data-dfn-for="TimingObject">
           <thead>
             <tr>
               <th>Event handler</th>
@@ -994,7 +1004,7 @@
 
       <h3>Timing Provider Object</h3>
       <p>
-        A <dfn lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates the logic necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
+        A <dfn data-lt="timing provider object|timing provider objects">timing provider object</dfn> is an object exposed by a <a>timing resource provider</a> that encapsulates the logic necessary to associate a <a>timing object</a> with an <a>external timing resource</a>.
       </p>
       <p>
         The concept is introduced in order to leave space open for innovation among online timing providers. The purpose is to decouple the <a>user agent</a> from any particular <a>timing resource provider</a>: third-parties may provide different implementations of <a>timing provider objects</a> in JavaScript, to which <a>timing objects</a> may be connected. In particular, this means that the protocols and logic used to identify, create or destroy an <a>external timing resource</a>, synchronize clocks and propagate <a>state vectors</a> to connected user agents, are up to the <a>timing resource provider</a>. Similarly, a <a>timing resource provider</a> may require Web applications or users to authenticate themselves before they grant them access to a particular <a>timing resource</a>.
@@ -1015,17 +1025,18 @@
       </p>
 
       <pre class="idl">
-        callback interface TimingProvider {
+        [Exposed=Window]
+        interface TimingProvider {
           readonly    attribute TimingStateVector vector;
           readonly    attribute unrestricted double startPosition;
           readonly    attribute unrestricted double endPosition;
           readonly    attribute DOMString         readyState;
           readonly    attribute unrestricted double skew;
-          Promise update (TimingStateVectorUpdate newVector);
+          Promise&lt;void&gt; update (optional TimingStateVectorUpdate newVector = {});
         };
       </pre>
 
-      <div dfn-for="TimingProvider">
+      <div data-dfn-for="TimingProvider">
         <p>
           The <dfn>vector</dfn> attribute MUST be set to the <a>state vector</a> that represents the initial conditions of the current motion.
         </p>
@@ -1048,7 +1059,7 @@
       <section>
         <h3>Process an update operation</h3>
         <p>
-          The <dfn for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the <a>external timing resource</a>, based on the provided <a>state vector</a>, and returns a <code>Promise</code> that the update was processed by the <a>timing resource provider</a> (see the <a for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
+          The <dfn data-dfn-for="TimingProvider">update</dfn> method sends a request to the <a>timing resource</a> to have it update the <a>external timing resource</a>, based on the provided <a>state vector</a>, and returns a <code>Promise</code> that the update was processed by the <a>timing resource provider</a> (see the <a data-link-for="TimingObject">update</a> method of <a>TimingObject</a> objects for more details). When the method is invoked on a <a>timing provider object</a> <var>provider</var>, the <a>timing resource provider</a> MUST run the following steps:
         </p>
         <ol>
           <li>Let <var>promise</var> be a new <code>Promise</code>.</li>
@@ -1061,27 +1072,27 @@
       <section>
         <h3>Report new conditions of the current motion</h3>
         <p>
-          When the <a>timing resource provider</a> needs to report an update to the <a>state vector</a> (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">vector</a> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
+          When the <a>timing resource provider</a> needs to report an update to the <a>state vector</a> (position, velocity or acceleration) of the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a data-link-for="TimingProvider">vector</a> property to a new <code><a>TimingStateVector</a></code> that represents the new conditions.
         </p>
       </section>
 
       <section>
         <h3>Report a state change</h3>
         <p>
-          When the <a>timing resource provider</a> needs to report a change of connection state with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">readyState</a> property to the new value.
+          When the <a>timing resource provider</a> needs to report a change of connection state with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a data-link-for="TimingProvider">readyState</a> property to the new value.
         </p>
       </section>
 
        <section>
         <h3>Report a skew change</h3>
         <p>
-          When the <a>timing resource provider</a> needs to report a change of the skew estimate with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a for="TimingProvider">skew</a> property to the new value.
+          When the <a>timing resource provider</a> needs to report a change of the skew estimate with the <a>external timing resource</a> that a <code><a>TimingProvider</a></code> object encapsulates, it MUST set its <a data-link-for="TimingProvider">skew</a> property to the new value.
         </p>
       </section>
 
       <section>
         <h3>Report an error</h3>
-        <p link-for="TimingProvider">
+        <p data-link-for="TimingProvider">
           When the <a>timing resource provider</a> needs to report an unrecoverable error for a <code><a>TimingProvider</a></code> object, it MUST set its <a>error</a> property to the error and set its <a>readyState</a> property to <code>closed</code>.
         </p>
         <p class="note">
@@ -1104,7 +1115,7 @@
       <h2>State Vector</h2>
 
       <p>
-        A <dfn lt="state vector|state vectors">state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, timestamp)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
+        A <dfn data-lt="state vector|state vectors">state vector</dfn> represents the classical four-tuple <code>(position, velocity, acceleration, timestamp)</code> associated with the mathematical description of linear motion under constant acceleration. A <a>state vector</a> is used to represent the motion of a <a>timing resource</a>.
       </p>
       <p>
         In particular, the <a>internal vector</a> of a <a>timing object</a> is a <a>state vector</a>, the <code>query()</code> operation returns a <a>state vector</a> and the <code>update()</code> operation takes a <a>state vector</a> as parameter.
@@ -1123,8 +1134,9 @@
           double timestamp;
         };
 
-        [ Constructor (TimingStateVectorInit vectorDict)]
+        [Exposed=Window]
         interface TimingStateVector {
+          constructor(optional TimingStateVectorInit vectorDict = {});
           readonly    attribute double position;
           readonly    attribute double velocity;
           readonly    attribute double acceleration;
@@ -1132,7 +1144,7 @@
         };
       </pre>
 
-      <div dfn-for="TimingStateVector" link-for="TimingStateVector">
+      <div data-dfn-for="TimingStateVector" data-link-for="TimingStateVector">
         <p>
           The <dfn>position</dfn> attribute MUST be set to the position of the <a>state vector</a> on its unidimensional axis. The position unit is usage specific. The position may for example represent a point in time in seconds, a height in meters, a slide number in a slide show or something else entirely.
         </p>
@@ -1153,7 +1165,7 @@
       <section>
         <h3>Create a new state vector</h3>
         <p>
-          The <code>TimingStateVector</code> constructor is only intended to be used by the <a>timing resource provider</a> to set the <a for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object.
+          The <code>TimingStateVector</code> constructor is only intended to be used by the <a>timing resource provider</a> to set the <a data-link-for="TimingProvider">vector</a> attribute of a <a>TimingProvider</a> object.
         </p>
         <p>
           When the <code>TimingStateVector</code> constructor is called, the <a>user agent</a> MUST run the following steps:
@@ -1203,7 +1215,7 @@
           To achieve precisely time-aligned playback, a <a>media element</a> must continuously monitor and adjust its internal media player. Even if the internal media player is perfectly time-aligned with the <a>timing object</a> at one point in time, media players may slowly drift away from the <a>timing object</a> over time. To counter this, the <a>media element</a> must monitor their time-alignment periodically, and adjust as the error grows too large. Using variable playback rate internally is an effective way of implementing adjustments gradually and precisely.
         </p>
         <p>
-          <a lt="media elements">Media elements</a> take direction from a <a>timing object</a>, but playback capabilities are likely limited when it comes to high velocities, backwards playback or acceleration (supported by the <a>timing object</a>). Still, <a>media elements</a> must accept any state that the <a>timing object</a> supports, so throwing exceptions in these circumstances is not acceptable. Instead, <a>media elements</a> are free to fall back to black screen or graphical illustrations whenever the <a>timing object</a> specifies motions that are not supported by the internal media player.
+          <a data-lt="media elements">Media elements</a> take direction from a <a>timing object</a>, but playback capabilities are likely limited when it comes to high velocities, backwards playback or acceleration (supported by the <a>timing object</a>). Still, <a>media elements</a> must accept any state that the <a>timing object</a> supports, so throwing exceptions in these circumstances is not acceptable. Instead, <a>media elements</a> are free to fall back to black screen or graphical illustrations whenever the <a>timing object</a> specifies motions that are not supported by the internal media player.
         </p>
 
       </section>
@@ -1320,7 +1332,7 @@
         <h3>Introduction</h3>
 
         <p>
-          In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn lt="sequencer">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
+          In this document, the process of translating a timed script or timed data into timed execution is broadly referred to as <dfn data-lt="sequencer">sequencing</dfn>. <a>Sequencing</a> functionality is already provided by existing media frameworks, for example <a>text tracks</a> integrated with <a>media elements</a>, audio sample scheduling within the Web Audio API [[WEBAUDIO]], or timegraph traversal within SMIL Timing [[SMIL3]]. 
         </p>
         <p>
           Similarly, the ability to connect <a>sequencing</a> logic (e.g. a <a>text track</a>) to a <a>timing object</a> would be very useful. It would allow timed data to be time-aligned (synchronized) with any other timed component, provided only that they are directed by the same <a>timing object</a>. Crucially, this would also be true in the multi-device scenario, as distributed <a>timing objects</a> may connect to and be directed by the same online timing source. Below we list important design goals for a general purpose <a>sequencing</a> mechanism for the Web.  
@@ -1347,18 +1359,19 @@
         <h3>Timing text track</h3>
     
         <p>
-          A <dfn lt="timing text tracks">timing text track</dfn> is a <a>text track</a> that is directed by a <a>timing object</a>. The <a>timing text track</a> includes <a>sequencing</a> logic for the set of <a>text track cues</a> that composes the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a>.
+          A <dfn data-lt="timing text tracks">timing text track</dfn> is a <a>text track</a> that is directed by a <a>timing object</a>. The <a>timing text track</a> includes <a>sequencing</a> logic for the set of <a>text track cues</a> that composes the <a>text track</a>. As such, a <a>timing text track</a> has a <dfn>current sequencer</dfn> which is the <a>timing object</a>.
         </p>
     
         <pre class="idl">
-          [ Constructor (TextTrackKind kind, optional DOMString label = "", optional DOMString language = "")]
+          [Exposed=Window]
           interface TimingTextTrack : TextTrack {
+            constructor(TextTrackKind kind, optional DOMString label = "", optional DOMString language = "");
             attribute TimingObject timingsrc;
           };
         </pre>
 
         <p>
-          The <dfn for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
+          The <dfn data-dfn-for="TimingTextTrack">timingsrc</dfn> attribute MUST, on getting, return the <a>current sequencer</a> of the <a>timing text track</a>, if any, or null otherwise. On setting, the <a>user agent</a> MUST <a>associate the track with a timing object</a>.
         </p>
 
         <p class="note">
@@ -1646,5 +1659,7 @@
       </p>
       </section>
     </section>
+
+    <section id="idl-index" class="appendix">
   </body>
 </html>
